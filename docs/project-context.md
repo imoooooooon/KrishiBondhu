@@ -47,7 +47,7 @@ Push current work (even incomplete) before every deadline.
 
 - UI dependencies (Bootstrap, Tailwind, Alpine.js, Livewire, or none) and whether an npm/Vite asset pipeline is needed.
 - Information architecture, routes, navigation.
-- Authentication approach and user/role schema. (`config/auth.php` still names `AppModelsSER`, WHICH WAS REMOVED WITH THE DEFAULT USERS MIGRATION. CREATE IT WHEN AUTHENTICATION IS DESIGNED.)
+- Authentication approach and user/role schema. (`config/auth.php` still names `App\Models\User`, which was removed with the default users migration. Create it when authentication is designed.)
 - Display timezone/locale handling (app currently stores UTC; Bangla/English UI).
 - Feature assignment per member (≥ 5 each, ≥ 20 total).
 - Any package implementing an assessed feature (requires faculty approval).
