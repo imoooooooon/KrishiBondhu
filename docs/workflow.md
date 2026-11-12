@@ -41,6 +41,7 @@ git fetch origin --prune
 
 - If `git status` shows changes you do not recognise: ✋ stop and ask. Do not discard them.
 - If `composer.lock` changed since your last session, run `composer install`.
+- If `database/migrations/` changed, run `php artisan migrate` to update your local database.
 - Quick health check: `composer check` (all steps should pass before you start).
 
 Then go to **section 2** (new task) or **section 3** (continuing a task).
@@ -75,6 +76,7 @@ git switch <prefix>/<short-task-name>
 git pull                                # your own branch's latest commits (e.g. from another computer)
 git merge origin/staging                # bring in teammates' merged work (see section 5)
 composer install
+php artisan migrate                     # apply teammates' new migrations to your local database
 ```
 
 ## 4. While working
@@ -119,6 +121,7 @@ Do this before opening or updating a PR, and whenever teammates merge something 
 git fetch origin
 git merge origin/staging
 composer install
+php artisan migrate
 composer check
 git push
 ```

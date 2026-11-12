@@ -17,8 +17,16 @@ Repository: <https://github.com/imoooooooon/KrishiBondhu>
   behaviour, MySQL 8.4 LTS (InnoDB, utf8mb4).
 - Native local setup (no Docker/WSL required). Each teammate has their own local dev database, test database,
   and application key.
-- Foundation has no business tables. Sessions/cache use files, and queues run synchronously, so no infrastructure
-  tables are needed yet.
+- Sessions/cache use files, and queues run synchronously, so no infrastructure tables are needed.
+- **Accounts (2026-11-13, issue #7):** one account per person, several roles (SRS §2.3). Tables `users`, `roles`,
+  `role_user`; the 8 roles are inserted by their migration (slugs in `App\Models\Role` constants, check with
+  `$user->hasRole(Role::FARMER)`). **Login is a Bangladeshi mobile number (01XXXXXXXXX) + password**; email is
+  optional. Administrator cannot be chosen at sign-up. Built with Laravel's own session auth (no Breeze/Jetstream:
+  they bring Tailwind/Vite). Password reset is not built yet (phone-only users would need SMS).
+- **Language (2026-11-13):** English and Bangla on the same URLs. `App\Http\Middleware\SetLocale` applies the
+  signed-in user's saved `users.locale`, otherwise the guest's session choice, otherwise `APP_LOCALE`. The header
+  switch posts to `preferences.locale`. UI strings: `__('English text')` + `lang/bn.json`; validation and log-in
+  messages: `lang/bn/*.php`. The rest of F24 (low-data mode, saved forms, preferences page) is still unassigned.
 - Git workflow: `main` (stable) + `staging` (integration) + short-lived `<name>/<task>` branches. PRs required (no approval needed),
   merge commits only, protected branches. See `CONTRIBUTING.md`.
 - CI: GitHub Actions with a throwaway MySQL 8.4 container. No secrets.
@@ -56,8 +64,8 @@ Push current work (even incomplete) before every deadline.
 
 - A JS interaction library or build pipeline, only if a feature genuinely needs one (team decision, record here).
 - Home page and role dashboard content (IA.md §7).
-- Authentication approach and user/role schema. (`config/auth.php` still names `App\Models\User`, which was removed with the default users migration. Create it when authentication is designed.)
-- Display timezone/locale handling (app currently stores UTC; Bangla/English UI).
+- Password reset for phone-only accounts (SMS provider or admin-assisted reset).
+- Display timezone (app currently stores UTC), and Bangla digits for numbers outside `<x-ui.price>`.
 - Feature assignment per member (≥ 5 each, ≥ 20 total).
 - Any package implementing an assessed feature (requires faculty approval).
 

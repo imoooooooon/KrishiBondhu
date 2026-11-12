@@ -358,7 +358,9 @@ File: `routes/modules/admin.php` · 16 routes
    ```
 
    If only some actions are ready, split them: keep `->only([...])` on your controller and leave the rest on `PlannedController` for now.
-4. Add the access rule from §5 (middleware or a policy) once authentication exists.
+4. Add the access rule from §5. Authentication exists: wrap signed-in routes in `Route::middleware('auth')`, and check
+   roles with `$request->user()->hasRole(Role::FARMER)` (constants in `App\Models\Role`) or a policy.
+   `RouteMapTest` expects parameter-free `auth` pages to redirect guests to `login`.
 5. Need a new route? Add it to the right module file, give it a name following §4, add a row to §5, and mention it in your PR.
    Renaming or removing a route others use needs a quick team agreement, because their links depend on it.
 6. Payment provider callbacks (`payments.callback.*`, `payments.ipn`) must be excluded from CSRF in `bootstrap/app.php`
@@ -378,3 +380,4 @@ File: `routes/modules/admin.php` · 16 routes
 | --- | --- | --- |
 | 2026-11-12 | Initial IA, navigation and full route map (193 routes) for F1–F26. | Emon (with Claude Code) |
 | 2026-11-12 | `home` now renders a basic landing page (`resources/views/home.blade.php`) instead of PlannedController. | Emon (with Claude Code) |
+| 2026-11-13 | Built `login`, `login.store`, `register`, `register.store`, `logout`, `dashboard` and `preferences.locale` (issue #7). Guest/auth middleware applied to the authentication and session groups in `routes/modules/account.php`; URIs and names unchanged. | Emon (with Claude Code) |
