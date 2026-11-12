@@ -1,0 +1,29 @@
+# Release rule: ordinary PRs into main must come from this repository's
+# staging branch. Required status check on main only.
+name: Release source
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, edited, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  release-source:
+    name: Release source branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require head branch to be staging from this repository
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          THIS_REPO: ${{ github.repository }}
+        run: |
+          if [ "$HEAD_REF" = "staging" ] && [ "$HEAD_REPO" = "$THIS_REPO" ]; then
+            echo "OK: release PR comes from $THIS_REPO:staging"
+          else
+            echo "::error::PRs into main must come from $THIS_REPO:staging (got $HEAD_REPO:$HEAD_REF). Open your PR into staging instead."
+            exit 1
+          fi
