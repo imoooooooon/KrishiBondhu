@@ -22,8 +22,15 @@ Repository: <https://github.com/imoooooooon/KrishiBondhu>
 - Git workflow: `main` (stable) + `staging` (integration) + short-lived `<name>/<task>` branches. Reviewed PRs,
   merge commits only, protected branches. See `CONTRIBUTING.md`.
 - CI: GitHub Actions with a throwaway MySQL 8.4 container. No secrets.
-- The current SRS is the working scope. Its feature list may change. Raw course documents (outline, faculty
-  announcement, SRS, feature sheet) are kept outside the public repository (local `/course-docs/` is git-ignored).
+- The current SRS is the working scope (26 planned features, `F1`–`F26`). Its feature list may change. Raw course
+  documents (project outline, course description, SRS) are kept outside the public repository. Each member keeps
+  them in the local, git-ignored `course-docs/` folder.
+
+## SRS items to reconcile (team to update the SRS; not changed by the setup)
+
+- The SRS lists the repository as `imoooooooon/Project470`. The active repository is `imoooooooon/KrishiBondhu`.
+- SRS §3.2 lists **MariaDB**, while §2.5 and this setup use **MySQL 8.4 LTS**.
+- The SRS names **Bootstrap** for the UI. UI dependencies are still a deferred team decision (below).
 
 ## Sprint deadlines (Asia/Dhaka)
 

@@ -3,6 +3,9 @@
 Krishi Bondhu (কৃষি বন্ধু) is a **CSE470 group project at BRAC University**, built by four students.
 It is assessed coursework. Read this before generating or changing anything.
 
+**Before any task, follow [docs/workflow.md](docs/workflow.md) step by step** (session checks, branch, commits,
+sync with staging, PR, review, cleanup). Stop and ask the student wherever it says ✋.
+
 ## Course constraints (must follow)
 
 - One shared group project. Backend framework with clear **MVC** architecture is mandatory.
@@ -16,8 +19,15 @@ It is assessed coursework. Read this before generating or changing anything.
 - Every student must make **meaningful commits throughout** development and **push current work at every sprint
   deadline**, including incomplete work.
 - Faculty must have the required repository access.
-- **AI assistance must be disclosed** (record it in `docs/ai-usage.md`), and each student must understand and be able
-  to defend their own work.
+- Commit messages must say what changed. No "update", "final", "done".
+- One-week sprints: goals agreed at sprint start (Saturday), attainment reported at sprint end (Friday),
+  including what is unfinished and why. Do not hide incomplete work, bugs, or scope changes.
+- Record every significant third-party package, API, or service in `docs/third-party.md`.
+- **AI assistance must be disclosed** (record it in `docs/ai-usage.md`). Never use AI to generate entire modules
+  or feature sets, or to fabricate requirements, test results, Git history, or sprint evidence. Each student must be
+  able to explain, modify, and debug their code in the viva, and understand the overall system.
+- Feature IDs are `F1`–`F26` (requirements `R1`–`R26`) from the current SRS. Login, registration, and plain CRUD do
+  not count as features. Raw course documents are in the git-ignored `course-docs/` folder and must not be committed.
 
 ## Scope boundaries for AI assistants
 

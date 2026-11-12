@@ -1,5 +1,7 @@
 # Contributing: team Git and GitHub workflow
 
+> Short step-by-step version for daily use (and for AI agents): [docs/workflow.md](docs/workflow.md).
+
 ## Branches
 
 | Branch | Purpose | Who writes to it |
