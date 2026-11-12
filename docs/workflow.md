@@ -1,7 +1,7 @@
 # Daily workflow runbook
 
 Follow this every time you work on Krishi Bondhu after first-time setup.
-For first-time setup, use [README.md](../README.md). For the reasons behind each rule, see
+For first-time setup, use [docs/first-time-setup.md](first-time-setup.md). For the reasons behind each rule, see
 [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 **Using an AI agent?** Start the session with:
