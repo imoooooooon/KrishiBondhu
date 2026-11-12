@@ -79,11 +79,17 @@ composer install
 
 ## 4. While working
 
-- Follow Laravel MVC: Models in `app/Models`, Controllers in `app/Http/Controllers`, Blade views in
-  `resources/views`, routes in `routes/web.php`, schema changes as migrations in `database/migrations`.
+- Follow Laravel MVC as mapped in [docs/architecture.md](architecture.md): Models in `app/Models`, Controllers in
+  `app/Http/Controllers`, Blade views in `resources/views`, schema changes as migrations in `database/migrations`.
   Keep business logic out of views. Do not put the whole feature in one controller.
-- Only change files that belong to your task. If you need to change shared files (layouts, routes, shared models,
-  `composer.json`), ✋ tell the team first, because these cause conflicts.
+- **Routes:** your feature's routes already exist in `routes/modules/<area>.php` (see [docs/IA.md](IA.md) §5).
+  Replace `PlannedController` with your controller and **keep the URI and route name**. Link with `route('name')`.
+  Adding or renaming a route? Update IA.md §5 in the same branch.
+- **Pages:** use `<x-layouts.app>` and the `<x-ui.*>` components from [docs/design-system.md](design-system.md).
+  No hex colours, inline styles or CSS frameworks. Check your page on `/design-system`-style quality: light and dark
+  theme, English and Bangla, phone width.
+- Only change files that belong to your task. If you need to change shared files (layout, header, `public/css/app.css`,
+  shared components, shared models, `composer.json`), ✋ tell the team first, because these cause conflicts.
 - New package? ✋ Ask the team first. Packages that implement an assessed feature need **faculty approval**.
   Record every significant package in [docs/third-party.md](third-party.md).
 - When your work changes a feature's status or scope, update its row in [docs/srs.md](srs.md) in the same branch

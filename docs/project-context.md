@@ -27,11 +27,12 @@ Repository: <https://github.com/imoooooooon/KrishiBondhu>
   The original PDFs stay in each member's local, git-ignored `course-docs/` folder (never committed). Student IDs
   and the faculty email are intentionally kept out of the public Markdown copies.
 - All documentation is living: update it in the same PR whenever the workflow or scope changes.
-
-## Open items
-
-- The SRS names **Bootstrap** for the UI. UI dependencies are still a deferred team decision (below). Update
-  `docs/srs.md` once decided.
+- **Information architecture (2026-11-12):** [docs/IA.md](IA.md). 193 named routes for F1–F26, one route file per
+  area in `routes/modules/`, unbuilt routes served by `PlannedController`.
+- **Design system (2026-11-12):** [docs/design-system.md](design-system.md), adapted from the Al Wasil system for
+  agriculture. **No UI framework** (replaces Bootstrap from the SRS draft) and **no npm/Vite pipeline**: plain CSS
+  tokens and Blade components, self-hosted Inter Tight (OFL); Bangla in Li Ador Noirrit (committed, used with permission from Lipighor) with Noto Sans Bengali (OFL) fallback; Lucide icons (ISC). A basic landing page is at `/`.
+- **Structure:** Laravel's MVC folders are the frontend/backend/database separation ([docs/architecture.md](architecture.md)).
 
 ## Sprint deadlines (Asia/Dhaka)
 
@@ -45,16 +46,16 @@ Repository: <https://github.com/imoooooooon/KrishiBondhu>
 Submission cutoff times and sprint start dates have not been confirmed. Check the faculty announcement.
 Push current work (even incomplete) before every deadline.
 
-## Next phases (not started)
+## Phases
 
-1. Information architecture and route planning
-2. Design system
-3. Frontend and backend implementation
+1. ~~Information architecture and route planning~~ (done: IA.md)
+2. ~~Design system~~ (done: design-system.md, `/design-system`)
+3. Frontend and backend implementation (next: each member builds their features on the planned routes)
 
 ## Deferred decisions
 
-- UI dependencies (Bootstrap, Tailwind, Alpine.js, Livewire, or none) and whether an npm/Vite asset pipeline is needed.
-- Information architecture, routes, navigation.
+- A JS interaction library or build pipeline, only if a feature genuinely needs one (team decision, record here).
+- Home page and role dashboard content (IA.md §7).
 - Authentication approach and user/role schema. (`config/auth.php` still names `App\Models\User`, which was removed with the default users migration. Create it when authentication is designed.)
 - Display timezone/locale handling (app currently stores UTC; Bangla/English UI).
 - Feature assignment per member (≥ 5 each, ≥ 20 total).

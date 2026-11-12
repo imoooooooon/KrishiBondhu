@@ -35,9 +35,15 @@ sync with staging, PR, review, cleanup). Stop and ask the student wherever it sa
 
 - Do **not** generate the assessed project: features, business logic, product pages, or schema, unless the
   responsible student explicitly asks for help with their own specific task and will review and understand it.
-- Do not pick UI dependencies (Bootstrap, Tailwind, Alpine.js, Livewire, etc.), a design system, or the route and
-  information architecture. These are team decisions still pending (see `docs/project-context.md`).
-- Do not add an asset build pipeline (npm/Vite) until the team decides it is needed.
+- **Frontend:** follow [docs/design-system.md](docs/design-system.md). Build pages from `<x-layouts.app>` and the
+  `<x-ui.*>` components; use semantic tokens from `public/css/tokens.css`. No hex colours or inline styles in views,
+  no CSS/JS frameworks (Bootstrap, Tailwind, Alpine.js, Livewire, React …), and no npm/Vite build pipeline unless the
+  team agrees and records it in `docs/project-context.md`. Check `/design-system` in light and dark, English and Bangla.
+- **Routes:** follow [docs/IA.md](docs/IA.md). All planned routes already exist in `routes/modules/*.php`, pointing
+  at `PlannedController`. To build one, swap in your controller and **keep the URI and route name**. Link with
+  `route('name')`, never hard-coded paths. New routes are named, put in the right module file, and added to IA.md §5.
+- **Structure:** MVC as mapped in [docs/architecture.md](docs/architecture.md). There are no separate frontend/backend folders.
+  Views present, controllers coordinate, models and `app/Services` hold business rules.
 - `docs/srs.md` is the team's living SRS and working scope. Update feature status rows as work lands. Change
   scope (features, requirements) only when the team has agreed, and log it in its revision log.
 - All docs are living documents. Keep them in sync with how the team actually works, in the same PR as the change.
@@ -61,7 +67,8 @@ sync with staging, PR, review, cleanup). Stop and ask the student wherever it sa
 ```bash
 composer install     # install locked dependencies
 composer setup       # create .env and generate this computer's app key (first time only)
-composer dev         # start the dev server at http://127.0.0.1:8000 (health check: /up)
+composer dev         # start the dev server at http://127.0.0.1:8000 (design system: /design-system, health: /up)
+php artisan route:list --except-vendor   # see every route and whether it is still PlannedController
 composer check       # validate composer files, Pint formatting, boot, MySQL connectivity, tests
 composer test        # tests only (always use the krishibondhu_test database)
 composer format      # fix PHP formatting with Pint

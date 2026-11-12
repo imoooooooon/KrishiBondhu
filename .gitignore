@@ -32,3 +32,7 @@ Thumbs.db
 *.dump
 # Raw course documents (outline, SRS, feature sheet) stay local, never public.
 /course-docs/
+
+# Reference design docs from a private project (al-wasil); keep local only.
+/docs/Demo Design System/
+
