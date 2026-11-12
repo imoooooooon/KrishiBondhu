@@ -3,6 +3,9 @@
 Krishi Bondhu (কৃষি বন্ধু) is a **CSE470 group project at BRAC University**, built by four students.
 It is assessed coursework. Read this before generating or changing anything.
 
+**Before any task, follow [docs/workflow.md](docs/workflow.md) step by step** (session checks, branch, commits,
+sync with staging, PR, review, cleanup). Stop and ask the student wherever it says ✋.
+
 ## Course constraints (must follow)
 
 - One shared group project. Backend framework with clear **MVC** architecture is mandatory.
@@ -16,8 +19,17 @@ It is assessed coursework. Read this before generating or changing anything.
 - Every student must make **meaningful commits throughout** development and **push current work at every sprint
   deadline**, including incomplete work.
 - Faculty must have the required repository access.
-- **AI assistance must be disclosed** (record it in `docs/ai-usage.md`), and each student must understand and be able
-  to defend their own work.
+- Commit messages must say what changed. No "update", "final", "done".
+- One-week sprints: goals agreed at sprint start (Saturday), attainment reported at sprint end (Friday),
+  including what is unfinished and why. Do not hide incomplete work, bugs, or scope changes.
+- Record every significant third-party package, API, or service in `docs/third-party.md`.
+- **AI assistance must be disclosed** (record it in `docs/ai-usage.md`). Never use AI to generate entire modules
+  or feature sets, or to fabricate requirements, test results, Git history, or sprint evidence. Each student must be
+  able to explain, modify, and debug their code in the viva, and understand the overall system.
+- Feature IDs are `F1`–`F26` (requirements `R1`–`R26`) from the SRS, [docs/srs.md](docs/srs.md). Login,
+  registration, and plain CRUD do not count as features. The full faculty rules are in
+  [docs/course/project-outline.md](docs/course/project-outline.md). Original PDFs stay in the git-ignored
+  `course-docs/` folder and must not be committed.
 
 ## Scope boundaries for AI assistants
 
@@ -26,18 +38,22 @@ It is assessed coursework. Read this before generating or changing anything.
 - Do not pick UI dependencies (Bootstrap, Tailwind, Alpine.js, Livewire, etc.), a design system, or the route and
   information architecture. These are team decisions still pending (see `docs/project-context.md`).
 - Do not add an asset build pipeline (npm/Vite) until the team decides it is needed.
-- Do not rewrite the SRS. The current SRS is the working scope and may change.
+- `docs/srs.md` is the team's living SRS and working scope. Update feature status rows as work lands. Change
+  scope (features, requirements) only when the team has agreed, and log it in its revision log.
+- All docs are living documents. Keep them in sync with how the team actually works, in the same PR as the change.
+  Treat `docs/course/*` as faculty rules: do not change their meaning.
 - Keep Laravel's conventional structure (`app/Http/Controllers`, `app/Models`, `resources/views`, `routes/web.php`,
   `database/migrations`). No speculative abstraction layers or empty placeholder classes.
 - Never commit `.env`, secrets, database dumps, uploads, `vendor/`, logs, or raw course documents (`/course-docs/`).
-- Never impersonate teammates, fabricate their commits or reviews, or self-approve PRs.
+- Never impersonate teammates or fabricate their commits, reviews, or sprint evidence.
 
 ## Collaboration rules
 
 - Branches: `main` (stable), `staging` (integration), and short-lived working branches
   `emon/<task>`, `jarif/<task>`, `mehrab/<task>`, `sajedul/<task>`. Full workflow: `CONTRIBUTING.md`.
-- All changes reach `staging` through a reviewed PR (1 approval from another teammate, CI green, conversations
-  resolved). `main` only receives PRs from `staging`. Merge commits only.
+- All changes reach `staging` through a PR (CI green, conversations resolved). No approval is required: team members
+  are equal contributors and merge their own PRs. Reviews are optional and encouraged. `main` only receives PRs
+  from `staging`. Merge commits only. An agent must confirm with the student before merging.
 - Never force-push or hard-reset shared branches. Integrate `origin/staging` with `git merge`.
 
 ## Commands

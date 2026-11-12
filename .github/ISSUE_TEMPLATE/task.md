@@ -10,7 +10,7 @@ assignees: ""
 
 <!-- What needs to be done? -->
 
-- **SRS feature ID (if applicable):**
+- **SRS feature ID (if applicable):** <!-- e.g. F5 -->
 - **Owner:** <!-- @username -->
 - **Sprint / milestone:**
 

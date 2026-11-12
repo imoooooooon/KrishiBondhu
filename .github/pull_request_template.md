@@ -3,7 +3,7 @@
 <!-- What does this PR do, in one or two sentences? -->
 
 - **Related issue:** Closes #
-- **SRS feature ID (if applicable):**
+- **SRS feature ID (if applicable):** <!-- e.g. F5 -->
 - **Owner:** <!-- e.g. @your-username -->
 - **Type:** feature / part of a feature / bug fix / documentation / setup
 
@@ -25,4 +25,4 @@
 
 ## Reviewer notes
 
-<!-- Anything the reviewer should look at closely. Reviewer must be another teammate. -->
+<!-- Optional: anything a teammate should look at closely. Approval is not required to merge. -->

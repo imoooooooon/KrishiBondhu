@@ -6,6 +6,8 @@ CSE470 group project, BRAC University. One Laravel (MVC) application with Blade 
 > business tables yet. Visiting `/` returns 404 on purpose. `/up` is Laravel's health check.
 
 - Team workflow (branches, PRs, reviews): [CONTRIBUTING.md](CONTRIBUTING.md)
+- **New to the project? Start here:** [docs/first-time-setup.md](docs/first-time-setup.md) (what you do vs. what Claude Code can do)
+- Step-by-step daily workflow (also for AI agents): [docs/workflow.md](docs/workflow.md)
 - Course rules and scope for humans and AI tools: [AGENTS.md](AGENTS.md)
 - Decisions, sprint dates, deferred items: [docs/project-context.md](docs/project-context.md)
 
