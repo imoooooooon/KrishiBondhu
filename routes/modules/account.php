@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\PlannedController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,7 +43,7 @@ Route::get('/account/preferences', PlannedController::class)->name('preferences.
 Route::patch('/account/preferences', PlannedController::class)->name('preferences.update');  // F24
 
 // Language switch (guest and auth)
-Route::post('/preferences/locale', PlannedController::class)->name('preferences.locale');    // F24
+Route::post('/preferences/locale', LocaleController::class)->name('preferences.locale');     // F24
 
 // In-site notifications and reminders (auth)
 Route::get('/notifications', PlannedController::class)->name('notifications.index');
