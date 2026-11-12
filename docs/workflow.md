@@ -22,8 +22,11 @@ The agent must follow this file step by step and **stop to ask the student** at 
 | Mehrab Hossain Nizami | mugdhoo44 | `mehrab/` |
 | Mir Mohammad Sajedul Islam | sajedulislam5840 | `sajedul/` |
 
-Feature IDs come from the SRS (`F1`–`F26`, requirements `R1`–`R26`). Raw course documents live in the git-ignored
-`course-docs/` folder on each computer and must never be committed.
+Feature IDs come from the SRS, [docs/srs.md](srs.md) (`F1`–`F26`, requirements `R1`–`R26`). Course rules are in
+[docs/course/project-outline.md](course/project-outline.md). Original PDFs stay in the git-ignored `course-docs/`
+folder on each computer and are never committed.
+
+All docs are living documents. When the way we work changes, update the relevant `.md` file in the same PR.
 
 ---
 
@@ -83,6 +86,8 @@ composer install
   `composer.json`), ✋ tell the team first, because these cause conflicts.
 - New package? ✋ Ask the team first. Packages that implement an assessed feature need **faculty approval**.
   Record every significant package in [docs/third-party.md](third-party.md).
+- When your work changes a feature's status or scope, update its row in [docs/srs.md](srs.md) in the same branch
+  (sprint completed, status), and add a line to the SRS revision log for scope changes.
 - Never put secrets or API keys in code. Use `.env` (and add a placeholder to `.env.example`).
 - Write real tests for real behaviour (normal, invalid, and boundary cases). Tests use `krishibondhu_test` only.
 - Commit small, meaningful steps:
@@ -125,7 +130,7 @@ git push
 
 A clean merge is not proof the app works. Always run `composer check` and try the feature again.
 
-## 6. Finishing a task (opening it for review)
+## 6. Finishing a task (PR and merge)
 
 1. Run section 5 one last time so the branch includes the latest staging.
 2. `composer check` passes locally, and you manually tested the acceptance criteria.
@@ -136,11 +141,21 @@ A clean merge is not proof the app works. Always run `composer check` and try th
    ```
 
    Fill in the template: related issue, SRS feature ID, owner, changes, checks performed, known limitations.
-4. Request a review from **another teammate** (`gh pr edit --add-reviewer <github-username>`).
-5. Move the issue to **In review** on the board.
-6. Respond to review comments with new commits on the same branch (just `git push`). Do not open a new PR.
+4. Move the issue to **In review** on the board.
+5. Wait for **Laravel checks** to pass: `gh pr checks --watch`. If it fails, fix, `git push`, and wait again.
+6. **Approval is not required.** For larger or shared changes, give teammates a chance to comment first
+   (`gh pr edit --add-reviewer <github-username>`). Address comments with new commits on the same branch, then
+   resolve each conversation (unresolved conversations block the merge).
+7. If GitHub says the branch is out of date with staging, run section 5 again and push.
+8. Merge it yourself with a merge commit: ✋ the agent confirms with the student first.
 
-## 7. Reviewing a teammate's PR
+   ```bash
+   gh pr merge --merge
+   ```
+
+   Then continue with section 8.
+
+## 7. Reviewing a teammate's PR (optional, encouraged)
 
 1. Read **Files changed**. Check MVC placement, validation, no secrets, and tests for the acceptance criteria.
 2. Optionally run it locally:
@@ -152,13 +167,14 @@ A clean merge is not proof the app works. Always run `composer check` and try th
    git switch -                       # back to your own branch
    ```
 
-3. **Approve** or **Request changes** with specific comments. Never approve your own PR, and never approve
-   without reading.
+3. Leave specific comments, or **Approve** / **Request changes**. Never approve without reading.
+   Reviewing is not required to merge, but it helps catch bugs and shows collaboration in the Git history.
 
 ## 8. After your PR is merged
 
 1. The merge must use **Create a merge commit** (the only option enabled).
-2. Click **Delete branch** on the PR page, then locally:
+2. Delete the remote branch (**Delete branch** button on the PR page, or
+   `git push origin --delete <prefix>/<short-task-name>`), then locally:
 
    ```bash
    git switch staging
@@ -185,7 +201,7 @@ Release (one person, agreed by the team, after staging has been tested together)
 gh pr create --base main --head staging --title "Release: Sprint N" --body "Features and fixes in this batch"
 ```
 
-- Another teammate reviews and approves. Merge with a merge commit. **Never delete `staging`.**
+- Tell the team, wait for CI, then merge with a merge commit (`gh pr merge --merge`). **Never delete `staging`.**
 - This PR releases **everything** currently in staging.
 
 Sprint start (Saturday): agree on specific, measurable goals. Create or assign the issues and put them in the
@@ -206,7 +222,7 @@ sprint milestone.
 ## Never
 
 - Force-push (`git push --force`), `git reset --hard` on shared work, or rewrite pushed history.
-- Push directly to `main` or `staging`, approve your own PR, or bypass protections.
+- Push directly to `main` or `staging`, merge with failing CI, or bypass protections.
 - Commit `.env`, keys, passwords, database dumps, uploads, `vendor/`, logs, or anything in `course-docs/`.
 - Commit or review as another teammate, or fabricate commits, tests, reviews, or sprint evidence.
 - Let an AI generate whole features or modules that you cannot explain.

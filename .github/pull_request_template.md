@@ -25,4 +25,4 @@
 
 ## Reviewer notes
 
-<!-- Anything the reviewer should look at closely. Reviewer must be another teammate. -->
+<!-- Optional: anything a teammate should look at closely. Approval is not required to merge. -->

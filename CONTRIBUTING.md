@@ -6,8 +6,8 @@
 
 | Branch | Purpose | Who writes to it |
 | --- | --- | --- |
-| `main` | Stable release | Only via a reviewed PR **from `staging`** |
-| `staging` | Shared integration and testing | Only via reviewed PRs from working branches |
+| `main` | Stable release | Only via a PR **from `staging`** |
+| `staging` | Shared integration and testing | Only via PRs from working branches |
 | `<name>/<task>` | One person's current piece of work | That person |
 
 Working branch prefixes:
@@ -33,14 +33,15 @@ These are naming examples, not assignments.
 3. Make meaningful commits and push the working branch, at least at every sprint deadline.
 4. Before integration, merge the latest `origin/staging` into your working branch.
 5. Resolve any conflicts, run `composer check`, and open (or update) a PR into `staging`.
-6. Another teammate reviews and approves it. CI must pass and all review conversations must be resolved.
+6. Wait for CI to pass and resolve any comment conversations. Teammates are welcome to review, but **approval is
+   not required**: we are equal contributors, and the author merges their own PR.
 7. Merge it with **"Create a merge commit"**, then delete the working branch.
 8. Test the combined `staging` version.
 9. When the whole staging batch is ready, open a PR from `staging` into `main`.
-10. Another teammate reviews it, then merge the release.
+10. When CI passes, merge the release (tell the team first).
 
-GitHub enforces: PRs required on `main` and `staging`, 1 approval from someone other than the author,
-passing CI, resolved conversations, no force pushes, no branch deletion, and the same rules for admins.
+GitHub enforces: PRs required on `main` and `staging` (no direct pushes), passing CI, resolved conversations,
+no force pushes, no branch deletion, and the same rules for admins. No approval count is required.
 Only merge commits are allowed (squash and rebase merging are off), so everyone's original commits stay in history.
 
 ## Things to understand
@@ -141,9 +142,10 @@ gh pr create --base staging --fill --draft    # still in progress
 gh pr ready                                   # mark a draft as ready
 ```
 
-Request a review from a teammate (not yourself).
+Reviews are optional. For larger or shared changes, ask a teammate to look (`gh pr edit --add-reviewer <username>`).
+Comments and reviews on PRs are also useful evidence of collaboration for the course.
 
-### Review a teammate's PR
+### Review a teammate's PR (optional, encouraged)
 
 1. Read the **Files changed** tab and leave comments on specific lines.
 2. Optionally test it locally:
@@ -155,11 +157,12 @@ Request a review from a teammate (not yourself).
    git switch staging                    # go back afterwards
    ```
 
-3. Submit **Approve** or **Request changes**. The author resolves each conversation after addressing it.
+3. Leave comments, or submit **Approve** / **Request changes**. The author resolves each conversation after addressing it
+   (unresolved conversations block the merge).
 
 ### Merge and delete the working branch
 
-After approval and green CI, click **Merge pull request** (merge commit) and then **Delete branch** on GitHub.
+When CI is green and conversations are resolved, click **Merge pull request** (merge commit) and then **Delete branch** on GitHub.
 Then locally:
 
 ```bash
@@ -180,7 +183,7 @@ After the combined `staging` has been tested:
 gh pr create --base main --head staging --title "Release: Sprint N" --body "Summary of what this batch contains"
 ```
 
-Another teammate reviews and approves. Merge with a merge commit. **Do not delete `staging`** after this merge.
+When CI passes, merge with a merge commit (agree with the team first, since it releases everyone's work). **Do not delete `staging`** after this merge.
 The "Release source branch" check fails any PR into `main` whose head is not this repository's `staging`.
 
 ---

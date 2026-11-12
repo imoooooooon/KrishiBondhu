@@ -19,18 +19,19 @@ Repository: <https://github.com/imoooooooon/KrishiBondhu>
   and application key.
 - Foundation has no business tables. Sessions/cache use files, and queues run synchronously, so no infrastructure
   tables are needed yet.
-- Git workflow: `main` (stable) + `staging` (integration) + short-lived `<name>/<task>` branches. Reviewed PRs,
+- Git workflow: `main` (stable) + `staging` (integration) + short-lived `<name>/<task>` branches. PRs required (no approval needed),
   merge commits only, protected branches. See `CONTRIBUTING.md`.
 - CI: GitHub Actions with a throwaway MySQL 8.4 container. No secrets.
-- The current SRS is the working scope (26 planned features, `F1`–`F26`). Its feature list may change. Raw course
-  documents (project outline, course description, SRS) are kept outside the public repository. Each member keeps
-  them in the local, git-ignored `course-docs/` folder.
+- The SRS is the working scope (26 planned features, `F1`–`F26`) and is maintained as a living Markdown document:
+  [docs/srs.md](srs.md). Faculty documents are transcribed in [docs/course/](course/) for reference.
+  The original PDFs stay in each member's local, git-ignored `course-docs/` folder (never committed). Student IDs
+  and the faculty email are intentionally kept out of the public Markdown copies.
+- All documentation is living: update it in the same PR whenever the workflow or scope changes.
 
-## SRS items to reconcile (team to update the SRS; not changed by the setup)
+## Open items
 
-- The SRS lists the repository as `imoooooooon/Project470`. The active repository is `imoooooooon/KrishiBondhu`.
-- SRS §3.2 lists **MariaDB**, while §2.5 and this setup use **MySQL 8.4 LTS**.
-- The SRS names **Bootstrap** for the UI. UI dependencies are still a deferred team decision (below).
+- The SRS names **Bootstrap** for the UI. UI dependencies are still a deferred team decision (below). Update
+  `docs/srs.md` once decided.
 
 ## Sprint deadlines (Asia/Dhaka)
 
