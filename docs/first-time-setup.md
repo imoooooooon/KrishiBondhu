@@ -74,7 +74,7 @@ macOS (Homebrew): `brew install php@8.4 composer mysql@8.4 gh && brew services s
 | Create `.env` and your app key | 🤖 | `composer setup` (copies `.env.example` to `.env` and generates **your own** key) |
 | Create your databases | 🤖 + 🧑 | Claude generates a random password for the `krishibondhu` user, writes the SQL below into a temporary file, and puts the same password into your `.env` as `DB_PASSWORD`. **You** run `mysql -u root -p < <that file>` and type your root password. Claude never needs your root password. Claude deletes the temp file afterwards. |
 | Verify everything | 🤖 | `composer check` (validates Composer files, formatting, app boot, MySQL connection, and tests). All steps must pass. |
-| Try the app | 🤖 / 🧑 | `composer dev`, then open <http://127.0.0.1:8000/up>. It should show a green "Application up" page. `/` shows 404 on purpose (no pages yet). |
+| Try the app | 🤖 / 🧑 | `composer dev`, then open <http://127.0.0.1:8000/design-system>. You should see the Krishi Bondhu design system. Other pages show a "planned page" until their feature is built; `/up` is the health check. |
 
 The database SQL (your own databases on your own computer):
 

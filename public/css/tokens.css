@@ -1,0 +1,329 @@
+/* =====================================================================
+   Krishi Bondhu design tokens — docs/design-system.md is the source of truth.
+   Use the SEMANTIC tokens (--canvas, --fg, --accent ...) in components and
+   pages. Raw scales (--paddy-800 ...) are for the design-system page,
+   illustrations and charts only. Never hard-code a hex value in a view.
+   ===================================================================== */
+
+:root {
+    /* ---- Paddy: primary brand green (the 30 %) ---- */
+    --paddy-50: #EFF6EE;
+    --paddy-100: #DBEDD6;
+    --paddy-200: #B6D9AD;
+    --paddy-300: #89BF7E;
+    --paddy-400: #5A9E50;
+    --paddy-500: #3B8237;
+    --paddy-600: #2A7230;
+    --paddy-700: #1A5C2A;
+    --paddy-800: #134A23; /* brand */
+    --paddy-900: #0E3A1B;
+    --paddy-950: #072413;
+
+    /* ---- Sprout: highlighter (the 10 %). Never text or thin lines on white. ---- */
+    --sprout-50: #F7FCE8;
+    --sprout-100: #EEF8CC;
+    --sprout-200: #E0F1A3;
+    --sprout-300: #CBE873; /* accent */
+    --sprout-400: #B5DA4C;
+    --sprout-500: #98C02D;
+    --sprout-700: #587617;
+    --sprout-800: #3D5E10;
+
+    /* ---- Shoot: soft brand tint (selected states, success) ---- */
+    --shoot-50: #F3FAEF;
+    --shoot-100: #E5F3DB;
+    --shoot-200: #C9E6B3;
+    --shoot-300: #ADD78D;
+
+    /* ---- Mustard: harvest & market highlight (fills, charts, category tags) ---- */
+    --mustard-50: #FFFAEB;
+    --mustard-100: #FFF1C7;
+    --mustard-200: #FDE28C;
+    --mustard-300: #F7CC45;
+    --mustard-400: #E9B320;
+    --mustard-500: #C99512;
+    --mustard-700: #7F5B00;
+    --mustard-800: #5E4300;
+
+    /* ---- Soil: earth tones (cattle, soil guidance, illustrations) ---- */
+    --soil-50: #FAF6F0;
+    --soil-100: #F2E9DB;
+    --soil-200: #E3D2B8;
+    --soil-300: #C9AE88;
+    --soil-500: #8B6440;
+    --soil-700: #5E4128;
+    --soil-800: #43301E;
+
+    /* ---- Neutrals: slightly green-tinted, never pure grey ---- */
+    --neutral-0: #FFFFFF;
+    --neutral-25: #FAFBFA;
+    --neutral-50: #F4F6F5;
+    --neutral-100: #ECEFED;
+    --neutral-200: #DFE4E1;
+    --neutral-300: #C7CEC9;
+    --neutral-400: #A1ABA5;
+    --neutral-500: #7A857F;
+    --neutral-600: #6B7770;
+    --neutral-700: #56625B;
+    --neutral-800: #2A322E;
+    --neutral-900: #101A15;
+
+    /* ---- Type families (self-hosted, OFL) ---- */
+    --font-latin: "Inter Tight";
+    --font-bengali: "Noto Sans Bengali";
+    --font-sans: var(--font-latin), var(--font-bengali), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+    /* ---- Space (4 px grid) ---- */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+    --section-space: clamp(56px, 8vw, 112px);
+
+    /* ---- Layout ---- */
+    --container: 1180px;
+    --container-narrow: 720px;
+    --gutter: 20px;
+    --header-height: 64px;
+
+    /* ---- Radius ---- */
+    --radius-xs: 6px;    /* badges, tags */
+    --radius-sm: 10px;   /* small buttons, thumbnails */
+    --radius-control: 12px; /* inputs, buttons */
+    --radius-lg: 16px;   /* list groups, media */
+    --radius-card: 24px; /* cards, sheets */
+    --radius-panel: 28px; /* large marketing/section panels */
+    --radius-inset: 8px; /* panels nested 16 px inside a card */
+    --radius-full: 999px;
+
+    /* ---- Control sizes (visible heights; hit areas are always >= 44 px) ---- */
+    --control-lg: 48px;
+    --control-md: 40px;
+    --control-sm: 32px;
+    --touch-min: 44px;
+
+    /* ---- Motion ---- */
+    --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+    --duration-fast: 120ms;
+    --duration-base: 200ms;
+    --duration-slow: 280ms;
+    --duration-reveal: 650ms;
+}
+
+/* ---------------- Semantic roles: light (default) ---------------- */
+:root,
+[data-theme="light"] {
+    color-scheme: light;
+
+    --canvas: #FFFFFF;           /* page background (60 %) */
+    --card: #F3F5F2;             /* grey elements on the white canvas (two-tone, no borders) */
+    --surface: #FFFFFF;          /* inputs, sheets, dialogs */
+    --surface-raised: #FFFFFF;
+    --subtle: #E9EDE9;           /* fills inside a card (icon discs, wells) */
+    --hover: #EEF5EC;
+    --active: #E3E8E4;
+    --track: #DFE4E1;
+    --divider: #E6EAE7;
+    --border: #DFE4E1;
+    --border-strong: #C7CEC9;
+    --border-control: #7A857F;   /* 3:1 for inputs and checkboxes */
+
+    --fg: #101A15;
+    --fg-muted: #56625B;
+    --fg-subtle: #616D66;
+    --fg-disabled: #A1ABA5;
+    --inverse: #101A15;
+    --on-inverse: #FFFFFF;
+
+    --brand: var(--paddy-800);
+    --brand-hover: var(--paddy-700);
+    --on-brand: #FFFFFF;
+    --on-brand-muted: var(--paddy-200);
+    --brand-deep: var(--paddy-950); /* footer and deep sections, both themes */
+
+    --accent: var(--paddy-800);  /* primary action */
+    --accent-hover: var(--paddy-700);
+    --on-accent: #FFFFFF;
+    --accent-fg: var(--paddy-800); /* links, active icons */
+    --accent-bg: var(--shoot-100); /* selected rows/chips */
+    --accent-bg-strong: var(--shoot-200);
+    --accent-border: var(--shoot-300);
+
+    --highlight: var(--sprout-300); /* the ONE highlight per region */
+    --highlight-hover: var(--sprout-400);
+    --on-highlight: var(--paddy-800);
+    --highlight-bg: var(--sprout-100);
+    --on-highlight-bg: var(--sprout-800);
+
+    --harvest-bg: var(--mustard-100);
+    --on-harvest-bg: var(--mustard-800);
+    --harvest-solid: var(--mustard-300);
+    --earth-bg: var(--soil-100);
+    --on-earth-bg: var(--soil-700);
+
+    --focus: var(--paddy-600);
+    --focus-ring: var(--shoot-200);
+
+    --success-fg: var(--paddy-800);
+    --success-bg: var(--shoot-100);
+    --success-border: var(--shoot-300);
+    --info-fg: #2F6FB3;
+    --info-bg: #E8F0FA;
+    --info-border: #C5D8EF;
+    --warning-fg: #945000;
+    --warning-bg: #FFF3DC;
+    --warning-border: #F2D29A;
+    --danger-fg: #C2362B;
+    --danger-bg: #FDECEA;
+    --danger-border: #F5C2BD;
+    --danger-solid: #C2362B;
+    --neutral-fg: #56625B;
+    --neutral-bg: #F1F3F2;
+    --neutral-border: #DFE4E1;
+
+    --chart-1: var(--paddy-800);
+    --chart-2: var(--mustard-400);
+    --chart-3: var(--paddy-400);
+    --chart-4: var(--soil-500);
+    --chart-5: var(--neutral-400);
+    --chart-grid: #E3E7E4;
+
+    --scrim: rgba(7, 36, 19, 0.45);
+    --shadow-small: 0 1px 2px rgba(19, 74, 35, 0.06);
+    --shadow-medium: 0 1px 2px rgba(19, 74, 35, 0.06), 0 6px 16px rgba(19, 74, 35, 0.08);
+    --shadow-modal: 0 -2px 6px rgba(19, 74, 35, 0.04), 0 -12px 32px rgba(19, 74, 35, 0.10);
+}
+
+/* ---------------- Semantic roles: dark ---------------- */
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --canvas: #0A110C;
+    --card: #141D17;
+    --surface: #111A14;
+    --surface-raised: #17221B;
+    --subtle: #1B2620;
+    --hover: #1B2620;
+    --active: #223029;
+    --track: #2A3730;
+    --divider: #1E2923;
+    --border: #26322B;
+    --border-strong: #35423C;
+    --border-control: #6E7C75;
+
+    --fg: #E6ECE8;
+    --fg-muted: #B8C2BC;
+    --fg-subtle: #94A19A;
+    --fg-disabled: #5E6A64;
+    --inverse: #E6ECE8;
+    --on-inverse: #0A110C;
+
+    --brand: var(--paddy-800);
+    --brand-hover: var(--paddy-700);
+    --on-brand: #FFFFFF;
+    --on-brand-muted: var(--paddy-200);
+
+    /* In dark, Sprout becomes the primary action colour. */
+    --accent: var(--sprout-300);
+    --accent-hover: var(--sprout-400);
+    --on-accent: var(--paddy-900);
+    --accent-fg: var(--sprout-300);
+    --accent-bg: #18301D;
+    --accent-bg-strong: #1F3D25;
+    --accent-border: #2E5233;
+
+    --highlight: var(--sprout-300);
+    --highlight-hover: var(--sprout-400);
+    --on-highlight: var(--paddy-900);
+    --highlight-bg: #22301A;
+    --on-highlight-bg: var(--sprout-200);
+
+    --harvest-bg: #2E2610;
+    --on-harvest-bg: var(--mustard-200);
+    --harvest-solid: var(--mustard-400);
+    --earth-bg: #2A2118;
+    --on-earth-bg: var(--soil-200);
+
+    --focus: var(--sprout-300);
+    --focus-ring: #24402A;
+
+    --success-fg: var(--sprout-300);
+    --success-bg: #18301D;
+    --success-border: #2E5233;
+    --info-fg: #8DB8EA;
+    --info-bg: #132235;
+    --info-border: #22385A;
+    --warning-fg: #F0B75A;
+    --warning-bg: #2E2210;
+    --warning-border: #4A3718;
+    --danger-fg: #F08A80;
+    --danger-bg: #331514;
+    --danger-border: #5A2522;
+    --danger-solid: #E0645A;
+    --neutral-fg: #B8C2BC;
+    --neutral-bg: #17221B;
+    --neutral-border: #26322B;
+
+    --chart-1: var(--sprout-300);
+    --chart-2: var(--mustard-300);
+    --chart-3: var(--paddy-300);
+    --chart-4: var(--soil-300);
+    --chart-5: var(--neutral-500);
+    --chart-grid: #26322B;
+
+    --scrim: rgba(0, 0, 0, 0.6);
+    --shadow-small: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-medium: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.35);
+    --shadow-modal: 0 -2px 6px rgba(0, 0, 0, 0.3), 0 -12px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------------- Type scale: Latin ---------------- */
+/* Larger than a typical "compact" app on purpose: outdoor phone use, first-time web users. */
+:root,
+:lang(en) {
+    --fs-display-xl: clamp(2.125rem, 1.4rem + 3vw, 3.5rem); --lh-display-xl: 1.08; --ls-display-xl: -0.04em;
+    --fs-display: 2rem;      --lh-display: 2.5rem;    --ls-display: -0.025em;
+    --fs-title-1: 1.5rem;    --lh-title-1: 2rem;      --ls-title-1: -0.02em;
+    --fs-title-2: 1.25rem;   --lh-title-2: 1.75rem;   --ls-title-2: -0.015em;
+    --fs-title-3: 1.0625rem; --lh-title-3: 1.5rem;    --ls-title-3: -0.01em;
+    --fs-body: 1rem;         --lh-body: 1.5rem;       --ls-body: 0;
+    --fs-callout: 0.875rem;  --lh-callout: 1.25rem;   --ls-callout: 0;
+    --fs-caption: 0.8125rem; --lh-caption: 1.125rem;  --ls-caption: 0.005em;
+    --fs-overline: 0.75rem;  --lh-overline: 1rem;     --ls-overline: 0.06em;
+    --fs-button-l: 1rem;     --fs-button-m: 0.9375rem; --fs-button-s: 0.875rem;
+    --overline-transform: uppercase;
+}
+
+/* ---------------- Type scale: Bangla ---------------- */
+/* +1 px, about 1.2x line height, no tracking, no capitals. Bangla text wraps, never truncates. */
+:lang(bn) {
+    --fs-display-xl: clamp(2rem, 1.35rem + 2.8vw, 3.25rem); --lh-display-xl: 1.3; --ls-display-xl: 0;
+    --fs-display: 2.0625rem; --lh-display: 3rem;      --ls-display: 0;
+    --fs-title-1: 1.5625rem; --lh-title-1: 2.375rem;  --ls-title-1: 0;
+    --fs-title-2: 1.3125rem; --lh-title-2: 2.125rem;  --ls-title-2: 0;
+    --fs-title-3: 1.125rem;  --lh-title-3: 1.75rem;   --ls-title-3: 0;
+    --fs-body: 1.0625rem;    --lh-body: 1.8rem;       --ls-body: 0;
+    --fs-callout: 0.9375rem; --lh-callout: 1.5rem;    --ls-callout: 0;
+    --fs-caption: 0.875rem;  --lh-caption: 1.375rem;  --ls-caption: 0;
+    --fs-overline: 0.875rem; --lh-overline: 1.375rem; --ls-overline: 0;
+    --fs-button-l: 1.0625rem; --fs-button-m: 1rem;    --fs-button-s: 0.9375rem;
+    --overline-transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --duration-fast: 1ms;
+        --duration-base: 1ms;
+        --duration-slow: 1ms;
+        --duration-reveal: 1ms;
+    }
+}

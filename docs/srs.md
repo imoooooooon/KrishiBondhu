@@ -124,7 +124,7 @@ This project will follow the CSE470 rules, including the required MVC architectu
 **(a) Primary Technology Stack**
 
 The application will use PHP with Laravel for the backend. The frontend will use Blade templates, HTML, CSS,
-Bootstrap, and JavaScript. MySQL will store the application data.
+and JavaScript, styled by the Krishi Bondhu design system (custom CSS tokens and Blade components, no CSS framework; see [design-system.md](design-system.md)). MySQL will store the application data.
 
 **(b) MVC Framework and Structure**
 
@@ -181,7 +181,7 @@ health guidance, and worker booking. Bangla text and voice support will work acr
 
 **Model:** Models will manage data and relationships. Examples include User, CropListing, Order, Cattle, and Booking.
 
-**View:** Blade templates will display pages and forms. Bootstrap will help the pages fit phone and computer screens.
+**View:** Blade templates will display pages and forms. Shared Blade components from the design system make pages fit phone and computer screens.
 
 **Controller:** Controllers will receive user requests, check permissions, and coordinate actions between models
 and views.
@@ -221,7 +221,7 @@ allowing access to protected actions.
 
 | Layer or Purpose | Technology | Use |
 | --- | --- | --- |
-| Frontend | Blade, HTML, CSS, Bootstrap, and JavaScript | Displays pages, forms, and interactive controls on phones and computers. |
+| Frontend | Blade, HTML, CSS (Krishi Bondhu design system), and JavaScript | Displays pages, forms, and interactive controls on phones and computers. |
 | Backend | PHP with Laravel | Handles user requests, permissions, and application logic using MVC. |
 | Database | MySQL 8.4 LTS | Stores users, listings, orders, cattle records, bookings, and other application data. |
 | Hosting | alwaysdata free plan | Hosts the application and database for the university demonstration. |
@@ -384,4 +384,5 @@ that clearly and distinguish it from your individual implementation work.]*
 
 | Date | Change | By |
 | --- | --- | --- |
+| 2026-11-12 | Frontend stack: Bootstrap replaced by the Krishi Bondhu design system (custom CSS + Blade components, no framework, no build step) in §2.5, §3.1, §3.2. Route map in [IA.md](IA.md). | Emon (with Claude Code) |
 | 2026-11-12 | Transcribed from the PDF to Markdown. Repository link updated from `Project470` to `KrishiBondhu`; database in §3.2 changed from MariaDB to MySQL 8.4 LTS (matching §2.5 and the confirmed setup); tech stack row filled in; architecture figure redrawn as a Mermaid diagram; sprint deadlines added to §7; checklist cross-reference to the AI disclosure corrected to §9. Student IDs and faculty email kept out of the public copy. | Emon (with Claude Code) |
