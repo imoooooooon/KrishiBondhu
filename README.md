@@ -2,9 +2,13 @@
 
 CSE470 group project, BRAC University. One Laravel (MVC) application with Blade templates and MySQL.
 
-> **Status:** environment and workflow foundation only. There are no product pages, routes, or
-> business tables yet. Visiting `/` returns 404 on purpose. `/up` is Laravel's health check.
+> **Status:** foundation, information architecture and design system are in place. All 193 planned routes exist
+> and show a "planned page" until their feature is built. There are no business tables yet.
+> Open `/design-system` for the living UI reference. `/up` is Laravel's health check.
 
+- Information architecture and every route: [docs/IA.md](docs/IA.md)
+- Design system (colours, type, components): [docs/design-system.md](docs/design-system.md), live at `/design-system`
+- Where frontend, backend and database code lives (MVC map): [docs/architecture.md](docs/architecture.md)
 - Team workflow (branches, PRs, reviews): [CONTRIBUTING.md](CONTRIBUTING.md)
 - **New to the project? Start here:** [docs/first-time-setup.md](docs/first-time-setup.md) (what you do vs. what Claude Code can do)
 - Step-by-step daily workflow (also for AI agents): [docs/workflow.md](docs/workflow.md)
@@ -22,7 +26,8 @@ CSE470 group project, BRAC University. One Laravel (MVC) application with Blade 
 | PHPUnit / Pint | 12.x / 1.x | Installed by Composer (dev) |
 | Git | any recent 2.x | |
 
-No Node.js, npm, Vite, or CSS framework is required yet. They will be added only if the team decides to use them.
+No Node.js, npm, Vite, or CSS framework is needed. The design system is plain CSS and Blade components in
+`public/css/` and `resources/views/components/`, with self-hosted fonts.
 
 Required PHP extensions: `curl`, `fileinfo`, `mbstring`, `openssl`, `pdo_mysql`, `intl`, `zip`
 (plus the ones enabled by default: ctype, dom, filter, hash, pcre, session, tokenizer, xml).
@@ -120,7 +125,7 @@ All steps should pass.
 
 | What | Command |
 | --- | --- |
-| Start the app | `composer dev` then open <http://127.0.0.1:8000/up> |
+| Start the app | `composer dev` then open <http://127.0.0.1:8000/design-system> (health check: `/up`) |
 | Run all checks | `composer check` |
 | Run tests only | `composer test` |
 | Check formatting | `composer lint` |
