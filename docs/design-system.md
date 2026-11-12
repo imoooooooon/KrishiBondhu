@@ -122,6 +122,7 @@ Use Blade components. Each file in `resources/views/components/ui/` documents it
 | `<x-ui.chip>` | Filters (link or toggle) |
 | `<x-ui.alert>` | Inline banners with icon and title |
 | `<x-ui.field>`, `<x-ui.select>`, `<x-ui.textarea>`, `<x-ui.checkbox>` | Labelled inputs with hints and errors from `$errors`/`old()` |
+| `fieldset.fieldset` + `legend.field__label`, `.check-grid` | One label for a group of checkboxes or radios; `.check-grid` lays them out in columns that wrap |
 | `<x-ui.stat>` | Figure + label + change (with sign and icon) |
 | `<x-ui.list-row>` inside `.list-group` | Rows with icon, title, subtitle, trailing content |
 | `<x-ui.empty-state>` | Icon, title, one line, one action |
@@ -192,5 +193,6 @@ themes on `/design-system` before merging UI work.
 
 | Date | Change | By |
 | --- | --- | --- |
+| 2026-11-13 | v1.2: `.fieldset` and `.check-grid` for grouped checkboxes (sign-up roles). | Emon (with Claude Code) |
 | 2026-11-12 | v1.1: Bangla font Li Ador Noirrit (committed with Lipighor permission, Noto fallback, footer credit); basic landing page. | Emon (with Claude Code) |
 | 2026-11-12 | v1.0: tokens, type, components, design-system page; adapted from Al Wasil for agriculture. | Emon (with Claude Code) |

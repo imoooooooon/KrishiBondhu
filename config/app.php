@@ -82,6 +82,9 @@ return [
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
+    // Languages people can switch to in the header (F24). Bangla strings: lang/bn.json and lang/bn/*.php.
+    'supported_locales' => ['en', 'bn'],
+
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
     /*

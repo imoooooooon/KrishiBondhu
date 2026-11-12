@@ -384,5 +384,6 @@ that clearly and distinguish it from your individual implementation work.]*
 
 | Date | Change | By |
 | --- | --- | --- |
+| 2026-11-13 | Accounts (supporting, not a counted feature): login uses a Bangladeshi mobile number + password, email optional; roles chosen at sign-up from the §2.3 list (Administrator excluded). F24 groundwork: the header language switch now works (saved per account or per session). F24 itself stays unassigned and Planned. No feature added or removed. | Emon (with Claude Code) |
 | 2026-11-12 | Frontend stack: Bootstrap replaced by the Krishi Bondhu design system (custom CSS + Blade components, no framework, no build step) in §2.5, §3.1, §3.2. Route map in [IA.md](IA.md). | Emon (with Claude Code) |
 | 2026-11-12 | Transcribed from the PDF to Markdown. Repository link updated from `Project470` to `KrishiBondhu`; database in §3.2 changed from MariaDB to MySQL 8.4 LTS (matching §2.5 and the confirmed setup); tech stack row filled in; architecture figure redrawn as a Mermaid diagram; sprint deadlines added to §7; checklist cross-reference to the AI disclosure corrected to §9. Student IDs and faculty email kept out of the public copy. | Emon (with Claude Code) |

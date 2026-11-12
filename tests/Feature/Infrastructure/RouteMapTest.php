@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Infrastructure;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as Router;
 use Tests\TestCase;
@@ -12,6 +13,8 @@ use Tests\TestCase;
  */
 class RouteMapTest extends TestCase
 {
+    use RefreshDatabase; // the sign-up page reads the roles table
+
     /** Framework routes that are not part of the product route map. */
     private const FRAMEWORK_URIS = ['up', 'storage/{path}'];
 
@@ -43,8 +46,13 @@ class RouteMapTest extends TestCase
 
         $this->assertNotEmpty($pages);
 
+        // Visited as a guest: pages behind the auth middleware must send guests to the login page.
         foreach ($pages as $route) {
-            $this->get('/'.ltrim($route->uri(), '/'))->assertOk();
+            $response = $this->get('/'.ltrim($route->uri(), '/'));
+
+            in_array('auth', $route->gatherMiddleware(), true)
+                ? $response->assertRedirect(route('login'))
+                : $response->assertOk();
         }
     }
 
