@@ -36,6 +36,3 @@ Thumbs.db
 # Reference design docs from a private project (al-wasil); keep local only.
 /docs/Demo Design System/
 
-# Li Ador Noirrit (Lipighor licence forbids redistribution): each member downloads it from lipighor.com.
-/resources/fonts/LiAdorNoirritMultiweight/
-/public/fonts/li-ador-noirrit/

@@ -69,8 +69,8 @@
     --neutral-900: #101A15;
 
     /* ---- Type families ----
-       Latin: Inter Tight (OFL, committed). Bangla: Li Ador Noirrit (Lipighor licence, installed locally with
-       `composer fonts`, never committed), falling back to Noto Sans Bengali (OFL, committed). */
+       Latin: Inter Tight (OFL). Bangla: Li Ador Noirrit (Lipighor, used with permission), with Noto Sans Bengali
+       (OFL) as the fallback. All font files are committed in public/fonts/. */
     --font-latin: "Inter Tight";
     --font-bengali: "Li Ador Noirrit", "Noto Sans Bengali";
     --font-sans: var(--font-latin), var(--font-bengali), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;

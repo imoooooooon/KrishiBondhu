@@ -70,9 +70,8 @@ macOS (Homebrew): `brew install php@8.4 composer mysql@8.4 gh && brew services s
 | Set your Git identity | 🧑 (or 🤖 with your details) | `git config --global user.name "Your Name"` and `git config --global user.email "your-github-email"` |
 | Clone the repo | 🤖 | `git clone https://github.com/imoooooooon/KrishiBondhu.git` then `cd KrishiBondhu` and `git switch staging` |
 | Put the course PDFs in place | 🧑 | Create a `course-docs` folder inside the project and put the PDFs there. Git ignores this folder, so they are never uploaded. |
-| Get the Bangla font | 🧑 | Download **Li Ador Noirrit** yourself from <https://lipighor.com> (free). Unzip it and put the `LiAdorNoirritMultiweight` folder in `resources/fonts/`. Its licence forbids sharing the files, so don't ask a teammate to send them, and never commit them (Git ignores that folder). Skip this and Bangla shows in Noto Sans Bengali instead. |
 | Install dependencies | 🤖 | `composer install` |
-| Create `.env` and your app key | 🤖 | `composer setup` (copies `.env.example` to `.env`, generates **your own** key, and runs `composer fonts` to install the Bangla font if you added it) |
+| Create `.env` and your app key | 🤖 | `composer setup` (copies `.env.example` to `.env` and generates **your own** key) |
 | Create your databases | 🤖 + 🧑 | Claude generates a random password for the `krishibondhu` user, writes the SQL below into a temporary file, and puts the same password into your `.env` as `DB_PASSWORD`. **You** run `mysql -u root -p < <that file>` and type your root password. Claude never needs your root password. Claude deletes the temp file afterwards. |
 | Verify everything | 🤖 | `composer check` (validates Composer files, formatting, app boot, MySQL connection, and tests). All steps must pass. |
 | Try the app | 🤖 / 🧑 | `composer dev`, then open <http://127.0.0.1:8000/design-system>. You should see the Krishi Bondhu design system. Other pages show a "planned page" until their feature is built; `/up` is the health check. |

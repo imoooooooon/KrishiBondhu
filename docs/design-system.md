@@ -74,12 +74,10 @@ mustard-800 on mustard-100 8.2:1 · soil-700 on soil-100 7.7:1 · `--fg-muted` o
 - **Families:** **Inter Tight** (Latin, SIL OFL, committed in `public/fonts/`) and **Li Ador Noirrit** (Bangla,
   as in Al Wasil), with **Noto Sans Bengali** (SIL OFL, committed) as the Bangla fallback. Bangla glyphs fall
   through to the Bangla family automatically.
-- **Li Ador Noirrit licence (Lipighor):** the font files must **not** be committed, uploaded or shared (including
-  by email). Each member downloads it from <https://lipighor.com>, puts the unzipped `LiAdorNoirritMultiweight`
-  folder in `resources/fonts/` (git-ignored), and runs `composer fonts` (copies the Unicode Regular, SemiBold and
-  Bold weights to the git-ignored `public/fonts/li-ador-noirrit/`). Without it, pages use Noto Sans Bengali.
-  Web use requires the footer credit "ওয়েবফন্ট- lipighor.com" (in the footer; do not remove it) and **written
-  permission from admin@lipighor.com before any public deployment**. Use only the Unicode files; the ANSI ones are
+- **Li Ador Noirrit (Lipighor):** committed in `public/fonts/li-ador-noirrit/` (Unicode Regular, SemiBold, Bold;
+  the full download is kept in `resources/fonts/LiAdorNoirritMultiweight/`), used **with permission from Lipighor**
+  obtained by Emon for this project. Keep the footer credit "ওয়েবফন্ট- lipighor.com" and do not rename or modify the
+  font. Use only the Unicode files; the ANSI ones are
   for legacy Bijoy text and break on the web.
 - **Scale** (`.t-*` classes; sizes switch automatically inside `lang="bn"`):
 
@@ -194,5 +192,5 @@ themes on `/design-system` before merging UI work.
 
 | Date | Change | By |
 | --- | --- | --- |
-| 2026-11-12 | v1.1: Bangla font Li Ador Noirrit (local install, Noto fallback, Lipighor credit); basic landing page. | Emon (with Claude Code) |
+| 2026-11-12 | v1.1: Bangla font Li Ador Noirrit (committed with Lipighor permission, Noto fallback, footer credit); basic landing page. | Emon (with Claude Code) |
 | 2026-11-12 | v1.0: tokens, type, components, design-system page; adapted from Al Wasil for agriculture. | Emon (with Claude Code) |
