@@ -292,6 +292,10 @@ a.media-card:hover { background: var(--active); }
 .input-group .input { border-radius: 0 var(--radius-control) var(--radius-control) 0; }
 .check { display: flex; gap: var(--space-3); align-items: flex-start; min-height: var(--touch-min); padding-block: 10px; cursor: pointer; }
 .check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+/* Group of checkboxes or radios with one label: <fieldset class="fieldset"><legend class="field__label">…</legend> */
+.fieldset { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 6px; }
+.fieldset > legend { padding: 0; margin-bottom: 6px; }
+.check-grid { display: grid; gap: 0 var(--space-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
 
 /* Page header */
 .page-header { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: flex-end; justify-content: space-between; margin-bottom: var(--space-8); }
