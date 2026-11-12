@@ -23,6 +23,33 @@
     unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1;
 }
 
+/* Li Ador Noirrit (Lipighor). Not in the repository: run `composer fonts` after downloading it (first-time-setup.md).
+   If the files are absent the browser skips this family and uses Noto Sans Bengali. Licence: footer credit required. */
+@font-face {
+    font-family: "Li Ador Noirrit";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: local("Li Ador Noirrit"), local("Li Ador Noirrit Regular"), url("../fonts/li-ador-noirrit/Li%20Ador%20Noirrit%20Regular.ttf") format("truetype");
+    unicode-range: U+0980-09FE, U+0964-0965, U+200C-200D, U+25CC;
+}
+@font-face {
+    font-family: "Li Ador Noirrit";
+    font-style: normal;
+    font-weight: 500 600;
+    font-display: swap;
+    src: local("Li Ador Noirrit SemiBold"), url("../fonts/li-ador-noirrit/Li%20Ador%20Noirrit%20SemiBold.ttf") format("truetype");
+    unicode-range: U+0980-09FE, U+0964-0965, U+200C-200D, U+25CC;
+}
+@font-face {
+    font-family: "Li Ador Noirrit";
+    font-style: normal;
+    font-weight: 700 900;
+    font-display: swap;
+    src: local("Li Ador Noirrit Bold"), url("../fonts/li-ador-noirrit/Li%20Ador%20Noirrit%20Bold.ttf") format("truetype");
+    unicode-range: U+0980-09FE, U+0964-0965, U+200C-200D, U+25CC;
+}
+
 /* 2. Base ---------------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -373,3 +400,29 @@ code { overflow-wrap: anywhere; }
 .site-header .site-header__menu-button { display: none; }
 @media (max-width: 1049px) { .js .site-header .site-header__menu-button { display: inline-grid; } }
 @media (max-width: 1279px) and (min-width: 1050px) { .site-nav__link { padding-inline: var(--space-2); } .site-nav__link .icon { display: none; } }
+
+/* Landing page ------------------------------------------------------------ */
+.main:has(> .hero) { padding-top: 0; }
+.hero { background: var(--card); padding-block: clamp(48px, 7vw, 96px); }
+.hero__grid { display: grid; gap: var(--space-10); grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr); align-items: center; }
+.hero__copy { --stack-gap: var(--space-5); }
+.hero__panel { padding: var(--space-8); display: grid; gap: var(--space-5); }
+.hero__list { display: grid; gap: var(--space-4); font-size: var(--fs-body); font-weight: 500; }
+.hero__list li { display: flex; gap: var(--space-3); align-items: center; }
+.hero__list .icon { color: var(--highlight); }
+.hero__panel-bn { color: var(--on-brand-muted); font-size: var(--fs-callout); }
+@media (max-width: 849px) { .hero__grid { grid-template-columns: minmax(0, 1fr); } }
+
+.area-card { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-6); }
+.area-card__icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: var(--radius-lg); margin-bottom: var(--space-2); }
+.area-card__icon--accent { background: var(--accent-bg); color: var(--accent-fg); }
+.area-card__icon--harvest { background: var(--harvest-bg); color: var(--on-harvest-bg); }
+.area-card__icon--earth { background: var(--earth-bg); color: var(--on-earth-bg); }
+.area-card__link { display: inline-flex; align-items: center; gap: var(--space-1); margin-top: var(--space-2); color: var(--accent-fg); font-weight: 600; font-size: var(--fs-callout); }
+
+.steps { display: grid; gap: var(--space-4); grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
+.steps__item { position: relative; display: grid; gap: var(--space-3); align-content: start; padding: var(--space-6); }
+.steps__number { position: absolute; top: var(--space-5); right: var(--space-6); font-size: var(--fs-display); font-weight: 600; color: var(--accent-bg-strong); line-height: 1; }
+@media (max-width: 849px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+
+.cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-6); background: var(--accent-bg); }

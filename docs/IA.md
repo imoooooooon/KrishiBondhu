@@ -377,3 +377,4 @@ File: `routes/modules/admin.php` · 16 routes
 | Date | Change | By |
 | --- | --- | --- |
 | 2026-11-12 | Initial IA, navigation and full route map (193 routes) for F1–F26. | Emon (with Claude Code) |
+| 2026-11-12 | `home` now renders a basic landing page (`resources/views/home.blade.php`) instead of PlannedController. | Emon (with Claude Code) |

@@ -35,7 +35,7 @@
         </div>
         <div class="site-footer__bottom">
             <p>© {{ date('Y') }} Krishi Bondhu · {{ __('CSE470 group project, BRAC University') }}</p>
-            <p lang="bn">কৃষকের পাশে, প্রতিদিন</p>
+            <p lang="bn">কৃষকের পাশে, প্রতিদিন · <a href="https://lipighor.com">ওয়েবফন্ট- lipighor.com</a></p>
         </div>
     </div>
 </footer>

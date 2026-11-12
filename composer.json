@@ -35,7 +35,8 @@
     "scripts": {
         "setup": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate --ansi"
+            "@php artisan key:generate --ansi",
+            "@fonts"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
@@ -67,6 +68,9 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ],
+        "fonts": [
+            "@php scripts/install-fonts.php"
         ]
     },
     "extra": {
@@ -88,6 +92,7 @@
         "lint": "Check PHP formatting (Laravel Pint)",
         "format": "Fix PHP formatting",
         "test": "Run the test suite against the test database",
-        "check": "Run all local checks"
+        "check": "Run all local checks",
+        "fonts": "Copy the locally downloaded Li Ador Noirrit font into public/ (not committed; see docs/first-time-setup.md)"
     }
 }

@@ -14,7 +14,8 @@ Add a row in the same PR that introduces the dependency.
 | MySQL | 8.4 LTS | Database | Application data | Setup | No |
 | GitHub Actions (actions/checkout, shivammathur/setup-php) | v7 / v2 | CI | Automated checks on PRs | Setup | No |
 | Inter Tight (via @fontsource-variable/inter-tight 5.3.0) | variable, latin | Font (self-hosted, `public/fonts/`) | Latin UI typeface | Design system | No (SIL OFL 1.1) |
-| Noto Sans Bengali (via @fontsource-variable/noto-sans-bengali 5.3.0) | variable, bengali | Font (self-hosted) | Bangla UI typeface | Design system | No (SIL OFL 1.1) |
+| Li Ador Noirrit (Lipighor) | Unicode Regular, SemiBold, Bold | Font (local only, **not committed**) | Primary Bangla UI typeface | Design system | No; licence forbids redistribution, needs footer credit and written permission from Lipighor before public web use |
+| Noto Sans Bengali (via @fontsource-variable/noto-sans-bengali 5.3.0) | variable, bengali | Font (self-hosted, committed) | Bangla fallback typeface | Design system | No (SIL OFL 1.1) |
 | Lucide icons (lucide-static 1.63.0) and Lucide Lab `cow-head` (@lucide/lab 0.7.0) | SVG paths copied | Icons (`components/ui/icon.blade.php`) | UI line icons | Design system | No (ISC) |
 
 No CSS/JS framework is used (Bootstrap from the SRS draft was replaced by the design system).

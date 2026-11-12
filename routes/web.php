@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 | The framework health check is registered at /up in bootstrap/app.php.
 */
 
-Route::get('/', PlannedController::class)->name('home');
+// Landing page (basic). Owners of the home/dashboard IA item may extend it.
+Route::view('/', 'home')->name('home');
 
 // Living design-system reference (docs/design-system.md).
 Route::view('/design-system', 'design-system.index')->name('design-system');

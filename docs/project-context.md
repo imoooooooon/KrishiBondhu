@@ -31,7 +31,7 @@ Repository: <https://github.com/imoooooooon/KrishiBondhu>
   area in `routes/modules/`, unbuilt routes served by `PlannedController`.
 - **Design system (2026-11-12):** [docs/design-system.md](design-system.md), adapted from the Al Wasil system for
   agriculture. **No UI framework** (replaces Bootstrap from the SRS draft) and **no npm/Vite pipeline**: plain CSS
-  tokens and Blade components, self-hosted OFL fonts (Inter Tight, Noto Sans Bengali), Lucide icons (ISC).
+  tokens and Blade components, self-hosted Inter Tight (OFL); Bangla in Li Ador Noirrit (installed locally per member under the Lipighor licence, not committed; permission needed before public deployment) with Noto Sans Bengali (OFL) fallback; Lucide icons (ISC). A basic landing page is at `/`.
 - **Structure:** Laravel's MVC folders are the frontend/backend/database separation ([docs/architecture.md](architecture.md)).
 
 ## Sprint deadlines (Asia/Dhaka)
