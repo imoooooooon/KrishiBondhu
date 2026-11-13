@@ -63,9 +63,10 @@ class RouteMapTest extends TestCase
 
     public function test_planned_page_shows_its_route(): void
     {
-        $this->get(route('marketplace.index'))
+        // Any route still served by PlannedController (marketplace.index was the example until F1 built it).
+        $this->get(route('orders.index'))
             ->assertOk()
-            ->assertSee('marketplace.index');
+            ->assertSee('orders.index');
     }
 
     public function test_design_system_page_renders(): void
