@@ -44,19 +44,22 @@ class CropListingPhotoService
 
     /**
      * Decode, straighten, resize and save one uploaded photo.
+     * $directory is the folder on the private disk: crop listings by default; F6 passes its own cattle folder,
+     * so each feature's files (and its cleanup command) stay separate. Who may SEE a file is decided by each
+     * feature's own controller, never by this service.
      *
      * @return array{display_path: string, thumbnail_path: string, display_width: int, display_height: int, thumbnail_width: int, thumbnail_height: int}
      *
      * @throws UnusableCropPhotoException when the file is not a usable JPEG/PNG
      * @throws RuntimeException when the files cannot be written (disk full, permissions)
      */
-    public function store(UploadedFile $file): array
+    public function store(UploadedFile $file, string $directory = self::DIRECTORY): array
     {
         $source = $this->decode($file->getRealPath());
 
         $written = [];
         try {
-            $base = self::DIRECTORY.'/'.bin2hex(random_bytes(16)); // unpredictable, never from the request
+            $base = $directory.'/'.bin2hex(random_bytes(16)); // unpredictable, never from the request
             $display = $this->writeVariant($source, $base.'-display.jpg', self::DISPLAY_EDGE, self::DISPLAY_QUALITY);
             $written[] = $display['path'];
             $thumb = $this->writeVariant($source, $base.'-thumb.jpg', self::THUMB_EDGE, self::THUMB_QUALITY);
