@@ -136,6 +136,7 @@ Claude Code inside the project folder and say:
 | --- | --- |
 | `php` / `composer` / `mysql` not found | Close and reopen the terminal or VS Code (PATH changes need a restart). |
 | `could not find driver` | `pdo_mysql` is not enabled in `php.ini`. Rerun the php.ini step and check `php -m`. |
+| Crop photo says it "did not finish uploading" (F1) | PHP's upload limit is lower than the app's 5 MB per photo. In `php.ini` (`php --ini` shows where) set `upload_max_filesize = 8M` and `post_max_size = 40M`, then restart `composer dev`. F1 also needs the `gd` extension (`extension=gd`, check with `php -m`). |
 | `Access denied for user 'krishibondhu'` | `DB_PASSWORD` in `.env` does not match the SQL password. Fix `.env`, then `php artisan config:clear`. |
 | `Unknown database 'krishibondhu_test'` | The database SQL was not run. Run it again. |
 | `composer check` fails on formatting | `composer format`. (Only matters for your own changes.) |
