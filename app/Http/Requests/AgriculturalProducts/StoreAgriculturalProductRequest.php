@@ -4,10 +4,12 @@ namespace App\Http\Requests\AgriculturalProducts;
 
 use App\Http\Requests\Cattle\NormalisesBanglaDigits;
 use App\Models\AgriculturalProduct;
+use App\Services\CropListingPhotoService;
 use Brick\Math\BigDecimal;
 use Closure;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -55,6 +57,10 @@ class StoreAgriculturalProductRequest extends FormRequest
             'brand' => ['nullable', 'string', 'max:80'],
             'category' => ['required', 'string', Rule::in(AgriculturalProduct::CATEGORIES)],
             'description' => ['required', 'string', 'min:10', 'max:1000'],
+            'public_area' => ['required', 'string', 'min:2', 'max:120'],
+            'delivery_options' => ['required', 'array', 'min:1', 'max:'.count(AgriculturalProduct::DELIVERY_METHODS)],
+            'delivery_options.*' => ['required', 'string', 'distinct', Rule::in(AgriculturalProduct::DELIVERY_METHODS)],
+            'delivery_notes' => ['nullable', 'string', 'max:300'],
             'unit_code' => ['required', 'string', Rule::in(AgriculturalProduct::UNITS)],
             'unit_price' => ['bail', 'required', 'string', 'regex:'.self::PRICE_FORMAT, $this->between(AgriculturalProduct::MAX_PRICE, zeroAllowed: false)],
             // 0 is allowed: the product stays listed as "out of stock" until the seller restocks.
@@ -62,7 +68,20 @@ class StoreAgriculturalProductRequest extends FormRequest
             'accepts_bulk_offers' => ['nullable', 'boolean'],
             'bulk_min_quantity' => ['exclude_unless:accepts_bulk_offers,1', 'bail', 'required', 'string', 'regex:'.self::QUANTITY_FORMAT, $this->bulkQuantityRange()],
             'bulk_min_unit_price' => ['exclude_unless:accepts_bulk_offers,1', 'bail', 'required', 'string', 'regex:'.self::PRICE_FORMAT, $this->between(AgriculturalProduct::MAX_PRICE, zeroAllowed: false)],
+            // One optional photo. Same limits as F1 crop photos; CropListingPhotoService decodes it afterwards,
+            // which is the real proof that it is an image.
+            'photo' => ['nullable', 'bail', 'file', 'max:'.CropListingPhotoService::MAX_KILOBYTES,
+                'mimes:jpg,jpeg,png', 'mimetypes:image/jpeg,image/png',
+                'dimensions:max_width='.CropListingPhotoService::MAX_SIDE.',max_height='.CropListingPhotoService::MAX_SIDE],
         ];
+    }
+
+    /** The uploaded photo, or null when none was chosen. */
+    public function photo(): ?UploadedFile
+    {
+        $file = $this->file('photo');
+
+        return $file instanceof UploadedFile ? $file : null;
     }
 
     /** Checks that need several fields. Each runs only when its fields passed their own format rules. */
@@ -87,6 +106,13 @@ class StoreAgriculturalProductRequest extends FormRequest
                     && BigDecimal::of($this->input('bulk_min_unit_price'))->isGreaterThan($this->input('unit_price'))) {
                     $errors->add('bulk_min_unit_price', __('The lowest bulk price cannot be higher than the fixed price per unit.'));
                 }
+
+                // Refuse a photo with too many pixels before any decoding work starts.
+                $photo = $this->photo();
+                $size = $photo && $photo->isValid() && ! $errors->has('photo') ? @getimagesize($photo->getRealPath()) : false;
+                if ($size && $size[0] * $size[1] > CropListingPhotoService::MAX_PIXELS) {
+                    $errors->add('photo', __('This photo is too large in pixels. Use a photo of at most 6000 pixels on each side and 12 megapixels.'));
+                }
             },
         ];
     }
@@ -95,9 +121,9 @@ class StoreAgriculturalProductRequest extends FormRequest
     public function productData(): array
     {
         $data = $this->safe()->only([
-            'name', 'brand', 'category', 'description', 'unit_code', 'unit_price', 'stock_quantity',
-            'bulk_min_quantity', 'bulk_min_unit_price',
-        ]) + ['brand' => null];
+            'name', 'brand', 'category', 'description', 'public_area', 'delivery_notes', 'unit_code', 'unit_price',
+            'stock_quantity', 'bulk_min_quantity', 'bulk_min_unit_price',
+        ]) + ['brand' => null, 'delivery_notes' => null];
 
         if (! $this->bulkRequested()) {
             $data['bulk_min_quantity'] = null;
@@ -107,11 +133,17 @@ class StoreAgriculturalProductRequest extends FormRequest
         return $data;
     }
 
+    /** @return list<string> the chosen delivery codes, without duplicates */
+    public function deliveryMethods(): array
+    {
+        return array_values(array_unique($this->validated('delivery_options')));
+    }
+
     /** What the seller typed, to show back on the "changed elsewhere" page. Never the form token. */
     public function submittedText(): array
     {
-        return $this->only(['name', 'brand', 'category', 'description', 'unit_code', 'unit_price', 'stock_quantity',
-            'accepts_bulk_offers', 'bulk_min_quantity', 'bulk_min_unit_price']);
+        return $this->only(['name', 'brand', 'category', 'description', 'public_area', 'delivery_options', 'delivery_notes',
+            'unit_code', 'unit_price', 'stock_quantity', 'accepts_bulk_offers', 'bulk_min_quantity', 'bulk_min_unit_price']);
     }
 
     protected function bulkRequested(): bool
@@ -160,6 +192,13 @@ class StoreAgriculturalProductRequest extends FormRequest
             'bulk_min_unit_price.required' => __('Enter your lowest bulk price, or untick “Accept bulk offers”.'),
             'submission_token.required' => __('This form has expired. Open “Add product” again.'),
             'submission_token.uuid' => __('This form has expired. Open “Add product” again.'),
+            'delivery_options.required' => __('Choose at least one delivery option.'),
+            'photo.uploaded' => __('The photo did not finish uploading, probably because it is too large for the server. Choose a smaller photo (5 MB or less).'),
+            'photo.file' => __('The photo did not finish uploading, probably because it is too large for the server. Choose a smaller photo (5 MB or less).'),
+            'photo.max' => __('The photo is larger than 5 MB. Choose a smaller photo.'),
+            'photo.mimes' => __('This file is not a JPG or PNG photo. Export it as JPG or PNG and try again.'),
+            'photo.mimetypes' => __('This file is not a JPG or PNG photo. Export it as JPG or PNG and try again.'),
+            'photo.dimensions' => __('This photo is too large in pixels. Use a photo of at most 6000 pixels on each side and 12 megapixels.'),
         ];
     }
 
@@ -170,6 +209,10 @@ class StoreAgriculturalProductRequest extends FormRequest
             'brand' => __('brand'),
             'category' => __('category'),
             'description' => __('description'),
+            'public_area' => __('area'),
+            'delivery_options' => __('delivery options'),
+            'delivery_options.*' => __('delivery option'),
+            'delivery_notes' => __('delivery notes'),
             'unit_code' => __('unit'),
             'unit_price' => __('price per unit'),
             'stock_quantity' => __('stock'),

@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * Route seller.products.update (PATCH). One route, three operations chosen by the hidden "operation" field:
- *  - save:      the edit form (same rules as "add");
+ *  - save:      the edit form (same rules as "add", plus "remove_photo");
  *  - publish:   show the product to buyers again;
  *  - unpublish: hide it from buyers.
  * Every operation sends "version", the number the page was opened with, to detect stale tabs.
@@ -35,7 +35,15 @@ class UpdateAgriculturalProductRequest extends StoreAgriculturalProductRequest
             return $rules; // publish / unpublish accept nothing else
         }
 
-        return $rules + $this->contentRules();
+        return $rules + $this->contentRules() + [
+            'remove_photo' => ['nullable', 'boolean'], // a new upload replaces the photo; this removes it without a new one
+        ];
+    }
+
+    /** "Remove the photo" was ticked and no new photo was chosen (a new photo always wins). */
+    public function removePhoto(): bool
+    {
+        return $this->photo() === null && (string) $this->validated('remove_photo') === '1';
     }
 
     public function after(): array

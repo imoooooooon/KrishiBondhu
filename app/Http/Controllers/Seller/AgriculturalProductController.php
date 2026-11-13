@@ -76,7 +76,9 @@ class AgriculturalProductController extends Controller
         [$product, $created] = $this->products->create(
             $request->user(),
             $request->productData(),
+            $request->deliveryMethods(),
             $request->validated('submission_token'),
+            $request->photo(),
         );
 
         if ($product->trashed()) {
@@ -95,7 +97,7 @@ class AgriculturalProductController extends Controller
         Gate::authorize('view', $product);
 
         return view('seller.products.show', [
-            'product' => $product,
+            'product' => $product->load('deliveryOptions'),
             'confirmRemove' => $request->query('confirm') === 'remove',
         ]);
     }
@@ -105,7 +107,7 @@ class AgriculturalProductController extends Controller
     {
         Gate::authorize('update', $product);
 
-        return view('seller.products.edit', ['product' => $product]);
+        return view('seller.products.edit', ['product' => $product->load('deliveryOptions')]);
     }
 
     /**
@@ -121,7 +123,15 @@ class AgriculturalProductController extends Controller
         };
 
         if ($request->operation() === 'save') {
-            $this->products->update($product, $request->version(), $request->productData(), $request->submittedText());
+            $this->products->update(
+                $product,
+                $request->version(),
+                $request->productData(),
+                $request->deliveryMethods(),
+                $request->photo(),
+                $request->removePhoto(),
+                $request->submittedText(),
+            );
         } else {
             $this->products->setVisibility($product, $request->version(), $request->operation() === 'publish');
         }

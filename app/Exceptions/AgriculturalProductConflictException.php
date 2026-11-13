@@ -24,6 +24,8 @@ class AgriculturalProductConflictException extends RuntimeException
 
     public function render(Request $request): Response
     {
+        $this->latest->load('deliveryOptions');
+
         return response()->view('seller.products.conflict', [
             'product' => $this->latest,
             'submitted' => $this->submitted,
