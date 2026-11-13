@@ -40,6 +40,12 @@ class User extends Authenticatable
         return $this->hasMany(FarmJob::class, 'farmer_id');
     }
 
+    /** Crop listings this user published as a farmer (F1). Removed listings are excluded. */
+    public function cropListings(): HasMany
+    {
+        return $this->hasMany(CropListing::class, 'farmer_id');
+    }
+
     /** Does this user hold the role? Pass a Role constant, e.g. Role::FARMER. */
     public function hasRole(string $slug): bool
     {
