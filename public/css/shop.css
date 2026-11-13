@@ -1,5 +1,5 @@
 /*
- | Farm supplies: the seller's products and (slice 2) the public shop (F25). Loaded only by
+ | Farm supplies: the seller's products and the public shop (F25). Loaded only by
  | resources/views/seller/products/*, resources/views/shop/* and the agricultural-products partials.
  | Only what the shared components cannot express; every colour, size and radius comes from tokens.css.
  */
@@ -43,3 +43,30 @@
 .supply-danger:target, .supply-danger:focus { outline: 2px solid var(--danger-border); outline-offset: 2px; }
 .supply-compare { align-items: start; }
 @media (max-width: 850px) { .supply-compare { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- Product photo (fixed 16:9 frame, the whole photo fits inside) ------------------------------ */
+.supply-photo { margin: 0; display: grid; gap: var(--space-2); }
+.supply-photo img { display: block; width: 100%; height: auto; aspect-ratio: var(--media-ratio); object-fit: contain; background: var(--card); border-radius: var(--radius-card); }
+.supply-photo__placeholder { aspect-ratio: var(--media-ratio); border-radius: var(--radius-card); }
+.supply-photo-current { display: grid; gap: var(--space-2); max-width: 240px; }
+.supply-photo-current img { width: 100%; aspect-ratio: var(--media-ratio); object-fit: cover; border-radius: var(--radius-sm); background: var(--subtle); }
+.supply-file { padding-block: 10px; height: auto; }
+
+/* ---- Public shop --------------------------------------------------------------------------------- */
+.supply-search { display: grid; gap: var(--space-4); margin-bottom: var(--space-4); }
+.supply-search__fields { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); align-items: start; }
+.supply-results { margin: 0 0 var(--space-4); }
+.supply-shop-grid { --grid-min: 230px; }
+.supply-shop-grid > li { display: grid; }
+.supply-card__price { font-weight: 600; }
+.supply-price { color: var(--accent-fg); }
+.supply-more { margin-top: var(--space-12); display: grid; gap: var(--space-4); }
+
+/* ---- Area and delivery --------------------------------------------------------------------------- */
+.supply-inline-icon { display: inline-flex; gap: var(--space-1); align-items: center; }
+.supply-inline-icon .icon, .supply-delivery .icon { color: var(--accent-fg); flex: none; }
+.supply-delivery { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+.supply-delivery li { display: flex; gap: var(--space-2); align-items: center; }
+.supply-delivery__notes { margin: var(--space-2) 0 0; }
+.supply-buy-delivery { padding-top: var(--space-3); border-top: 1px solid var(--border); }
+.supply-buy-delivery h3, .supply-buy-delivery p { margin: 0; }

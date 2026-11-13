@@ -11,6 +11,9 @@
         'brand' => __('Brand'),
         'category' => __('Category'),
         'description' => __('Description'),
+        'public_area' => __('Area'),
+        'delivery_options' => __('Delivery options'),
+        'delivery_notes' => __('Delivery notes'),
         'unit_code' => __('Sold per'),
         'unit_price' => __('Fixed price per unit'),
         'stock_quantity' => __('Stock available'),
@@ -23,6 +26,7 @@
             'category' => \App\Models\AgriculturalProduct::categoryLabels()[$value] ?? (is_scalar($value) ? (string) $value : ''),
             'unit_code' => \App\Models\AgriculturalProduct::unitLabels()[$value] ?? (is_scalar($value) ? (string) $value : ''),
             'accepts_bulk_offers' => (string) $value === '1' ? __('Yes') : __('No'),
+            'delivery_options' => collect((array) $value)->map(fn ($code) => \App\Models\AgriculturalProduct::deliveryLabels()[$code] ?? $code)->implode(', '),
             default => is_scalar($value) ? (string) $value : '',
         };
     };

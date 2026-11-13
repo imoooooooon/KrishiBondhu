@@ -1,7 +1,7 @@
 {{--
     F25: the details of one product as label/value rows.
     $product: AgriculturalProduct. $showPrivate: true ONLY on the owner's pages; it adds the private
-    lowest bulk price. Public pages (slice 2) include this without $showPrivate, so the minimum never reaches them.
+    lowest bulk price. Public shop pages include this without $showPrivate, so the minimum never reaches them.
     All seller-written text is printed with {{ }}, which escapes HTML (no <script> can run from a product).
 --}}
 @php $showPrivate = $showPrivate ?? false; @endphp
@@ -43,6 +43,20 @@
                 {{ __('Not accepted. Every order uses the fixed price.') }}
             @endif
         </dd>
+    </div>
+    <div>
+        <dt>{{ __('Area') }}</dt>
+        <dd class="supply-text">
+            @if ($product->public_area)
+                <span class="supply-inline-icon"><x-ui.icon name="map-pin" size="16" /> {{ $product->public_area }}</span>
+            @else
+                <span class="t-muted">{{ __('Not given yet') }}</span>
+            @endif
+        </dd>
+    </div>
+    <div>
+        <dt>{{ __('Delivery') }}</dt>
+        <dd>@include('agricultural-products._delivery')</dd>
     </div>
     <div>
         <dt>{{ __('Description') }}</dt>

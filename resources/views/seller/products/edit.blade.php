@@ -18,7 +18,7 @@
         <span class="cluster">@include('agricultural-products._status-badge') {{ __('Saving keeps this status. Use the buttons on the product page to hide or publish it.') }}</span>
     </x-ui.alert>
 
-    <form method="POST" action="{{ route('seller.products.update', $product) }}" class="stack stack-lg" id="product-form">
+    <form method="POST" action="{{ route('seller.products.update', $product) }}" enctype="multipart/form-data" class="stack stack-lg" id="product-form">
         @csrf
         @method('PATCH')
         <input type="hidden" name="operation" value="save">

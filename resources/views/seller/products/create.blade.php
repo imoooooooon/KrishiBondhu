@@ -13,7 +13,7 @@
         </x-slot:breadcrumbs>
     </x-ui.page-header>
 
-    <form method="POST" action="{{ route('seller.products.store') }}" class="stack stack-lg" id="product-form">
+    <form method="POST" action="{{ route('seller.products.store') }}" enctype="multipart/form-data" class="stack stack-lg" id="product-form">
         @csrf
         <input type="hidden" name="submission_token" value="{{ old('submission_token', $submissionToken) }}">
 

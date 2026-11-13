@@ -15,6 +15,9 @@
                 <a href="{{ route('seller.products.index') }}">{{ __('My products') }}</a>
             </x-slot:breadcrumbs>
             <x-slot:actions>
+                @if ($product->isPublished())
+                    <x-ui.button size="md" variant="secondary" icon="external-link" :href="route('shop.show', $product)">{{ __('View in shop') }}</x-ui.button>
+                @endif
                 <x-ui.button size="md" icon="pencil" :href="route('seller.products.edit', $product)">{{ __('Edit') }}</x-ui.button>
             </x-slot:actions>
         </x-ui.page-header>
@@ -38,6 +41,7 @@
 
         <div class="supply-layout">
             <x-ui.card class="stack">
+                @include('agricultural-products._photo')
                 <div class="cluster cluster--between">
                     @include('agricultural-products._status-badge')
                     <span class="t-caption t-muted">{{ __('Updated :date', ['date' => $product->updated_at->translatedFormat('j M Y')]) }}</span>

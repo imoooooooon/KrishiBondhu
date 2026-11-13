@@ -54,13 +54,20 @@
                     <li>
                         <article class="media-card supply-card">
                             <div class="media-card__media">
-                                <div class="media-card__placeholder" data-decorative><x-ui.icon name="package" size="40" stroke="1.5" /></div>
+                                @if ($product->hasPhoto())
+                                    <img src="{{ $product->photoUrl('thumb') }}" alt="" loading="lazy" decoding="async">
+                                @else
+                                    <div class="media-card__placeholder" data-decorative><x-ui.icon name="package" size="40" stroke="1.5" /></div>
+                                @endif
                             </div>
                             <div class="media-card__body">
                                 <div class="cluster">@include('agricultural-products._status-badge') @include('agricultural-products._stock-badge')</div>
                                 <h2 class="t-title-3 supply-text"><a href="{{ route('seller.products.show', $product) }}" class="supply-card__link">{{ $product->name }}</a></h2>
                                 <x-ui.price :amount="$product->unit_price" :unit="$product->unitLabel()" />
                                 <div class="media-card__meta">
+                                    @if ($product->public_area)
+                                        <span class="supply-text supply-inline-icon"><x-ui.icon name="map-pin" size="14" /> {{ $product->public_area }}</span>
+                                    @endif
                                     <span>{{ $product->categoryLabel() }}</span>
                                     @if ($product->acceptsBulkOffers())
                                         <span>{{ __('Bulk offers from :quantity :unit', ['quantity' => $product->bulkMinQuantityForDisplay(), 'unit' => $product->unitLabel()]) }}</span>

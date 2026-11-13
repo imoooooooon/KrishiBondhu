@@ -12,7 +12,11 @@
         : (bool) $product?->acceptsBulkOffers();
 
     // Error summary: each message links to its field (W3C WAI error-summary pattern).
-    $fieldFor = fn (string $key) => in_array($key, ['version', 'submission_token', 'operation'], true) ? 'product-form' : 'field-'.$key;
+    $fieldFor = fn (string $key) => match (true) {
+        in_array($key, ['version', 'submission_token', 'operation'], true) => 'product-form',
+        str_starts_with($key, 'delivery_options') => 'field-delivery_options',
+        default => 'field-'.$key,
+    };
 @endphp
 
 @if ($errors->any())
@@ -75,4 +79,58 @@
             :hint="__('Private: buyers never see it. It cannot be higher than the fixed price.')" />
     </div>
     <p class="t-caption t-muted">{{ __('If “Accept bulk offers” is not ticked, these two boxes are ignored and cleared.') }}</p>
+</section>
+
+{{-- 4. Area and delivery. Anyone can see these, so the area is approximate (never a house or shop address). --}}
+<section class="supply-form__section" aria-labelledby="section-delivery">
+    <h2 class="t-title-2" id="section-delivery">{{ __('4. Area and delivery') }}</h2>
+
+    <x-ui.field name="public_area" :label="__('Area')" :value="$product?->public_area" maxlength="120" required
+        :hint="__('Upazila and district you sell from, like Shibganj, Bogura. Not your exact address: anyone can see it.')" />
+
+    @php
+        $selectedDelivery = $product?->deliveryMethods() ?? [];
+        $deliveryError = $errors->first('delivery_options') ?: $errors->first('delivery_options.*');
+    @endphp
+    <fieldset class="fieldset" id="field-delivery_options" tabindex="-1" @if ($deliveryError) aria-describedby="field-delivery_options-error" @endif>
+        <legend class="field__label">{{ __('Delivery options') }}</legend>
+        <p class="field__hint">{{ __('Choose every arrangement you accept. No delivery fee is promised here.') }}</p>
+        <div class="check-grid">
+            @foreach (\App\Models\AgriculturalProduct::deliveryLabels() as $code => $label)
+                <x-ui.checkbox name="delivery_options[]" :value="$code" :label="$label" :checked="in_array($code, $selectedDelivery, true)" />
+            @endforeach
+        </div>
+        @if ($deliveryError)
+            <p class="field__error" id="field-delivery_options-error"><x-ui.icon name="circle-alert" size="16" />{{ $deliveryError }}</p>
+        @endif
+    </fieldset>
+
+    <x-ui.textarea name="delivery_notes" :label="__('Delivery notes').' ('.__('optional').')'" :value="$product?->delivery_notes" rows="2" maxlength="300"
+        :hint="__('For example: pickup from Shibganj bazaar, 9 am to 6 pm; courier to any district.')" />
+</section>
+
+{{-- 5. Photo (optional). One photo; it is re-encoded on the server, so metadata such as GPS location is removed. --}}
+<section class="supply-form__section" aria-labelledby="section-photo">
+    <h2 class="t-title-2" id="section-photo">{{ __('5. Photo') }} <span class="field__optional">({{ __('optional') }})</span></h2>
+
+    @if ($product?->hasPhoto())
+        <div class="supply-photo-current">
+            <img src="{{ $product->photoUrl('thumb') }}" alt="{{ __('Current photo') }}" loading="lazy">
+            <x-ui.checkbox name="remove_photo" value="1" :label="__('Remove this photo')" />
+        </div>
+    @endif
+
+    @php $photoError = $errors->first('photo'); @endphp
+    <div class="field">
+        <label class="field__label" for="field-photo">{{ $product?->hasPhoto() ? __('Replace with a new photo') : __('Product photo') }}</label>
+        <input id="field-photo" name="photo" type="file" class="input supply-file" accept="image/jpeg,image/png"
+            aria-describedby="field-photo-hint @if ($photoError) field-photo-error @endif" @if ($photoError) aria-invalid="true" @endif>
+        <p class="field__hint" id="field-photo-hint">{{ __('JPG or PNG, up to 5 MB. Show the product or its package clearly.') }}</p>
+        @if ($photoError)
+            <p class="field__error" id="field-photo-error"><x-ui.icon name="circle-alert" size="16" />{{ $photoError }}</p>
+        @endif
+    </div>
+    @if ($errors->any())
+        <p class="t-callout t-muted">{{ __('If you chose a new photo, please select it again. Your text is still here.') }}</p>
+    @endif
 </section>
