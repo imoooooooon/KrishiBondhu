@@ -11,7 +11,7 @@
     ];
 @endphp
 <x-layouts.app :title="__('My crop listings')">
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css').'?v='.@filemtime(public_path('css/crop-listings.css')) }}"></x-slot:head>
 
     <div class="container">
         <x-ui.page-header :title="__('My crop listings')" :subtitle="__('Crops you offer on the marketplace. Keep them up to date.')">

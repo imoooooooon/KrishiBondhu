@@ -28,7 +28,7 @@
     };
 @endphp
 <x-layouts.app :title="__('This listing changed')">
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css').'?v='.@filemtime(public_path('css/crop-listings.css')) }}"></x-slot:head>
 
     <div class="container">
         <x-ui.page-header :title="__('This listing changed after you opened it')">

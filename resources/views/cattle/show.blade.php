@@ -7,7 +7,7 @@
     $notRecorded = __('Not recorded');
 @endphp
 <x-layouts.app :title="$cattle->title()">
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css').'?v='.@filemtime(public_path('css/cattle.css')) }}"></x-slot:head>
 
     <div class="container">
         <x-ui.page-header :title="$cattle->title()" class="cattle-text">
@@ -163,5 +163,5 @@
         @endunless
     </div>
 
-    <x-slot:scripts><script src="{{ asset('js/cattle.js') }}" defer></script></x-slot:scripts>
+    <x-slot:scripts><script src="{{ asset('js/cattle.js').'?v='.@filemtime(public_path('js/cattle.js')) }}" defer></script></x-slot:scripts>
 </x-layouts.app>

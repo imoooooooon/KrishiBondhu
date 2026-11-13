@@ -8,7 +8,7 @@
     $canSell = auth()->user()?->can('create', \App\Models\CropListing::class) ?? false;
 @endphp
 <x-layouts.app :title="__('Marketplace')" :description="__('Buy crops directly from farmers in Bangladesh. Prices per unit set by the farmers, with real photos of each lot.')">
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css').'?v='.@filemtime(public_path('css/crop-listings.css')) }}"></x-slot:head>
 
     <div class="container">
         <section class="card card--brand market-hero" aria-labelledby="market-title">
@@ -65,5 +65,5 @@
         @endif
     </div>
 
-    <x-slot:scripts><script src="{{ asset('js/crop-listings.js') }}" defer></script></x-slot:scripts>
+    <x-slot:scripts><script src="{{ asset('js/crop-listings.js').'?v='.@filemtime(public_path('js/crop-listings.js')) }}" defer></script></x-slot:scripts>
 </x-layouts.app>

@@ -13,7 +13,7 @@
     $unit = $listing->unitLabel();
 @endphp
 <x-layouts.app :title="$listing->crop_name" :description="__(':crop from :area, ৳:price per :unit', ['crop' => $listing->crop_name, 'area' => $listing->public_area, 'price' => \App\Models\CropListing::trimDecimal((string) $listing->price_per_unit), 'unit' => $unit])">
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css').'?v='.@filemtime(public_path('css/crop-listings.css')) }}"></x-slot:head>
 
     <div class="container">
         <nav class="breadcrumbs mb-4" aria-label="{{ __('Breadcrumb') }}">
@@ -104,5 +104,5 @@
         @endif
     </div>
 
-    <x-slot:scripts><script src="{{ asset('js/crop-listings.js') }}" defer></script></x-slot:scripts>
+    <x-slot:scripts><script src="{{ asset('js/crop-listings.js').'?v='.@filemtime(public_path('js/crop-listings.js')) }}" defer></script></x-slot:scripts>
 </x-layouts.app>

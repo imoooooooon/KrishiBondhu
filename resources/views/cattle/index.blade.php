@@ -6,7 +6,7 @@
     $scopes = ['active' => __('Active'), 'archived' => __('Archived'), 'all' => __('All')];
 @endphp
 <x-layouts.app :title="__('My cattle')">
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css').'?v='.@filemtime(public_path('css/cattle.css')) }}"></x-slot:head>
 
     <div class="container">
         <x-ui.page-header :title="__('My cattle')" :subtitle="__('Your private herd records: photo, KB ID, age, parents and health history.')">

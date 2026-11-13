@@ -1,6 +1,6 @@
 {{-- "Add health entry" (route cattle.health-history.create, owner only, active cattle). --}}
 <x-layouts.app :title="__('Add health entry')" narrow>
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css').'?v='.@filemtime(public_path('css/cattle.css')) }}"></x-slot:head>
 
     <x-ui.page-header :title="__('Add health entry')" :subtitle="__('Record something that happened in the past, such as a vaccination or a vet visit.')">
         <x-slot:breadcrumbs>
@@ -22,5 +22,5 @@
         </div>
     </form>
 
-    <x-slot:scripts><script src="{{ asset('js/cattle.js') }}" defer></script></x-slot:scripts>
+    <x-slot:scripts><script src="{{ asset('js/cattle.js').'?v='.@filemtime(public_path('js/cattle.js')) }}" defer></script></x-slot:scripts>
 </x-layouts.app>
