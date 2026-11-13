@@ -127,7 +127,13 @@ class CropListingPhotoService
             throw new UnusableCropPhotoException(UnusableCropPhotoException::TOO_MANY_PIXELS);
         }
 
-        // By default GD accepts a truncated JPEG and fills the missing part with grey. Refuse it instead.
+        // A cut-off upload (weak connection) would decode as a half-grey photo. Some GD builds accept it,
+        // so check the file itself: the image data after the last scan must reach the end-of-image marker.
+        if ($info[2] === IMAGETYPE_JPEG && ! $this->jpegIsComplete($path)) {
+            throw new UnusableCropPhotoException(UnusableCropPhotoException::CANNOT_DECODE);
+        }
+
+        // Also ask GD to treat recoverable JPEG errors as failures (honoured by most builds).
         $previous = ini_set('gd.jpeg_ignore_warning', '0');
         try {
             // "@": GD reports broken files as PHP warnings; we check the return value instead.
@@ -143,6 +149,19 @@ class CropListingPhotoService
         }
 
         return $info[2] === IMAGETYPE_JPEG ? $this->applyOrientation($image, $this->jpegOrientation($path)) : $image;
+    }
+
+    /**
+     * Inside JPEG image data a 0xFF byte is always followed by 0x00 or a marker, so the markers SOS (FF DA,
+     * "scan starts") and EOI (FF D9, "image ends") cannot appear by accident. A complete file has an EOI
+     * after its last scan; a truncated one does not. (Extra bytes after EOI, which some phones add, are fine.)
+     */
+    private function jpegIsComplete(string $path): bool
+    {
+        $bytes = (string) @file_get_contents($path);
+        $lastScan = strrpos($bytes, "\xFF\xDA");
+
+        return $lastScan !== false && strpos($bytes, "\xFF\xD9", $lastScan) !== false;
     }
 
     /**
