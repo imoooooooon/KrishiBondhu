@@ -316,13 +316,13 @@ File: `routes/modules/shop.php` · 13 routes
 | `GET` | `/seller/orders` | `seller.orders.index` | F25 | Agricultural product seller |
 | `GET` | `/seller/orders/{order}` | `seller.orders.show` | F25 | Agricultural product seller |
 | `PATCH` | `/seller/orders/{order}/status` | `seller.orders.status` | F25 | Agricultural product seller |
-| `GET` | `/seller/products` | `seller.products.index` | F25 | Agricultural product seller |
-| `POST` | `/seller/products` | `seller.products.store` | F25 | Agricultural product seller |
-| `GET` | `/seller/products/create` | `seller.products.create` | F25 | Agricultural product seller |
-| `GET` | `/seller/products/{product}` | `seller.products.show` | F25 | Agricultural product seller |
-| `PUT|PATCH` | `/seller/products/{product}` | `seller.products.update` | F25 | Agricultural product seller |
-| `DELETE` | `/seller/products/{product}` | `seller.products.destroy` | F25 | Agricultural product seller |
-| `GET` | `/seller/products/{product}/edit` | `seller.products.edit` | F25 | Agricultural product seller |
+| `GET` | `/seller/products` | `seller.products.index` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
+| `POST` | `/seller/products` | `seller.products.store` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
+| `GET` | `/seller/products/create` | `seller.products.create` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
+| `GET` | `/seller/products/{product}` | `seller.products.show` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
+| `PUT|PATCH` | `/seller/products/{product}` | `seller.products.update` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
+| `DELETE` | `/seller/products/{product}` | `seller.products.destroy` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
+| `GET` | `/seller/products/{product}/edit` | `seller.products.edit` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
 | `GET` | `/shop` | `shop.index` | F25 | Public |
 | `GET` | `/shop/products/{product}` | `shop.show` | F25 | Public |
 | `POST` | `/shop/products/{product}/offers` | `shop.offers.store` | F25, F3 | Auth |
