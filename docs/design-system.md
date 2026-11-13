@@ -144,7 +144,10 @@ Rules:
 - Lucide-style line icons at 20 px (16 small, 24 large), round caps, `currentColor`. Decorative by default.
   Icon-only controls need a label.
 - Domain icons: wheat (marketplace), trending-up (prices), store (supplies), cow-head (cattle), stethoscope (health), tractor (jobs).
-- Photos: real crops, animals, fields and markets supplied by users. Crop listings use 16:10 media. No filters.
+- Photos: real crops, animals, fields and markets supplied by users. No filters.
+- **Every image frame is 16:9** (`--media-ratio` in `tokens.css`): cards, galleries, profile photos and thumbnails,
+  whatever shape the uploaded photo is, so cards and pages never change size. Cards and thumbnails crop to fill
+  (`object-fit: cover`); a full-size photo fits inside its frame (`object-fit: contain`) so nothing is cut off.
   Use `loading="lazy"` and the image size the layout needs.
 - No photo? Use the media-card placeholder (shoot tint + icon), never a stock image.
 - Illustrations, if added later: flat, few strokes, palette paddy, sprout, shoot, mustard, soil; no faces or minimal faces.
@@ -193,6 +196,7 @@ themes on `/design-system` before merging UI work.
 
 | Date | Change | By |
 | --- | --- | --- |
+| 2026-11-13 | v1.3: all image frames are 16:9 (`--media-ratio` token); was 16:10 on media cards and free height on full-size photos. | Emon (with Claude Code) |
 | 2026-11-13 | v1.2: `.fieldset` and `.check-grid` for grouped checkboxes (sign-up roles). | Emon (with Claude Code) |
 | 2026-11-12 | v1.1: Bangla font Li Ador Noirrit (committed with Lipighor permission, Noto fallback, footer credit); basic landing page. | Emon (with Claude Code) |
 | 2026-11-12 | v1.0: tokens, type, components, design-system page; adapted from Al Wasil for agriculture. | Emon (with Claude Code) |

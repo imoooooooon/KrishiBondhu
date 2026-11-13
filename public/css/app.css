@@ -229,7 +229,7 @@ code { background: var(--subtle); padding: 1px 6px; border-radius: var(--radius-
 /* Media card (listing, product, market, vet, job) */
 .media-card { display: flex; flex-direction: column; overflow: hidden; background: var(--card); border-radius: var(--radius-card); color: inherit; text-decoration: none; }
 a.media-card:hover { background: var(--active); }
-.media-card__media { position: relative; aspect-ratio: 16 / 10; background: var(--subtle); }
+.media-card__media { position: relative; aspect-ratio: var(--media-ratio); background: var(--subtle); }
 .media-card__media img { width: 100%; height: 100%; object-fit: cover; }
 .media-card__media .badge { position: absolute; top: var(--space-3); left: var(--space-3); }
 .media-card__placeholder { display: grid; place-items: center; height: 100%; color: var(--accent-fg); background: var(--accent-bg); }

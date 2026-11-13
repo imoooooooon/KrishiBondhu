@@ -41,17 +41,18 @@ html:not(.js) .js-only { display: none !important; }
 .listing-file { padding-block: 10px; height: auto; }
 .listing-photo-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); }
 .listing-photo-grid__item { display: grid; gap: var(--space-2); align-content: start; }
-.listing-photo-grid__item img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius-sm); background: var(--subtle); }
+.listing-photo-grid__item img { width: 100%; aspect-ratio: var(--media-ratio); object-fit: cover; border-radius: var(--radius-sm); background: var(--subtle); }
 
 /* ---- Gallery ------------------------------------------------------------------------------------- */
 .listing-gallery { display: grid; gap: var(--space-3); align-content: start; min-width: 0; }
 .listing-gallery__main { margin: 0; display: grid; gap: var(--space-2); }
-.listing-gallery__main img { width: 100%; height: auto; max-height: 70vh; object-fit: contain; background: var(--card); border-radius: var(--radius-card); }
-.listing-gallery__placeholder { aspect-ratio: 16 / 10; border-radius: var(--radius-card); }
+/* Fixed 16:9 frame: the whole photo fits inside (contain), so a tall or wide photo never resizes the page. */
+.listing-gallery__main img { display: block; width: 100%; height: auto; aspect-ratio: var(--media-ratio); object-fit: contain; background: var(--card); border-radius: var(--radius-card); }
+.listing-gallery__placeholder { aspect-ratio: var(--media-ratio); border-radius: var(--radius-card); }
 .listing-gallery__thumbs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.listing-gallery__thumb { display: block; width: 80px; border-radius: var(--radius-sm); overflow: hidden; outline-offset: 2px; border: 2px solid transparent; }
+.listing-gallery__thumb { display: block; width: 96px; border-radius: var(--radius-sm); overflow: hidden; outline-offset: 2px; border: 2px solid transparent; }
 .listing-gallery__thumb[aria-current="true"] { border-color: var(--accent); }
-.listing-gallery__thumb img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.listing-gallery__thumb img { display: block; width: 100%; height: auto; aspect-ratio: var(--media-ratio); object-fit: cover; }
 
 /* ---- Owner detail and product page layout -------------------------------------------------------- */
 .listing-layout, .product { display: grid; gap: var(--space-8); align-items: start; }

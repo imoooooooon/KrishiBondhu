@@ -29,7 +29,8 @@ html:not(.js) .js-only { display: none !important; }
 .cattle-layout { display: grid; gap: var(--space-8); align-items: start; }
 @media (min-width: 850px) { .cattle-layout { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); } }
 .cattle-photo { margin: 0; }
-.cattle-photo img { width: 100%; height: auto; max-height: 70vh; object-fit: contain; background: var(--card); border-radius: var(--radius-card); }
+/* Fixed 16:9 frame; the whole animal fits inside (contain) so no identifying marking is cut off. */
+.cattle-photo img { display: block; width: 100%; height: auto; aspect-ratio: var(--media-ratio); object-fit: contain; background: var(--card); border-radius: var(--radius-card); }
 .cattle-facts { display: grid; gap: var(--space-3); margin: 0; }
 .cattle-facts > div { display: grid; grid-template-columns: minmax(104px, 34%) minmax(0, 1fr); gap: var(--space-3); }
 .cattle-facts dt { color: var(--fg-muted); font-size: var(--fs-callout); }
@@ -50,6 +51,6 @@ html:not(.js) .js-only { display: none !important; }
 @media (max-width: 480px) { .cattle-form__pair { grid-template-columns: minmax(0, 1fr); } }
 .cattle-file { padding-block: 10px; height: auto; }
 .cattle-current-photo { display: flex; gap: var(--space-4); align-items: center; margin-bottom: var(--space-2); }
-.cattle-current-photo img, .cattle-summary img { width: 120px; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius-sm); background: var(--subtle); }
-.cattle-photo-preview { width: 100%; max-width: 320px; height: auto; border-radius: var(--radius-sm); margin-top: var(--space-2); }
+.cattle-current-photo img, .cattle-summary img { width: 128px; height: auto; aspect-ratio: var(--media-ratio); object-fit: cover; border-radius: var(--radius-sm); background: var(--subtle); }
+.cattle-photo-preview { width: 100%; max-width: 320px; height: auto; aspect-ratio: var(--media-ratio); object-fit: contain; background: var(--card); border-radius: var(--radius-sm); margin-top: var(--space-2); }
 .cattle-summary { display: flex; gap: var(--space-4); align-items: center; }
