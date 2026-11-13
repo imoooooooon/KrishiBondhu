@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FarmJobController;
 use App\Http\Controllers\PlannedController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,11 +11,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Job search (public) — F20
-Route::get('/jobs', PlannedController::class)->name('jobs.index');
-Route::get('/jobs/{job}', PlannedController::class)->name('jobs.show');
+Route::get('/jobs', [FarmJobController::class, 'index'])->name('jobs.index');
+Route::get('/jobs/{job}', [FarmJobController::class, 'show'])->name('jobs.show');
 
-// Farmer: post and manage jobs — F20
-Route::resource('farmer/jobs', PlannedController::class)->names('farmer.jobs')->parameters(['jobs' => 'job']);
+// Farmer: post and manage own jobs — F20. Signed in here; the Farmer role and ownership are checked by FarmJobPolicy.
+// There is no delete route: a job is closed instead, so F21 applications and bookings can keep pointing at it.
+Route::middleware('auth')->group(function () {
+    Route::get('/farmer/jobs', [FarmJobController::class, 'myJobs'])->name('farmer.jobs.index');
+    Route::get('/farmer/jobs/create', [FarmJobController::class, 'create'])->name('farmer.jobs.create'); // before {job}
+    Route::post('/farmer/jobs', [FarmJobController::class, 'store'])->name('farmer.jobs.store');
+    Route::get('/farmer/jobs/{job}', [FarmJobController::class, 'show'])->name('farmer.jobs.show');
+    Route::get('/farmer/jobs/{job}/edit', [FarmJobController::class, 'edit'])->name('farmer.jobs.edit');
+    Route::match(['put', 'patch'], '/farmer/jobs/{job}', [FarmJobController::class, 'update'])->name('farmer.jobs.update');
+    Route::patch('/farmer/jobs/{job}/close', [FarmJobController::class, 'close'])->name('farmer.jobs.close');
+});
 
 // Applications, wage agreement and booking — F21
 Route::post('/jobs/{job}/applications', PlannedController::class)->name('jobs.applications.store');

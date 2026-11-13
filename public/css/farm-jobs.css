@@ -1,0 +1,17 @@
+/*
+ | Farm jobs (F20). Loaded only by the pages in resources/views/farm-jobs/.
+ | Only what the shared components cannot express; colours and sizes come from tokens.css.
+ */
+
+/* Label + value rows on job cards and the job details page. */
+.job-facts { display: grid; gap: var(--space-3); margin: 0; }
+.job-facts > div { display: grid; grid-template-columns: minmax(96px, 32%) minmax(0, 1fr); gap: var(--space-3); }
+.job-facts dt { color: var(--fg-muted); font-size: var(--fs-callout); }
+.job-facts dd { margin: 0; overflow-wrap: anywhere; }
+
+/* Text typed by farmers: very long words must wrap instead of breaking the layout on phones. */
+.job-text, .job-text h1 { overflow-wrap: anywhere; }
+.job-text--lines { white-space: pre-line; } /* keep the farmer's line breaks in the description */
+
+/* Search filters: line the boxes up at the top, whether or not a filter has a hint under it. */
+.job-filters { align-items: start; }

@@ -281,15 +281,15 @@ File: `routes/modules/jobs.php` · 29 routes
 | `GET` | `/farmer/jobs` | `farmer.jobs.index` | F20 | Farmer |
 | `POST` | `/farmer/jobs` | `farmer.jobs.store` | F20 | Farmer |
 | `GET` | `/farmer/jobs/create` | `farmer.jobs.create` | F20 | Farmer |
-| `GET` | `/farmer/jobs/{job}` | `farmer.jobs.show` | F20 | Farmer |
-| `PUT|PATCH` | `/farmer/jobs/{job}` | `farmer.jobs.update` | F20 | Farmer |
-| `DELETE` | `/farmer/jobs/{job}` | `farmer.jobs.destroy` | F20 | Farmer |
+| `GET` | `/farmer/jobs/{job}` | `farmer.jobs.show` | F20 | Auth (open job, or job owner) |
+| `PUT|PATCH` | `/farmer/jobs/{job}` | `farmer.jobs.update` | F20 | Farmer (job owner) |
 | `GET` | `/farmer/jobs/{job}/applications` | `farmer.jobs.applications.index` | F21 | Farmer (job owner) |
 | `PATCH` | `/farmer/jobs/{job}/applications/{application}` | `farmer.jobs.applications.update` | F21 | Farmer (job owner) |
 | `POST` | `/farmer/jobs/{job}/bookings` | `farmer.jobs.bookings.store` | F21 | Farmer (job owner) |
-| `GET` | `/farmer/jobs/{job}/edit` | `farmer.jobs.edit` | F20 | Farmer |
+| `PATCH` | `/farmer/jobs/{job}/close` | `farmer.jobs.close` | F20 | Farmer (job owner) |
+| `GET` | `/farmer/jobs/{job}/edit` | `farmer.jobs.edit` | F20 | Farmer (job owner) |
 | `GET` | `/jobs` | `jobs.index` | F20 | Public |
-| `GET` | `/jobs/{job}` | `jobs.show` | F20 | Public |
+| `GET` | `/jobs/{job}` | `jobs.show` | F20 | Public (open job dated today or later); job owner for closed and past jobs |
 | `POST` | `/jobs/{job}/applications` | `jobs.applications.store` | F21 | Agricultural worker |
 | `GET` | `/worker/applications` | `worker.applications.index` | F21 | Agricultural worker |
 | `PATCH` | `/worker/applications/{application}` | `worker.applications.update` | F21 | Agricultural worker |
@@ -381,3 +381,4 @@ File: `routes/modules/admin.php` · 16 routes
 | 2026-11-12 | Initial IA, navigation and full route map (193 routes) for F1–F26. | Emon (with Claude Code) |
 | 2026-11-12 | `home` now renders a basic landing page (`resources/views/home.blade.php`) instead of PlannedController. | Emon (with Claude Code) |
 | 2026-11-13 | Built `login`, `login.store`, `register`, `register.store`, `logout`, `dashboard` and `preferences.locale` (issue #7). Guest/auth middleware applied to the authentication and session groups in `routes/modules/account.php`; URIs and names unchanged. | Emon (with Claude Code) |
+| 2026-11-13 | Built the F20 routes (`jobs.index`, `jobs.show`, `farmer.jobs.*`) with `FarmJobController`; URIs and names unchanged. **Removed `farmer.jobs.destroy`** and **added `farmer.jobs.close`** (`PATCH /farmer/jobs/{job}/close`): jobs are closed, not deleted, so F21 applications and bookings can keep referencing them. `/farmer/jobs/*` is behind `auth`; the Farmer role and ownership are checked by `FarmJobPolicy`. | Mehrab (with Claude Code) |
