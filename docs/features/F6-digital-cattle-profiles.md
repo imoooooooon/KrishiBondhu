@@ -846,3 +846,36 @@ Consulted 13 November 2026. These sources inform the design; they do not constit
 
 
 
+
+## 24. Implementation record (2026-11-13, branch `emon/f6-digital-cattle-profiles`, issue #15)
+
+Built by Emon with Claude Code (see `docs/ai-usage.md`). This records what was actually built and checked. Where it differs from the proposals above, this section wins.
+
+### 24.1 Decisions and deviations
+
+| Spec | Built | Why |
+| --- | --- | --- |
+| §11 five Form Requests, two services, three controllers | As proposed: `app/Http/Requests/Cattle/*`, `CattleService`, `CattleHealthHistoryService`, `CattleController`, `CattleHealthEntryController`, `CattlePhotoController`, `CattleAge` (in `app/Services`) | Matches the existing F1/F20 layout |
+| §14 reuse F1 image code | `CropListingPhotoService::store()` gained a `$directory` parameter. Cattle photos live in `storage/app/private/cattle-photos/` and are served only to the owner. | One tested GD pipeline. Visibility stays each feature's own decision. |
+| §6.3 cattle-specific placeholder pages protected per owner | The F7–F10 planned routes still use the shared `PlannedController` (no data, generic "not built" page). The profile links show a "Planned" label, detected from the route. | Those routes belong to teammates. The planned page reveals no cattle data. |
+| §14 F6 orphan cleanup command | Not built | `crop-listings:prune-photos` only scans the F1 folder. A cattle version is follow-up work. |
+| §19.3 prepared local fixture assets | Photos are downloaded once from `images.unsplash.com` into a private, Git-ignored cache. Later runs work offline. | No binary files in Git. Credits are in `docs/demo-assets.md`. |
+| §19.4 opt-in demo configuration flag | The command runs only when `APP_ENV=local` (or `testing`), with no force option | Simpler, and still fails closed |
+| §19.4 demo passwords not committed | Demo accounts use the shared team demo password `password` (same convention as the F1/F20 seeders) | Local-only demo data. Never in production. |
+| §13 bounded ULID retry | Not built. A ULID collision would surface as a database error. | The chance is negligible (80 random bits per millisecond) |
+
+### 24.2 Evidence (what actually ran)
+
+- **Automated:** 40 F6 tests in `tests/Feature/Cattle/` on the MySQL test database. The full suite (186 tests) passes with `composer check`. They cover T01–T15, T17, T18, T21 (partly, through the shared F1 pipeline tests), T22 (partly), T23–T29.
+- **Manual smoke run** against `php artisan serve` with the dev database (2026-11-13):
+  - `kb:demo-cattle seed` added 12 cattle (1 archived) and 12 health entries for Karim/Salma/Hamid. Nasrin has none.
+  - Every cattle page plus the dashboard, marketplace and F1 pages returned 200.
+  - The owner photo came back as 1600 px with `no-store`. Salma got 404 for Karim's profile, photo and edit page. A guest was sent to log in.
+  - The Bangla profile showed Bangla digits.
+  - A brand-new farmer signed up, registered a cow with an estimated age and a photo, and added an undated health entry.
+- **Not run, so not claimed:**
+  - a real browser check (layout at phone widths, light/dark, keyboard and screen reader, JS age toggles and photo preview);
+  - truly concurrent requests (only sequential stale-version tests, T16 and T19);
+  - `EXPLAIN` on large data;
+  - usability sessions;
+  - review of the Bangla text by a fluent reader.

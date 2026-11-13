@@ -142,3 +142,16 @@ Claude Code inside the project folder and say:
 | `composer check` fails on formatting | `composer format`. (Only matters for your own changes.) |
 | Port 3306 already in use | Another MySQL/MariaDB (e.g. XAMPP) is running. Stop it, or ask the team before changing ports. |
 | Commits not showing on your GitHub profile | Your `git config user.email` is not linked to your GitHub account. Add it in GitHub → Settings → Emails. |
+
+## Optional: local demo data
+
+After `php artisan migrate`, you can fill your **own local** database with demo records (needs internet once, for the photos):
+
+```bash
+php artisan db:seed --class=CropListingDemoSeeder   # F1: demo farmers + 11 crop listings
+php artisan kb:demo-cattle seed                      # F6: 12 demo cattle for the same demo farmers
+php artisan kb:demo-cattle credentials               # prints the demo logins and links
+php artisan kb:demo-cattle cleanup                   # dry run; add --apply to remove the demo cattle
+```
+
+Demo logins use the password `password` and work only on your computer. Both refuse to run in production. Photo credits: [demo-assets.md](demo-assets.md).
