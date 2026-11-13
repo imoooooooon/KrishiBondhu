@@ -35,7 +35,7 @@ Repository: <https://github.com/imoooooooon/KrishiBondhu>
   The original PDFs stay in each member's local, git-ignored `course-docs/` folder (never committed). Student IDs
   and the faculty email are intentionally kept out of the public Markdown copies.
 - All documentation is living: update it in the same PR whenever the workflow or scope changes.
-- **Information architecture (2026-11-12):** [docs/IA.md](IA.md). 193 named routes for F1–F26, one route file per
+- **Information architecture (2026-11-12):** [docs/IA.md](IA.md). 199 named routes for F1–F26 (193 planned + the F1 photo route + 5 F6 routes), one route file per
   area in `routes/modules/`, unbuilt routes served by `PlannedController`.
 - **Design system (2026-11-12):** [docs/design-system.md](design-system.md), adapted from the Al Wasil system for
   agriculture. **No UI framework** (replaces Bootstrap from the SRS draft) and **no npm/Vite pipeline**: plain CSS

@@ -1,0 +1,103 @@
+/*
+ | Crop listings and the crop marketplace (F1). Loaded only by resources/views/farmer/listings/*,
+ | resources/views/marketplace/* and the crop-listings partials.
+ | Only what the shared components cannot express; every colour, size and radius comes from tokens.css.
+ */
+
+/* Farmer-written text: very long words wrap instead of breaking the layout on phones. */
+.listing-text, .listing-text h1 { overflow-wrap: anywhere; }
+.listing-text--lines { white-space: pre-line; } /* keep the farmer's line breaks */
+
+/* Shown only when JavaScript runs (e.g. the search box that announces "coming soon"). */
+html:not(.js) .js-only { display: none !important; }
+
+/* Lists used as grids: no bullets. */
+.listing-grid, .market-grid, .listing-photo-grid, .listing-gallery__thumbs, .listing-delivery, .market-points, .listing-error-list { list-style: none; margin: 0; padding: 0; }
+.listing-error-list { display: grid; gap: var(--space-1); }
+.alert .listing-error-list a { color: inherit; }
+
+/* ---- Facts (label / value rows) ---------------------------------------------------------------- */
+.listing-facts { display: grid; gap: var(--space-3); margin: 0; }
+.listing-facts > div { display: grid; grid-template-columns: minmax(104px, 32%) minmax(0, 1fr); gap: var(--space-3); }
+.listing-facts dt { color: var(--fg-muted); font-size: var(--fs-callout); }
+.listing-facts dd { margin: 0; min-width: 0; }
+.listing-facts__note { display: block; margin-top: var(--space-1); }
+.listing-delivery { display: grid; gap: var(--space-1); }
+.listing-delivery li { display: flex; gap: var(--space-2); align-items: center; }
+.listing-delivery .icon { color: var(--accent-fg); flex: none; }
+@media (max-width: 420px) { .listing-facts > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); } }
+
+/* ---- Owner list cards -------------------------------------------------------------------------- */
+.listing-grid { --grid-min: 250px; }
+.listing-card__link { color: inherit; text-decoration: none; }
+.listing-card__link:hover { text-decoration: underline; }
+
+/* ---- Form ---------------------------------------------------------------------------------------- */
+.listing-form__section { display: grid; gap: var(--space-5); }
+.listing-form__pair { align-items: start; }
+@media (max-width: 480px) { .listing-form__pair { grid-template-columns: minmax(0, 1fr); } }
+.listing-summary { margin: 0; padding: var(--space-4) var(--space-5); background: var(--harvest-bg); color: var(--on-harvest-bg); border-radius: var(--radius-lg); }
+.listing-unit-note { margin: 0; color: var(--warning-fg); }
+.listing-file { padding-block: 10px; height: auto; }
+.listing-photo-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); }
+.listing-photo-grid__item { display: grid; gap: var(--space-2); align-content: start; }
+.listing-photo-grid__item img { width: 100%; aspect-ratio: var(--media-ratio); object-fit: cover; border-radius: var(--radius-sm); background: var(--subtle); }
+
+/* ---- Gallery ------------------------------------------------------------------------------------- */
+.listing-gallery { display: grid; gap: var(--space-3); align-content: start; min-width: 0; }
+.listing-gallery__main { margin: 0; display: grid; gap: var(--space-2); }
+/* Fixed 16:9 frame: the whole photo fits inside (contain), so a tall or wide photo never resizes the page. */
+.listing-gallery__main img { display: block; width: 100%; height: auto; aspect-ratio: var(--media-ratio); object-fit: contain; background: var(--card); border-radius: var(--radius-card); }
+.listing-gallery__placeholder { aspect-ratio: var(--media-ratio); border-radius: var(--radius-card); }
+.listing-gallery__thumbs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.listing-gallery__thumb { display: block; width: 96px; border-radius: var(--radius-sm); overflow: hidden; outline-offset: 2px; border: 2px solid transparent; }
+.listing-gallery__thumb[aria-current="true"] { border-color: var(--accent); }
+.listing-gallery__thumb img { display: block; width: 100%; height: auto; aspect-ratio: var(--media-ratio); object-fit: cover; }
+
+/* ---- Owner detail and product page layout -------------------------------------------------------- */
+.listing-layout, .product { display: grid; gap: var(--space-8); align-items: start; }
+@media (min-width: 850px) {
+    .listing-layout { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+    .product { grid-template-columns: minmax(0, 7fr) minmax(320px, 5fr); }
+    .product-buy { position: sticky; top: calc(var(--header-height, 72px) + var(--space-4)); }
+}
+.listing-danger { background: var(--danger-bg); }
+.listing-danger:target, .listing-danger:focus { outline: 2px solid var(--danger-border); outline-offset: 2px; }
+.listing-compare { align-items: start; }
+@media (max-width: 850px) { .listing-compare { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- Marketplace storefront ---------------------------------------------------------------------- */
+.market-hero { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: flex-end; justify-content: space-between; padding: var(--space-8); }
+.market-hero__copy { display: grid; gap: var(--space-2); max-width: 60ch; }
+.market-hero__eyebrow { color: var(--highlight); }
+.market-points { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); margin-block: var(--space-6) var(--space-10, var(--space-8)); }
+.market-points li { display: flex; gap: var(--space-3); align-items: center; color: var(--fg-muted); font-size: var(--fs-callout); }
+.market-points .icon { color: var(--accent-fg); flex: none; }
+.market-toolbar { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
+.market-search { display: flex; gap: var(--space-2); flex: 1 1 320px; max-width: 480px; }
+.market-search .input-group { flex: 1; }
+.market-grid { --grid-min: 230px; }
+.market-grid > li { display: grid; }
+.market-card__area { display: inline-flex; gap: var(--space-1); align-items: center; overflow-wrap: anywhere; }
+.market-card__price { font-size: var(--fs-title-3, 1.0625rem); font-weight: 600; }
+.market-card .media-card__footer { flex-wrap: wrap; }
+.product-buy__seller { gap: var(--space-2) var(--space-4); }
+.product-buy__seller span, .product-buy__stock { display: inline-flex; gap: var(--space-2); align-items: center; }
+.product-buy__price { display: grid; gap: var(--space-1); }
+.product-buy__price .price { color: var(--accent-fg); }
+.product-buy__stock { margin: 0; }
+.product-buy__stock .icon { color: var(--accent-fg); }
+.product-details { margin-top: var(--space-12); display: grid; gap: var(--space-4); }
+
+/* ---- "Coming soon" message (toast) for actions owned by features that are not built yet -------- */
+.planned-toast { position: fixed; z-index: 60; left: 50%; bottom: var(--space-6); transform: translateX(-50%); width: min(calc(100% - 2 * var(--space-4)), 480px);
+    display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-4) var(--space-5); border-radius: var(--radius-lg);
+    background: var(--brand-deep); color: var(--on-accent); box-shadow: var(--shadow-modal); }
+.planned-toast[hidden] { display: none; }
+.planned-toast .icon { flex: none; color: var(--highlight); margin-top: 2px; }
+.planned-toast p { margin: 0; flex: 1; }
+.planned-toast button { flex: none; background: none; border: 0; color: inherit; cursor: pointer; min-width: var(--touch-min); min-height: var(--touch-min); margin: calc(-1 * var(--space-3)); border-radius: var(--radius-sm); }
+@media (prefers-reduced-motion: no-preference) {
+    .planned-toast:not([hidden]) { animation: planned-toast-in var(--duration-base) var(--ease-standard, ease-out); }
+    @keyframes planned-toast-in { from { opacity: 0; transform: translate(-50%, 8px); } }
+}

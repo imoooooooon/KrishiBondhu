@@ -136,8 +136,22 @@ Claude Code inside the project folder and say:
 | --- | --- |
 | `php` / `composer` / `mysql` not found | Close and reopen the terminal or VS Code (PATH changes need a restart). |
 | `could not find driver` | `pdo_mysql` is not enabled in `php.ini`. Rerun the php.ini step and check `php -m`. |
+| Crop photo says it "did not finish uploading" (F1) | PHP's upload limit is lower than the app's 5 MB per photo. In `php.ini` (`php --ini` shows where) set `upload_max_filesize = 8M` and `post_max_size = 40M`, then restart `composer dev`. F1 also needs the `gd` extension (`extension=gd`, check with `php -m`). |
 | `Access denied for user 'krishibondhu'` | `DB_PASSWORD` in `.env` does not match the SQL password. Fix `.env`, then `php artisan config:clear`. |
 | `Unknown database 'krishibondhu_test'` | The database SQL was not run. Run it again. |
 | `composer check` fails on formatting | `composer format`. (Only matters for your own changes.) |
 | Port 3306 already in use | Another MySQL/MariaDB (e.g. XAMPP) is running. Stop it, or ask the team before changing ports. |
 | Commits not showing on your GitHub profile | Your `git config user.email` is not linked to your GitHub account. Add it in GitHub → Settings → Emails. |
+
+## Optional: local demo data
+
+After `php artisan migrate`, you can fill your **own local** database with demo records (needs internet once, for the photos):
+
+```bash
+php artisan db:seed --class=CropListingDemoSeeder   # F1: demo farmers + 11 crop listings
+php artisan kb:demo-cattle seed                      # F6: 12 demo cattle for the same demo farmers
+php artisan kb:demo-cattle credentials               # prints the demo logins and links
+php artisan kb:demo-cattle cleanup                   # dry run; add --apply to remove the demo cattle
+```
+
+Demo logins use the password `password` and work only on your computer. Both refuse to run in production. Photo credits: [demo-assets.md](demo-assets.md).

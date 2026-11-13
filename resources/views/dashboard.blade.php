@@ -32,6 +32,28 @@
                 </div>
                 <p class="t-callout t-muted mt-4">{{ __('Tools for each role will appear here as they are built.') }}</p>
             </x-ui.card>
+
+            @if ($user->hasRole(\App\Models\Role::FARMER))
+                {{-- F1: crop listings (farmer workspace) --}}
+                <x-ui.card>
+                    <x-slot:title>{{ __('Sell your crops') }}</x-slot:title>
+                    <p class="t-callout t-muted mb-4">{{ __('Publish a crop lot with photos and a price per unit. Buyers see it on the marketplace.') }}</p>
+                    <div class="cluster">
+                        <x-ui.button size="md" icon="plus" :href="route('farmer.listings.create')">{{ __('Add crop listing') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="list" :href="route('farmer.listings.index')">{{ __('My crop listings') }}</x-ui.button>
+                    </div>
+                </x-ui.card>
+
+                {{-- F6: digital cattle profiles (private herd records) --}}
+                <x-ui.card>
+                    <x-slot:title>{{ __('My cattle') }}</x-slot:title>
+                    <p class="t-callout t-muted mb-4">{{ __('Keep each animal’s photo, KB ID, age, parents and health history in one private place.') }}</p>
+                    <div class="cluster">
+                        <x-ui.button size="md" icon="cow-head" :href="route('cattle.index')">{{ __('My cattle') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="plus" :href="route('cattle.create')">{{ __('Register cattle') }}</x-ui.button>
+                    </div>
+                </x-ui.card>
+            @endif
         </div>
     </div>
 </x-layouts.app>

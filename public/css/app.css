@@ -229,8 +229,10 @@ code { background: var(--subtle); padding: 1px 6px; border-radius: var(--radius-
 /* Media card (listing, product, market, vet, job) */
 .media-card { display: flex; flex-direction: column; overflow: hidden; background: var(--card); border-radius: var(--radius-card); color: inherit; text-decoration: none; }
 a.media-card:hover { background: var(--active); }
-.media-card__media { position: relative; aspect-ratio: 16 / 10; background: var(--subtle); }
-.media-card__media img { width: 100%; height: 100%; object-fit: cover; }
+/* The frame's size comes ONLY from the 16:9 ratio: the photo is pinned inside it (absolute), so a tall or wide
+   photo can never stretch the card. overflow: hidden also stops the content from setting a minimum height. */
+.media-card__media { position: relative; flex: none; aspect-ratio: var(--media-ratio); overflow: hidden; background: var(--subtle); }
+.media-card__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .media-card__media .badge { position: absolute; top: var(--space-3); left: var(--space-3); }
 .media-card__placeholder { display: grid; place-items: center; height: 100%; color: var(--accent-fg); background: var(--accent-bg); }
 .media-card__body { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4) var(--space-5) var(--space-5); flex: 1; }

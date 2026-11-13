@@ -105,6 +105,11 @@
     --radius-inset: 8px; /* panels nested 16 px inside a card */
     --radius-full: 999px;
 
+    /* ---- Media ---- */
+    /* Every image frame (cards, galleries, profile photos, thumbnails) is 16:9, whatever photo is uploaded,
+       so cards and pages never change size. Cards crop to fill (cover); full-size photos fit inside (contain). */
+    --media-ratio: 16 / 9;
+
     /* ---- Control sizes (visible heights; hit areas are always >= 44 px) ---- */
     --control-lg: 48px;
     --control-md: 40px;

@@ -6,7 +6,7 @@
         ['route' => 'shop.index', 'match' => ['shop.*'], 'label' => __('Farm supplies'), 'icon' => 'store'],
         ['route' => 'cattle.index', 'match' => ['cattle.*', 'inseminations.*', 'pregnancies.*', 'breeding-check.*'], 'label' => __('Cattle'), 'icon' => 'cow-head'],
         ['route' => 'health.index', 'match' => ['health.*', 'guidance.*', 'vets.*', 'treatments.*', 'visit-requests.*'], 'label' => __('Health'), 'icon' => 'stethoscope'],
-        ['route' => 'jobs.index', 'match' => ['jobs.*', 'bookings.*'], 'label' => __('Farm jobs'), 'icon' => 'tractor'],
+        ['route' => 'jobs.index', 'match' => ['jobs.*', 'farmer.jobs.*', 'bookings.*'], 'label' => __('Farm jobs'), 'icon' => 'tractor'],
     ];
     $locale = app()->getLocale();
 @endphp
