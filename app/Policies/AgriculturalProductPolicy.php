@@ -16,7 +16,7 @@ use Illuminate\Auth\Access\Response;
  * - One product in the workspace (view, edit, publish, remove): its owner. Another seller gets 404,
  *   so the response does not even confirm that the product exists.
  * - Administrators get no automatic bypass here; administration has its own routes.
- * - The public shop pages (slice 2) add their own viewPublic rule.
+ * - Public shop pages and the photo: anyone, but only while the product is published (viewPublic, viewPhoto).
  */
 class AgriculturalProductPolicy
 {
@@ -42,6 +42,29 @@ class AgriculturalProductPolicy
     public function delete(User $user, AgriculturalProduct $product): Response
     {
         return $this->ownerOnly($user, $product);
+    }
+
+    /**
+     * Public shop page. $user is null for guests. Unpublished, removed and unknown products all give the
+     * same 404, so the page never reveals which one it was (the owner previews from the seller workspace).
+     */
+    public function viewPublic(?User $user, AgriculturalProduct $product): Response
+    {
+        return $product->isPublished() && ! $product->trashed()
+            ? Response::allow()
+            : Response::denyAsNotFound();
+    }
+
+    /** The photo: public while the product is published; its seller can always see their own (not removed) photo. */
+    public function viewPhoto(?User $user, AgriculturalProduct $product): Response
+    {
+        if ($product->trashed()) {
+            return Response::denyAsNotFound();
+        }
+
+        return $product->isPublished() || ($user !== null && $user->id === $product->seller_id)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     private function ownerOnly(User $user, AgriculturalProduct $product): Response
