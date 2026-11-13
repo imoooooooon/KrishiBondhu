@@ -309,7 +309,7 @@ File: `routes/modules/jobs.php` · 29 routes
 
 ### 5.8 Farm supplies
 
-File: `routes/modules/shop.php` · 13 routes
+File: `routes/modules/shop.php` · 14 routes
 
 | Method | URI | Route name | Feature | Access (when auth is built) |
 | --- | --- | --- | --- | --- |
@@ -323,8 +323,9 @@ File: `routes/modules/shop.php` · 13 routes
 | `PUT|PATCH` | `/seller/products/{product}` | `seller.products.update` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
 | `DELETE` | `/seller/products/{product}` | `seller.products.destroy` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
 | `GET` | `/seller/products/{product}/edit` | `seller.products.edit` | F25 | Agricultural product seller (one product: its owner; other sellers get 404) |
-| `GET` | `/shop` | `shop.index` | F25 | Public |
-| `GET` | `/shop/products/{product}` | `shop.show` | F25 | Public |
+| `GET` | `/shop` | `shop.index` | F25 | Public (published products only; filters `q`, `category`, `min_price`, `max_price`, `in_stock`) |
+| `GET` | `/shop/products/{product}` | `shop.show` | F25 | Public (published products only, otherwise 404) |
+| `GET` | `/shop/products/{product}/photo/{variant}` | `shop.photo` | F25 | Public while the product is published; its seller while hidden; nobody once removed (`variant`: `thumb` or `display`) |
 | `POST` | `/shop/products/{product}/offers` | `shop.offers.store` | F25, F3 | Auth |
 
 ### 5.9 Administration
@@ -390,3 +391,4 @@ File: `routes/modules/admin.php` · 16 routes
 | 2026-11-13 | Built the F20 routes (`jobs.index`, `jobs.show`, `farmer.jobs.*`) with `FarmJobController`; URIs and names unchanged. **Removed `farmer.jobs.destroy`** and **added `farmer.jobs.close`** (`PATCH /farmer/jobs/{job}/close`): jobs are closed, not deleted, so F21 applications and bookings can keep referencing them. `/farmer/jobs/*` is behind `auth`; the Farmer role and ownership are checked by `FarmJobPolicy`. | Mehrab (with Claude Code) |
 | 2026-11-13 | Built the F1 routes (`farmer.listings.*`, `marketplace.index`, `marketplace.show`) with `Farmer\CropListingController` and `MarketplaceController`; URIs and names unchanged. **Added `crop-listing-photos.show`** (`GET /crop-listing-photos/{photo}/{variant}`): listing photos are private files and this route checks the listing's visibility on every request. `/farmer/listings/*` is behind `auth`; the Farmer role and ownership are checked by `CropListingPolicy`; per account, 10 new listings and 30 changes per minute. After publishing, the farmer lands on `farmer.listings.show`, which links to the public page. Cart and offer buttons on `marketplace.show` post to the still-planned `cart.items.store` and `marketplace.offers.store`. | Emon (with Claude Code) |
 | 2026-11-13 | Built the F6 routes (`cattle.index/create/store/show/edit/update/destroy`) with `CattleController`; URIs and names unchanged. `cattle.destroy` **archives** (sets `archived_at`) and `cattle.update` with `operation=restore` brings it back; nothing is deleted. **Added** `cattle.photo` (private photos, owner only) and `cattle.health-history.create/store/edit/update` (`CattleHealthEntryController`). All behind `auth`; the Farmer role and ownership are checked by `CattlePolicy`. Per account, 10 registrations and 30 other changes per minute. The F7–F10 and F18 routes are unchanged and still planned; the cattle profile links to them with a "Planned" label. | Emon (with Claude Code) |
+| 2026-11-14 | Built the F25 routes `seller.products.*` (`Seller\AgriculturalProductController`), `shop.index` and `shop.show` (`ShopController`); URIs and names unchanged. **Added `shop.photo`** (`GET /shop/products/{product}/photo/{variant}`): product photos are private files and this route checks the product's visibility on every request. `/seller/products/*` is behind `auth`; the seller role and ownership are checked by `AgriculturalProductPolicy`; per account, 10 new products and 30 changes per minute. `shop.offers.store` (F3) and `seller.orders.*` (needs F5's Order model) are unchanged and still planned; the product page shows disabled cart and offer buttons with an explanation. | Jarif (with Claude Code) |

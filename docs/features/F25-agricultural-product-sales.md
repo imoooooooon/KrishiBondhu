@@ -14,9 +14,9 @@ To avoid designing teammates' schemas, F25 is built in slices that only touch F2
 
 | Slice | What | Routes | Status |
 | --- | --- | --- | --- |
-| 1 | Product schema, policy, seller workspace (add, list, view, edit, publish/unpublish, remove) | `seller.products.*` | Built (branch `jarif/f25-seller-products`) |
-| 2 | Public shop: browse, search/filter, product detail | `shop.index`, `shop.show` | Planned |
-| 3 (optional) | Product photos, reusing `CropListingPhotoService` without changing it | — | Planned |
+| 1 | Product schema, policy, seller workspace (add, list, view, edit, publish/unpublish, remove) | `seller.products.*` | Built (PR #20) |
+| 2 | Public shop: browse, search/filter, product detail | `shop.index`, `shop.show` | Built (PR #20) |
+| 3 | One optional product photo, reusing `CropListingPhotoService` without changing it | `shop.photo` (new) | Built (PR #20) |
 
 Still on `PlannedController`, waiting for their owners: `shop.offers.store` (F3), `seller.orders.*` (needs F5's
 Order model), and the shared `cart.*`, `checkout.*`, `orders.*`, `negotiations.*` and `payments.*` routes.
@@ -52,6 +52,31 @@ Order model), and the shared `cart.*`, `checkout.*`, `orders.*`, `negotiations.*
   and the seller's account cannot be deleted while it owns products (`restrictOnDelete`).
 - **Numbers:** exact decimal strings end to end (DECIMAL columns, `decimal:N` casts, `brick/math` comparisons).
   Bangla digits typed into number fields are converted to 0–9; commas, ৳, signs and `1e3` are rejected, not stripped.
+- **Area and delivery (required):** an approximate public area (upazila and district, 2 to 120 characters, never an
+  exact address) and at least one delivery arrangement: buyer picks up from the seller, buyer arranges transport,
+  seller can arrange delivery, third-party delivery (courier). Optional delivery notes (up to 300 characters). The
+  codes mirror F1's, so F4 can calculate delivery costs for crops and supplies the same way; F25 shows no fee.
+  The area appears on the shop cards (before opening a product), in the product details and, with the delivery
+  options, in the "Buy at the fixed price" section. The shop keyword search also matches the area. Products saved
+  before this change show "Not given yet" until the seller edits them (the edit form then requires both).
+- **Photo (optional, one per product):** JPG or PNG up to 5 MB and 6000 px a side (12 megapixels), the same limits as
+  F1. It is re-encoded by `CropListingPhotoService` into a display JPEG and a thumbnail on the private disk (folder
+  `agricultural-product-photos`), which removes metadata such as GPS location. A new upload replaces the old photo;
+  "Remove this photo" removes it; the old files are deleted only after the change is saved. Files are sent only through
+  `shop.photo`: public while the product is published, always to its seller, never once removed. F1's cleanup command
+  only scans its own folder, so it never touches product photos.
+- **Public shop:** anyone (guest or signed in) sees published, not-removed products, newest first by the time they were
+  first listed (`published_at`; republishing keeps the original time). The product page (not the shop card) shows
+  "Listed 14 Nov 2026, 4:15 am" in Bangladesh time, in the product details. Filters: keyword
+  (name, brand, description; `%` and `_` are searched literally), category, lowest/highest fixed price (exact decimal
+  comparison, Bangla digits accepted), in stock only. Invalid filters return to the shop with an error. A hidden or
+  removed product is 404, even for its seller (who previews it in the workspace). The seller's name and phone are not
+  shown, like F1.
+- **Product page:** two separate sections. "Buy at the fixed price" (small purchases, price per unit, stock, out of
+  stock = cannot be bought) and "Bulk order" (only if the seller accepts bulk offers: the public threshold, and a note
+  when stock is below it; otherwise "fixed price only"). The private lowest bulk price is never printed. The "Add to
+  cart" and "Make a bulk offer" buttons are disabled with an explanation until F5 (cart, orders), F4 (checkout) and F3
+  (offers) exist; then those features enable them on this page.
 - **Safe writes:** CSRF on every form; Form Requests whitelist the fields (seller, status, version and dates cannot be
   sent in); a `submission_token` makes a double-submitted "Add product" create one product (also across removed ones);
   every change sends the page's `version` and is refused with a 409 comparison page if the product changed meanwhile;
@@ -80,17 +105,19 @@ public list, category filter.
 - Offers (F3) must be for at least `bulk_min_quantity` units, at a price between `bulk_min_unit_price` and
   `unit_price`. The minimum must never be sent to the buyer, including in error messages.
 
-## 6. Code map (slice 1)
+## 6. Code map
 
 | Layer | Files |
 | --- | --- |
-| Model / factory | `app/Models/AgriculturalProduct.php`, `database/factories/AgriculturalProductFactory.php` |
+| Migrations | `2026_11_14_000000_create_agricultural_products_table.php`, `2026_11_14_100000_add_photo_to_agricultural_products_table.php`, `2026_11_14_200000_add_area_and_delivery_to_agricultural_products.php` (adds `public_area`, `delivery_notes` and the `agricultural_product_delivery_options` table) |
+| Model / factory | `app/Models/AgriculturalProduct.php` (incl. `search` scope), `app/Models/AgriculturalProductDeliveryOption.php`, `database/factories/AgriculturalProductFactory.php` |
 | Policy | `app/Policies/AgriculturalProductPolicy.php` |
-| Validation | `app/Http/Requests/AgriculturalProducts/` (Store, Update, Destroy) |
+| Validation | `app/Http/Requests/AgriculturalProducts/` (Store, Update, Destroy, SearchShop) |
 | Business rules | `app/Services/AgriculturalProductService.php`, `app/Exceptions/AgriculturalProductConflictException.php` |
-| Controller | `app/Http/Controllers/Seller/AgriculturalProductController.php` |
-| Views | `resources/views/seller/products/`, `resources/views/agricultural-products/` (partials shared with slice 2), `public/css/shop.css` |
+| Controllers | `Seller\AgriculturalProductController` (workspace), `ShopController` (public), `AgriculturalProductPhotoController` (photo files) |
+| Views | `resources/views/seller/products/`, `resources/views/shop/`, `resources/views/agricultural-products/` (shared partials), `public/css/shop.css` |
 | Routes | `routes/modules/shop.php` (same URIs and names as IA.md §5.8) |
+| Navigation | A "Sell farm supplies" card on `dashboard.blade.php` for users with the seller role (My products, Add product) |
 | Tests | `tests/Feature/AgriculturalProducts/` |
 
 ## 7. Implementation record
@@ -99,4 +126,14 @@ public list, category filter.
   [ai-usage.md](../ai-usage.md)). Evidence: `composer check` passed; 63 new feature tests on the MySQL test database
   (249 in total). Writing the tests caught a real bug in the first draft of the bulk CHECK constraint (NULL counted as
   passing); fixed before any commit. Manual light/dark, English/Bangla and phone-width checks: see the PR.
+- **Slices 2 and 3** (2026-11-14, same branch): public shop, search and the optional photo, built with Claude Code at
+  Jarif's request. 29 more feature tests (92 F25 tests in total). Writing them caught one test mistake (a signed-in
+  session carried over into a "guest" request), fixed in the test.
+- **Area and delivery** (2026-11-14, same branch): at Jarif's request, modelled on F1's marketplace. 7 more tests
+  (99 F25 tests). The first draft of the migration failed on MySQL because the automatic foreign-key name was
+  70 characters (limit 64); it now uses a short explicit name. The half-applied local change was undone with the
+  migration's own `down()` before migrating again.
+- Not possible inside F25 alone: buying (cart, checkout, orders) and bulk offers, because they are F5, F4 and F3, which
+  are other teammates' features and not built yet. `seller.orders.*` (received orders) is F25's but needs F5's Order
+  model. See §5 for the contract.
 - Bangla strings added to `lang/bn.json` are drafts and should be checked by a fluent reader.
