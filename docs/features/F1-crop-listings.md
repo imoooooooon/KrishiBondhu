@@ -817,3 +817,4 @@ Manual smoke run against `php artisan serve` with the dev database (no fakes), 2
 - `php artisan migrate` (adds the three crop listing tables).
 - PHP needs `gd`. For 5 MB photos, `php.ini` needs `upload_max_filesize = 8M` and `post_max_size = 40M`. The default 2 MB rejects larger photos with a "did not finish uploading" message.
 - Optional maintenance: `php artisan crop-listings:prune-photos` (dry run), then add `--apply`.
+- Demo data (development only, **delete before release**): `php artisan db:seed --class=CropListingDemoSeeder` adds four demo farmers and a demo buyer (password `password`) with 11 listings (10 published, 1 hidden), using real crop photos from Unsplash. It needs internet access and refuses to run in production. Accounts: Karim 01700000001, Salma 01700000002 (shared with the F20 demo), Hamid 01700000004, Nasrin 01700000005, buyer Tania 01700000006.
