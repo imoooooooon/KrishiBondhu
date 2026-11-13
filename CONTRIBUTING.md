@@ -96,6 +96,7 @@ git fetch origin
 git switch emon/short-task-name
 git merge origin/staging
 composer install                        # in case composer.lock changed
+php artisan migrate                     # in case database/migrations changed
 composer check
 git push
 ```

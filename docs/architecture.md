@@ -15,10 +15,10 @@ faculty review. Moving them would break autoloading, artisan generators and ever
 | | | `public/css/` | `tokens.css`, `app.css` (design system); feature CSS only if needed |
 | | | `public/js/` | `app.js` (shell); feature scripts loaded per page |
 | | | `public/fonts/`, `public/favicon.svg` | Self-hosted fonts, icon |
-| | | `lang/` | Translations (`bn.json`) |
+| | | `lang/` | Bangla translations: `bn.json` for UI text, `bn/validation.php` and `bn/auth.php` for messages |
 | **Backend** | Controller | `app/Http/Controllers/` | One controller per resource/workflow, e.g. `Farmer/CropListingController.php` |
 | | | `app/Http/Requests/` | Form Request validation (created with `make:request`) |
-| | | `app/Http/Middleware/` | Role/locale middleware when needed |
+| | | `app/Http/Middleware/` | `SetLocale` (Bangla/English on every request); role middleware when needed |
 | | | `routes/web.php`, `routes/modules/*.php` | Route map (see [IA.md](IA.md)) |
 | | Model | `app/Models/` | Eloquent models, relationships, data rules |
 | | | `app/Services/` | Complex business logic and external APIs (SRS §2.5: price calculations, breeding checks, Gemini, payments) |

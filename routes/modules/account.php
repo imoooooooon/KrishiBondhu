@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\PlannedController;
 use Illuminate\Support\Facades\Route;
 
@@ -7,22 +11,27 @@ use Illuminate\Support\Facades\Route;
 | Accounts, roles, preferences, notifications, reminders and voice.
 | IA.md §5.2. Supporting: login/registration are not counted as features.
 | Features: F24 (language, low-data preferences), F23 (voice), F10/F19 (reminders).
-| Access when auth exists: guest group → middleware('guest'); rest → middleware('auth').
+| Access: the guest and session groups below have their middleware. The other account routes get
+| middleware('auth') when their pages are built (IA.md §6 step 4).
 */
 
-// Authentication (guest)
-Route::get('/login', PlannedController::class)->name('login');
-Route::post('/login', PlannedController::class)->name('login.store');
-Route::get('/register', PlannedController::class)->name('register');
-Route::post('/register', PlannedController::class)->name('register.store');
-Route::get('/forgot-password', PlannedController::class)->name('password.request');
-Route::post('/forgot-password', PlannedController::class)->name('password.email');
-Route::get('/reset-password/{token}', PlannedController::class)->name('password.reset');
-Route::post('/reset-password', PlannedController::class)->name('password.update');
+// Authentication (guest): signed-in users are sent to the dashboard.
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
+    Route::get('/forgot-password', PlannedController::class)->name('password.request');
+    Route::post('/forgot-password', PlannedController::class)->name('password.email');
+    Route::get('/reset-password/{token}', PlannedController::class)->name('password.reset');
+    Route::post('/reset-password', PlannedController::class)->name('password.update');
+});
 
-// Session (auth)
-Route::post('/logout', PlannedController::class)->name('logout');
-Route::get('/dashboard', PlannedController::class)->name('dashboard');
+// Session (auth): guests are sent to the login page.
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+});
 
 // Account (auth)
 Route::get('/account/profile', PlannedController::class)->name('profile.edit');
@@ -34,7 +43,7 @@ Route::get('/account/preferences', PlannedController::class)->name('preferences.
 Route::patch('/account/preferences', PlannedController::class)->name('preferences.update');  // F24
 
 // Language switch (guest and auth)
-Route::post('/preferences/locale', PlannedController::class)->name('preferences.locale');    // F24
+Route::post('/preferences/locale', LocaleController::class)->name('preferences.locale');     // F24
 
 // In-site notifications and reminders (auth)
 Route::get('/notifications', PlannedController::class)->name('notifications.index');

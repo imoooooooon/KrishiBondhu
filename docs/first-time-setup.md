@@ -73,6 +73,7 @@ macOS (Homebrew): `brew install php@8.4 composer mysql@8.4 gh && brew services s
 | Install dependencies | 🤖 | `composer install` |
 | Create `.env` and your app key | 🤖 | `composer setup` (copies `.env.example` to `.env` and generates **your own** key) |
 | Create your databases | 🤖 + 🧑 | Claude generates a random password for the `krishibondhu` user, writes the SQL below into a temporary file, and puts the same password into your `.env` as `DB_PASSWORD`. **You** run `mysql -u root -p < <that file>` and type your root password. Claude never needs your root password. Claude deletes the temp file afterwards. |
+| Create the tables | 🤖 | `php artisan migrate` (creates the users, roles and other tables in your `krishibondhu` database; tests build their own tables in `krishibondhu_test`). |
 | Verify everything | 🤖 | `composer check` (validates Composer files, formatting, app boot, MySQL connection, and tests). All steps must pass. |
 | Try the app | 🤖 / 🧑 | `composer dev`, then open <http://127.0.0.1:8000/design-system>. You should see the Krishi Bondhu design system. Other pages show a "planned page" until their feature is built; `/up` is the health check. |
 
@@ -101,8 +102,8 @@ your details:
 > https://github.com/imoooooooon/KrishiBondhu by following its `docs/first-time-setup.md` exactly.
 > First inspect what is already installed (OS, Git, gh, PHP and extensions, Composer, MySQL) and reuse anything compatible.
 > Do the 🤖 steps yourself. For every 🧑 step, stop and tell me exactly what to do, then wait for me.
-> Never ask for my MySQL root password and never commit `.env`. Do not create any branches, features, pages, or
-> database tables. At the end, run `composer check`, show me the result, and summarise what was done and what
+> Never ask for my MySQL root password and never commit `.env`. Do not create any branches, features, or pages, and
+> do not write new migrations. At the end, run `composer check`, show me the result, and summarise what was done and what
 > (if anything) is still left.
 
 When it finishes, `composer check` must pass.

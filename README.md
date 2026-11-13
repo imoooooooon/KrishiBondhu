@@ -110,9 +110,10 @@ git config --global user.name  "Your Name"
 git config --global user.email "you@example.com"
 ```
 
-### 4. Verify
+### 4. Create the tables and verify
 
 ```bash
+php artisan migrate   # creates the tables (users, roles …) in YOUR krishibondhu database
 composer check
 ```
 
@@ -131,6 +132,7 @@ All steps should pass.
 | Check formatting | `composer lint` |
 | Fix formatting | `composer format` |
 | Install after `composer.lock` changed | `composer install` |
+| Update your database after new migrations | `php artisan migrate` |
 | Clear cached config after editing `.env` | `php artisan config:clear` |
 
 For branches, commits, pushing, and PRs, see [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -138,7 +140,8 @@ For branches, commits, pushing, and PRs, see [CONTRIBUTING.md](CONTRIBUTING.md).
 ## Configuration notes
 
 - Sessions and cache use files (`storage/framework`), and queued jobs run synchronously (`QUEUE_CONNECTION=sync`).
-  This means the foundation needs **no database tables**. The default Laravel users/cache/jobs migrations were removed
-  on purpose. Tables will be added by real features later.
+  So there are **no session, cache or jobs tables**. The default Laravel cache/jobs migrations were removed on purpose.
+- Accounts: `users`, `roles` (the 8 SRS roles, inserted by the migration) and `role_user`. People log in with a
+  Bangladeshi mobile number; email is optional. Feature tables are added by each feature's owner.
 - The app timezone is UTC (Laravel default). How to display Asia/Dhaka time is a later decision.
 - CI (GitHub Actions) runs the same checks against a throwaway MySQL 8.4 container on every PR into `staging` or `main`.
