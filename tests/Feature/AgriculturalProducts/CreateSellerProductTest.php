@@ -183,6 +183,48 @@ class CreateSellerProductTest extends TestCase
         $this->assertNull(AgriculturalProduct::sole()->brand); // an empty brand is stored as "no brand"
     }
 
+    public function test_area_and_delivery_options_are_saved(): void
+    {
+        $seller = $this->seller();
+
+        $this->actingAs($seller)->post(route('seller.products.store'), $this->validForm([
+            'public_area' => 'Mohasthan, Bogura',
+            'delivery_options' => ['third_party', 'pickup'],
+            'delivery_notes' => 'Courier to any district.',
+        ]))->assertSessionHasNoErrors();
+
+        $product = AgriculturalProduct::sole();
+        $this->assertSame('Mohasthan, Bogura', $product->public_area);
+        $this->assertSame('Courier to any district.', $product->delivery_notes);
+        $this->assertEqualsCanonicalizing(['third_party', 'pickup'], $product->deliveryMethods());
+
+        $this->actingAs($seller)->get(route('seller.products.show', $product))
+            ->assertSee('Mohasthan, Bogura')
+            ->assertSee('Third-party delivery (courier)')
+            ->assertSee('Buyer picks up from the seller')
+            ->assertSee('Courier to any district.');
+    }
+
+    public function test_area_and_delivery_options_are_checked(): void
+    {
+        $seller = $this->seller();
+
+        $this->actingAs($seller)->post(route('seller.products.store'), $this->validForm(['public_area' => '']))
+            ->assertSessionHasErrors('public_area');
+        $this->actingAs($seller)->post(route('seller.products.store'), $this->validForm(['public_area' => str_repeat('a', 121)]))
+            ->assertSessionHasErrors('public_area');
+        $this->actingAs($seller)->post(route('seller.products.store'), $this->validForm(['delivery_options' => []]))
+            ->assertSessionHasErrors('delivery_options');
+        $this->actingAs($seller)->post(route('seller.products.store'), $this->validForm(['delivery_options' => ['teleport']]))
+            ->assertSessionHasErrors('delivery_options.0');
+        $this->actingAs($seller)->post(route('seller.products.store'), $this->validForm(['delivery_options' => ['pickup', 'pickup']]))
+            ->assertSessionHasErrors('delivery_options.0');
+        $this->actingAs($seller)->post(route('seller.products.store'), $this->validForm(['delivery_notes' => str_repeat('n', 301)]))
+            ->assertSessionHasErrors('delivery_notes');
+
+        $this->assertSame(0, AgriculturalProduct::count());
+    }
+
     public function test_bulk_offers_store_the_threshold_and_the_private_minimum(): void
     {
         $seller = $this->seller();
@@ -352,6 +394,14 @@ class CreateSellerProductTest extends TestCase
         }
 
         $this->assertSame('40.000', $product->fresh()->stock_quantity);
+    }
+
+    public function test_the_database_refuses_an_unknown_delivery_method(): void
+    {
+        $product = AgriculturalProduct::factory()->create();
+
+        $this->expectException(QueryException::class);
+        DB::table('agricultural_product_delivery_options')->insert(['agricultural_product_id' => $product->id, 'method' => 'teleport']);
     }
 
     public function test_a_seller_with_products_cannot_be_deleted_by_accident(): void

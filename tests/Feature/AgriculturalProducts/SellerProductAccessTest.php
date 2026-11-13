@@ -90,6 +90,22 @@ class SellerProductAccessTest extends TestCase
             ->assertDontSee('Someone else’s seed');
     }
 
+    public function test_the_dashboard_links_sellers_to_their_products_and_only_sellers(): void
+    {
+        $this->actingAs($this->seller())->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Sell farm supplies')
+            ->assertSee(route('seller.products.index'))
+            ->assertSee(route('seller.products.create'));
+
+        foreach ([Role::BUYER, Role::FARMER] as $role) {
+            $this->actingAs($this->userWith($role))->get(route('dashboard'))
+                ->assertOk()
+                ->assertDontSee('Sell farm supplies')
+                ->assertDontSee(route('seller.products.index'));
+        }
+    }
+
     public function test_a_user_with_several_roles_including_seller_can_use_the_workspace(): void
     {
         $user = $this->userWith(Role::FARMER, Role::SELLER);

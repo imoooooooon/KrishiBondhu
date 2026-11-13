@@ -62,6 +62,23 @@ class ManageSellerProductTest extends TestCase
         $this->assertNotSame('2001', $fresh->published_at->format('Y'));
     }
 
+    public function test_editing_changes_the_area_and_syncs_delivery_options(): void
+    {
+        $seller = $this->seller();
+        $product = $this->productFor($seller); // factory default: pickup only
+
+        $this->actingAs($seller)->patch(route('seller.products.update', $product), $this->editForm($product, [
+            'public_area' => 'Savar, Dhaka',
+            'delivery_options' => ['seller_arranged', 'third_party'],
+            'delivery_notes' => 'Delivery inside Savar on Fridays.',
+        ]))->assertSessionHasNoErrors();
+
+        $fresh = $product->fresh();
+        $this->assertSame('Savar, Dhaka', $fresh->public_area);
+        $this->assertEqualsCanonicalizing(['seller_arranged', 'third_party'], $fresh->deliveryMethods());
+        $this->assertSame('Delivery inside Savar on Fridays.', $fresh->delivery_notes);
+    }
+
     public function test_bulk_offers_can_be_turned_on_changed_and_turned_off(): void
     {
         $seller = $this->seller();
