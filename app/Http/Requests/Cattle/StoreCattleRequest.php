@@ -51,7 +51,9 @@ class StoreCattleRequest extends FormRequest
             'nickname' => ['nullable', 'string', 'max:80'],
             // Unique among THIS farmer's cattle, archived ones included. MySQL compares without case,
             // so "TAG-1" and "tag-1" count as the same tag, in this rule and in the database index.
-            'farm_tag' => ['nullable', 'string', 'max:50', Rule::unique('cattle', 'farm_tag')->where('farmer_id', $this->user()->id)->ignore($ignoreId)],
+            // The animal made by this same form (a re-send) is not a clash: CattleService returns it instead.
+            'farm_tag' => ['nullable', 'string', 'max:50', Rule::unique('cattle', 'farm_tag')->where('farmer_id', $this->user()->id)
+                ->whereNot('submission_token', (string) $this->input('submission_token'))->ignore($ignoreId)],
             'sex' => ['required', Rule::in(Cattle::SEXES)],
             'breed_known' => ['required', Rule::in(['yes', 'no'])],
             'breed_description' => ['nullable', 'required_if:breed_known,yes', 'string', 'min:2', 'max:100'],
