@@ -54,6 +54,18 @@
                     </div>
                 </x-ui.card>
             @endif
+
+            @if ($user->hasRole(\App\Models\Role::SELLER))
+                {{-- F25: agricultural products (seller workspace) --}}
+                <x-ui.card>
+                    <x-slot:title>{{ __('Sell farm supplies') }}</x-slot:title>
+                    <p class="t-callout t-muted mb-4">{{ __('Add fertilizer, pesticide, seed or tools with a fixed price and stock. Buyers see them in Farm supplies.') }}</p>
+                    <div class="cluster">
+                        <x-ui.button size="md" icon="package" :href="route('seller.products.index')">{{ __('My products') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="plus" :href="route('seller.products.create')">{{ __('Add product') }}</x-ui.button>
+                    </div>
+                </x-ui.card>
+            @endif
         </div>
     </div>
 </x-layouts.app>
