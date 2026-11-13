@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CattleController;
+use App\Http\Controllers\CattleHealthEntryController;
+use App\Http\Controllers\CattlePhotoController;
 use App\Http\Controllers\PlannedController;
 use Illuminate\Support\Facades\Route;
 
@@ -9,8 +12,21 @@ use Illuminate\Support\Facades\Route;
 | Access: farmer role for own cattle; insemination agents only for cattle a farmer has shared with them.
 */
 
-// Digital cattle profiles — F6
-Route::resource('cattle', PlannedController::class)->parameters(['cattle' => 'cattle']);
+// Digital cattle profiles — F6. Private: signed in here; the Farmer role and ownership are checked by CattlePolicy.
+// Writes are rate limited per account: 10 registrations and 30 other changes per minute.
+Route::middleware('auth')->group(function () {
+    Route::resource('cattle', CattleController::class)->parameters(['cattle' => 'cattle'])->only(['index', 'create', 'show', 'edit']);
+    Route::post('/cattle', [CattleController::class, 'store'])->middleware('throttle:10,1,cattle-create')->name('cattle.store');
+    Route::match(['put', 'patch'], '/cattle/{cattle}', [CattleController::class, 'update'])->middleware('throttle:30,1,cattle-change')->name('cattle.update');
+    Route::delete('/cattle/{cattle}', [CattleController::class, 'destroy'])->middleware('throttle:30,1,cattle-change')->name('cattle.destroy');
+
+    Route::get('/cattle/{cattle}/photo/{variant}', [CattlePhotoController::class, 'show'])->whereIn('variant', ['thumb', 'display'])->name('cattle.photo');
+
+    Route::get('/cattle/{cattle}/health-history/create', [CattleHealthEntryController::class, 'create'])->name('cattle.health-history.create');
+    Route::post('/cattle/{cattle}/health-history', [CattleHealthEntryController::class, 'store'])->middleware('throttle:30,1,cattle-change')->name('cattle.health-history.store');
+    Route::get('/cattle/{cattle}/health-history/{entry}/edit', [CattleHealthEntryController::class, 'edit'])->name('cattle.health-history.edit');
+    Route::match(['put', 'patch'], '/cattle/{cattle}/health-history/{entry}', [CattleHealthEntryController::class, 'update'])->middleware('throttle:30,1,cattle-change')->name('cattle.health-history.update');
+});
 
 // Parentage and family tree — F8
 Route::get('/cattle/{cattle}/family-tree', PlannedController::class)->name('cattle.family-tree');

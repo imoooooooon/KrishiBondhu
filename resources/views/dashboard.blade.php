@@ -43,6 +43,16 @@
                         <x-ui.button size="md" variant="secondary" icon="list" :href="route('farmer.listings.index')">{{ __('My crop listings') }}</x-ui.button>
                     </div>
                 </x-ui.card>
+
+                {{-- F6: digital cattle profiles (private herd records) --}}
+                <x-ui.card>
+                    <x-slot:title>{{ __('My cattle') }}</x-slot:title>
+                    <p class="t-callout t-muted mb-4">{{ __('Keep each animal’s photo, KB ID, age, parents and health history in one private place.') }}</p>
+                    <div class="cluster">
+                        <x-ui.button size="md" icon="cow-head" :href="route('cattle.index')">{{ __('My cattle') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="plus" :href="route('cattle.create')">{{ __('Register cattle') }}</x-ui.button>
+                    </div>
+                </x-ui.card>
             @endif
         </div>
     </div>

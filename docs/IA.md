@@ -179,7 +179,7 @@ File: `routes/modules/marketplace.php` · 41 routes
 
 ### 5.4 Cattle
 
-File: `routes/modules/cattle.php` · 28 routes
+File: `routes/modules/cattle.php` · 33 routes
 
 | Method | URI | Route name | Feature | Access (when auth is built) |
 | --- | --- | --- | --- | --- |
@@ -187,15 +187,20 @@ File: `routes/modules/cattle.php` · 28 routes
 | `GET` | `/agent/inseminations` | `agent.inseminations.index` | F7 | Insemination agent |
 | `GET` | `/breeding-check` | `breeding-check.create` | F9 | Farmer or insemination agent |
 | `POST` | `/breeding-check` | `breeding-check.store` | F9 | Farmer or insemination agent |
-| `GET` | `/cattle` | `cattle.index` | F6 | Farmer (own cattle) |
-| `POST` | `/cattle` | `cattle.store` | F6 | Farmer (own cattle) |
-| `GET` | `/cattle/create` | `cattle.create` | F6 | Farmer (own cattle) |
-| `GET` | `/cattle/{cattle}` | `cattle.show` | F6 | Farmer (own cattle) |
-| `PUT|PATCH` | `/cattle/{cattle}` | `cattle.update` | F6 | Farmer (own cattle) |
-| `DELETE` | `/cattle/{cattle}` | `cattle.destroy` | F6 | Farmer (own cattle) |
+| `GET` | `/cattle` | `cattle.index` | F6 | Farmer (own cattle; another farmer gets 404) |
+| `POST` | `/cattle` | `cattle.store` | F6 | Farmer (own cattle; another farmer gets 404) |
+| `GET` | `/cattle/create` | `cattle.create` | F6 | Farmer (own cattle; another farmer gets 404) |
+| `GET` | `/cattle/{cattle}` | `cattle.show` | F6 | Farmer (own cattle; another farmer gets 404) |
+| `PUT|PATCH` | `/cattle/{cattle}` | `cattle.update` | F6 | Farmer (own cattle; another farmer gets 404) |
+| `DELETE` | `/cattle/{cattle}` | `cattle.destroy` | F6 | Farmer (own cattle; another farmer gets 404) |
 | `POST` | `/cattle/{cattle}/agents` | `cattle.agents.store` | F7 | Farmer (own cattle) |
 | `DELETE` | `/cattle/{cattle}/agents/{agent}` | `cattle.agents.destroy` | F7 | Farmer (own cattle) |
-| `GET` | `/cattle/{cattle}/edit` | `cattle.edit` | F6 | Farmer (own cattle) |
+| `GET` | `/cattle/{cattle}/edit` | `cattle.edit` | F6 | Farmer (own cattle; another farmer gets 404) |
+| `GET` | `/cattle/{cattle}/health-history/create` | `cattle.health-history.create` | F6 | Farmer (own, active cattle) |
+| `POST` | `/cattle/{cattle}/health-history` | `cattle.health-history.store` | F6 | Farmer (own, active cattle) |
+| `GET` | `/cattle/{cattle}/health-history/{entry}/edit` | `cattle.health-history.edit` | F6 | Farmer (own, active cattle; the entry must belong to this animal) |
+| `PUT|PATCH` | `/cattle/{cattle}/health-history/{entry}` | `cattle.health-history.update` | F6 | Farmer (own, active cattle; the entry must belong to this animal) |
+| `GET` | `/cattle/{cattle}/photo/{variant}` | `cattle.photo` | F6 | Farmer (own cattle only; `variant`: `thumb` or `display`) |
 | `GET` | `/cattle/{cattle}/family-tree` | `cattle.family-tree` | F8 | Farmer (own cattle) |
 | `GET` | `/cattle/{cattle}/inseminations` | `cattle.inseminations.index` | F7 | Insemination agent (shared cattle); farmer can view |
 | `POST` | `/cattle/{cattle}/inseminations` | `cattle.inseminations.store` | F7 | Insemination agent (shared cattle); farmer can view |
@@ -384,3 +389,4 @@ File: `routes/modules/admin.php` · 16 routes
 | 2026-11-13 | Built `login`, `login.store`, `register`, `register.store`, `logout`, `dashboard` and `preferences.locale` (issue #7). Guest/auth middleware applied to the authentication and session groups in `routes/modules/account.php`; URIs and names unchanged. | Emon (with Claude Code) |
 | 2026-11-13 | Built the F20 routes (`jobs.index`, `jobs.show`, `farmer.jobs.*`) with `FarmJobController`; URIs and names unchanged. **Removed `farmer.jobs.destroy`** and **added `farmer.jobs.close`** (`PATCH /farmer/jobs/{job}/close`): jobs are closed, not deleted, so F21 applications and bookings can keep referencing them. `/farmer/jobs/*` is behind `auth`; the Farmer role and ownership are checked by `FarmJobPolicy`. | Mehrab (with Claude Code) |
 | 2026-11-13 | Built the F1 routes (`farmer.listings.*`, `marketplace.index`, `marketplace.show`) with `Farmer\CropListingController` and `MarketplaceController`; URIs and names unchanged. **Added `crop-listing-photos.show`** (`GET /crop-listing-photos/{photo}/{variant}`): listing photos are private files and this route checks the listing's visibility on every request. `/farmer/listings/*` is behind `auth`; the Farmer role and ownership are checked by `CropListingPolicy`; per account, 10 new listings and 30 changes per minute. After publishing, the farmer lands on `farmer.listings.show`, which links to the public page. Cart and offer buttons on `marketplace.show` post to the still-planned `cart.items.store` and `marketplace.offers.store`. | Emon (with Claude Code) |
+| 2026-11-13 | Built the F6 routes (`cattle.index/create/store/show/edit/update/destroy`) with `CattleController`; URIs and names unchanged. `cattle.destroy` **archives** (sets `archived_at`) and `cattle.update` with `operation=restore` brings it back; nothing is deleted. **Added** `cattle.photo` (private photos, owner only) and `cattle.health-history.create/store/edit/update` (`CattleHealthEntryController`). All behind `auth`; the Farmer role and ownership are checked by `CattlePolicy`. Per account, 10 registrations and 30 other changes per minute. The F7–F10 and F18 routes are unchanged and still planned; the cattle profile links to them with a "Planned" label. | Emon (with Claude Code) |

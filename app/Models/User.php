@@ -46,6 +46,12 @@ class User extends Authenticatable
         return $this->hasMany(CropListing::class, 'farmer_id');
     }
 
+    /** Cattle in this farmer's private herd (F6), active and archived. */
+    public function cattle(): HasMany
+    {
+        return $this->hasMany(Cattle::class, 'farmer_id');
+    }
+
     /** Does this user hold the role? Pass a Role constant, e.g. Role::FARMER. */
     public function hasRole(string $slug): bool
     {
