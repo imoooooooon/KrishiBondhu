@@ -17,6 +17,9 @@ Add a row in the same PR that introduces the dependency.
 | Li Ador Noirrit (Lipighor) | Unicode Regular, SemiBold, Bold | Font (committed, `public/fonts/li-ador-noirrit/`) | Primary Bangla UI typeface | Design system | No. Used with permission from Lipighor (obtained by Emon, 2026-11-12); keep the footer credit "ওয়েবফন্ট- lipighor.com" |
 | Noto Sans Bengali (via @fontsource-variable/noto-sans-bengali 5.3.0) | variable, bengali | Font (self-hosted, committed) | Bangla fallback typeface | Design system | No (SIL OFL 1.1) |
 | Lucide icons (lucide-static 1.63.0) and Lucide Lab `cow-head` (@lucide/lab 0.7.0) | SVG paths copied | Icons (`components/ui/icon.blade.php`) | UI line icons | Design system | No (ISC) |
+| brick/math | installed with laravel/framework (see composer.lock) | Composer (runtime, already a Laravel dependency) | Exact decimal comparison of crop quantities and prices in F1 validation (no float rounding) | Emon (F1) | No (general maths library, not an assessed feature) |
+| PHP GD extension | bundled with PHP 8.4 | PHP extension (`extension=gd`; added to CI) | Decode, resize and re-encode crop listing photos, which strips metadata (F1) | Emon (F1) | No (part of PHP) |
+| Unsplash photos (17 crop photos, ids listed in `CropListingDemoSeeder`) | downloaded from images.unsplash.com when the seeder runs; not committed | Demo images (development only) | Example crop photos for the F1 demo listings | Emon (F1) | No ([Unsplash License](https://unsplash.com/license): free use, no attribution required). **Delete the demo data before release.** |
 
 No CSS/JS framework is used (Bootstrap from the SRS draft was replaced by the design system).
 

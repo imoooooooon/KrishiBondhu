@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CropListingPhotoController;
+use App\Http\Controllers\Farmer\CropListingController;
+use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\PlannedController;
 use Illuminate\Support\Facades\Route;
 
@@ -9,12 +12,26 @@ use Illuminate\Support\Facades\Route;
 | Access: browsing is public; buying needs auth; /farmer/* needs the farmer role.
 */
 
-// Browse and search (public) — F2, F1
-Route::get('/marketplace', PlannedController::class)->name('marketplace.index');
-Route::get('/marketplace/crops/{listing}', PlannedController::class)->name('marketplace.show');
+// Browse (public) — F1 now; F2 adds search and filters to the same pages.
+Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace.index');
+Route::get('/marketplace/crops/{listing}', [MarketplaceController::class, 'show'])->name('marketplace.show');
 
-// Farmer: manage crop listings — F1
-Route::resource('farmer/listings', PlannedController::class)->names('farmer.listings')->parameters(['listings' => 'listing']);
+// Crop listing photos — F1. Private files: the controller checks the listing's visibility on every request.
+Route::get('/crop-listing-photos/{photo}/{variant}', [CropListingPhotoController::class, 'show'])
+    ->whereNumber('photo')->whereIn('variant', ['thumb', 'display'])->name('crop-listing-photos.show');
+
+// Farmer: manage crop listings — F1. Signed in here; the Farmer role and ownership are checked by CropListingPolicy.
+// Writes are rate limited per account (spec §16): 10 new listings and 30 changes per minute.
+Route::middleware('auth')->group(function () {
+    Route::resource('farmer/listings', CropListingController::class)->names('farmer.listings')
+        ->parameters(['listings' => 'listing'])->only(['index', 'create', 'show', 'edit']);
+    Route::post('/farmer/listings', [CropListingController::class, 'store'])
+        ->middleware('throttle:10,1,crop-listing-create')->name('farmer.listings.store');
+    Route::match(['put', 'patch'], '/farmer/listings/{listing}', [CropListingController::class, 'update'])
+        ->middleware('throttle:30,1,crop-listing-change')->name('farmer.listings.update');
+    Route::delete('/farmer/listings/{listing}', [CropListingController::class, 'destroy'])
+        ->middleware('throttle:30,1,crop-listing-change')->name('farmer.listings.destroy');
+});
 
 // Farmer: incoming orders — F5
 Route::get('/farmer/orders', PlannedController::class)->name('farmer.orders.index');

@@ -131,7 +131,7 @@ File: `routes/modules/account.php` · 25 routes
 
 ### 5.3 Marketplace
 
-File: `routes/modules/marketplace.php` · 40 routes
+File: `routes/modules/marketplace.php` · 41 routes
 
 | Method | URI | Route name | Feature | Access (when auth is built) |
 | --- | --- | --- | --- | --- |
@@ -147,19 +147,20 @@ File: `routes/modules/marketplace.php` · 40 routes
 | `PATCH` | `/cart/items/{item}` | `cart.items.update` | F5, F25 | Auth |
 | `DELETE` | `/cart/items/{item}` | `cart.items.destroy` | F5, F25 | Auth |
 | `GET` | `/checkout` | `checkout.show` | F4 | Auth |
+| `GET` | `/crop-listing-photos/{photo}/{variant}` | `crop-listing-photos.show` | F1 | Public while the listing is published; its owner while hidden; nobody once removed (`variant`: `thumb` or `display`) |
 | `POST` | `/checkout` | `checkout.store` | F4 | Auth |
-| `GET` | `/farmer/listings` | `farmer.listings.index` | F1 | Farmer |
-| `POST` | `/farmer/listings` | `farmer.listings.store` | F1 | Farmer |
-| `GET` | `/farmer/listings/create` | `farmer.listings.create` | F1 | Farmer |
-| `GET` | `/farmer/listings/{listing}` | `farmer.listings.show` | F1 | Farmer |
-| `PUT|PATCH` | `/farmer/listings/{listing}` | `farmer.listings.update` | F1 | Farmer |
-| `DELETE` | `/farmer/listings/{listing}` | `farmer.listings.destroy` | F1 | Farmer |
-| `GET` | `/farmer/listings/{listing}/edit` | `farmer.listings.edit` | F1 | Farmer |
+| `GET` | `/farmer/listings` | `farmer.listings.index` | F1 | Farmer (one listing: its owner; other farmers get 404) |
+| `POST` | `/farmer/listings` | `farmer.listings.store` | F1 | Farmer (one listing: its owner; other farmers get 404) |
+| `GET` | `/farmer/listings/create` | `farmer.listings.create` | F1 | Farmer (one listing: its owner; other farmers get 404) |
+| `GET` | `/farmer/listings/{listing}` | `farmer.listings.show` | F1 | Farmer (one listing: its owner; other farmers get 404) |
+| `PUT|PATCH` | `/farmer/listings/{listing}` | `farmer.listings.update` | F1 | Farmer (one listing: its owner; other farmers get 404) |
+| `DELETE` | `/farmer/listings/{listing}` | `farmer.listings.destroy` | F1 | Farmer (one listing: its owner; other farmers get 404) |
+| `GET` | `/farmer/listings/{listing}/edit` | `farmer.listings.edit` | F1 | Farmer (one listing: its owner; other farmers get 404) |
 | `GET` | `/farmer/orders` | `farmer.orders.index` | F5 | Farmer |
 | `GET` | `/farmer/orders/{order}` | `farmer.orders.show` | F5 | Farmer |
 | `PATCH` | `/farmer/orders/{order}/status` | `farmer.orders.status` | F5 | Farmer |
-| `GET` | `/marketplace` | `marketplace.index` | F2, F1 | Public |
-| `GET` | `/marketplace/crops/{listing}` | `marketplace.show` | F2, F1 | Public |
+| `GET` | `/marketplace` | `marketplace.index` | F2, F1 | Public (published listings only) |
+| `GET` | `/marketplace/crops/{listing}` | `marketplace.show` | F2, F1 | Public (published listings only, otherwise 404) |
 | `POST` | `/marketplace/crops/{listing}/offers` | `marketplace.offers.store` | F3 | Auth (buyer or seller in the negotiation) |
 | `GET` | `/negotiations` | `negotiations.index` | F3 | Auth (buyer or seller in the negotiation) |
 | `GET` | `/negotiations/{negotiation}` | `negotiations.show` | F3 | Auth (buyer or seller in the negotiation) |
@@ -382,3 +383,4 @@ File: `routes/modules/admin.php` · 16 routes
 | 2026-11-12 | `home` now renders a basic landing page (`resources/views/home.blade.php`) instead of PlannedController. | Emon (with Claude Code) |
 | 2026-11-13 | Built `login`, `login.store`, `register`, `register.store`, `logout`, `dashboard` and `preferences.locale` (issue #7). Guest/auth middleware applied to the authentication and session groups in `routes/modules/account.php`; URIs and names unchanged. | Emon (with Claude Code) |
 | 2026-11-13 | Built the F20 routes (`jobs.index`, `jobs.show`, `farmer.jobs.*`) with `FarmJobController`; URIs and names unchanged. **Removed `farmer.jobs.destroy`** and **added `farmer.jobs.close`** (`PATCH /farmer/jobs/{job}/close`): jobs are closed, not deleted, so F21 applications and bookings can keep referencing them. `/farmer/jobs/*` is behind `auth`; the Farmer role and ownership are checked by `FarmJobPolicy`. | Mehrab (with Claude Code) |
+| 2026-11-13 | Built the F1 routes (`farmer.listings.*`, `marketplace.index`, `marketplace.show`) with `Farmer\CropListingController` and `MarketplaceController`; URIs and names unchanged. **Added `crop-listing-photos.show`** (`GET /crop-listing-photos/{photo}/{variant}`): listing photos are private files and this route checks the listing's visibility on every request. `/farmer/listings/*` is behind `auth`; the Farmer role and ownership are checked by `CropListingPolicy`; per account, 10 new listings and 30 changes per minute. After publishing, the farmer lands on `farmer.listings.show`, which links to the public page. Cart and offer buttons on `marketplace.show` post to the still-planned `cart.items.store` and `marketplace.offers.store`. | Emon (with Claude Code) |
