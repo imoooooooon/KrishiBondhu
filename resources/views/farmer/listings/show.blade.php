@@ -5,7 +5,7 @@
     Nothing is changed by opening a link (GET); only the final button (DELETE) removes. No JavaScript needed.
 --}}
 <x-layouts.app :title="$listing->crop_name">
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css').'?v='.@filemtime(public_path('css/crop-listings.css')) }}"></x-slot:head>
 
     <div class="container">
         <x-ui.page-header :title="$listing->crop_name" class="listing-text">
@@ -104,5 +104,5 @@
         </div>
     </div>
 
-    <x-slot:scripts><script src="{{ asset('js/crop-listings.js') }}" defer></script></x-slot:scripts>
+    <x-slot:scripts><script src="{{ asset('js/crop-listings.js').'?v='.@filemtime(public_path('js/crop-listings.js')) }}" defer></script></x-slot:scripts>
 </x-layouts.app>

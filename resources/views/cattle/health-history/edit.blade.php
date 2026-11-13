@@ -1,6 +1,6 @@
 {{-- "Edit health entry" (route cattle.health-history.edit). A correction of the farmer's own note; no delete in F6. --}}
 <x-layouts.app :title="__('Edit health entry')" narrow>
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css').'?v='.@filemtime(public_path('css/cattle.css')) }}"></x-slot:head>
 
     <x-ui.page-header :title="__('Edit health entry')" :subtitle="__('Correct this note. The change is marked as edited.')">
         <x-slot:breadcrumbs>
@@ -23,5 +23,5 @@
         </div>
     </form>
 
-    <x-slot:scripts><script src="{{ asset('js/cattle.js') }}" defer></script></x-slot:scripts>
+    <x-slot:scripts><script src="{{ asset('js/cattle.js').'?v='.@filemtime(public_path('js/cattle.js')) }}" defer></script></x-slot:scripts>
 </x-layouts.app>

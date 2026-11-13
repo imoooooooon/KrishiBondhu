@@ -3,7 +3,7 @@
     submission_token: one per form, kept after a validation error, so sending the same form twice publishes once.
 --}}
 <x-layouts.app :title="__('Add crop listing')" narrow>
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/crop-listings.css').'?v='.@filemtime(public_path('css/crop-listings.css')) }}"></x-slot:head>
 
     <x-ui.page-header :title="__('Add crop listing')" :subtitle="__('Describe one crop lot. It is published on the marketplace as soon as you submit.')">
         <x-slot:breadcrumbs>
@@ -29,5 +29,5 @@
         </div>
     </form>
 
-    <x-slot:scripts><script src="{{ asset('js/crop-listings.js') }}" defer></script></x-slot:scripts>
+    <x-slot:scripts><script src="{{ asset('js/crop-listings.js').'?v='.@filemtime(public_path('js/crop-listings.js')) }}" defer></script></x-slot:scripts>
 </x-layouts.app>

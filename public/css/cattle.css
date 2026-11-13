@@ -6,12 +6,13 @@
 /* Farmer-written text and IDs wrap instead of breaking the layout on phones. */
 .cattle-text, .cattle-text h1 { overflow-wrap: anywhere; }
 .cattle-text--lines { white-space: pre-line; }
-.cattle-id { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; letter-spacing: 0.02em; }
+/* A long ID breaks anywhere when it must, instead of leaving "KB-C-" alone on its own line. */
+.cattle-id { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; word-break: break-all; letter-spacing: 0.02em; }
 .cattle-id-line { gap: var(--space-2); }
 html:not(.js) .js-only { display: none !important; }
 .js .cattle-no-js-hint { display: none; }
 
-.cattle-list, .cattle-timeline { list-style: none; margin: 0; padding: 0; }
+.cattle-list, .cattle-timeline, .cattle-grid { list-style: none; margin: 0; padding: 0; }
 .cattle-list { display: grid; gap: var(--space-1); }
 .alert .cattle-list a { color: inherit; }
 
@@ -29,7 +30,8 @@ html:not(.js) .js-only { display: none !important; }
 .cattle-layout { display: grid; gap: var(--space-8); align-items: start; }
 @media (min-width: 850px) { .cattle-layout { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); } }
 .cattle-photo { margin: 0; }
-.cattle-photo img { width: 100%; height: auto; max-height: 70vh; object-fit: contain; background: var(--card); border-radius: var(--radius-card); }
+/* Fixed 16:9 frame; the whole animal fits inside (contain) so no identifying marking is cut off. */
+.cattle-photo img { display: block; width: 100%; height: auto; aspect-ratio: var(--media-ratio); object-fit: contain; background: var(--card); border-radius: var(--radius-card); }
 .cattle-facts { display: grid; gap: var(--space-3); margin: 0; }
 .cattle-facts > div { display: grid; grid-template-columns: minmax(104px, 34%) minmax(0, 1fr); gap: var(--space-3); }
 .cattle-facts dt { color: var(--fg-muted); font-size: var(--fs-callout); }
@@ -50,6 +52,6 @@ html:not(.js) .js-only { display: none !important; }
 @media (max-width: 480px) { .cattle-form__pair { grid-template-columns: minmax(0, 1fr); } }
 .cattle-file { padding-block: 10px; height: auto; }
 .cattle-current-photo { display: flex; gap: var(--space-4); align-items: center; margin-bottom: var(--space-2); }
-.cattle-current-photo img, .cattle-summary img { width: 120px; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius-sm); background: var(--subtle); }
-.cattle-photo-preview { width: 100%; max-width: 320px; height: auto; border-radius: var(--radius-sm); margin-top: var(--space-2); }
+.cattle-current-photo img, .cattle-summary img { width: 128px; height: auto; aspect-ratio: var(--media-ratio); object-fit: cover; border-radius: var(--radius-sm); background: var(--subtle); }
+.cattle-photo-preview { width: 100%; max-width: 320px; height: auto; aspect-ratio: var(--media-ratio); object-fit: contain; background: var(--card); border-radius: var(--radius-sm); margin-top: var(--space-2); }
 .cattle-summary { display: flex; gap: var(--space-4); align-items: center; }

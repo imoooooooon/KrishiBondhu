@@ -3,7 +3,7 @@
     health entry changed after this form was opened. Shows what the farmer typed so they can enter it again.
 --}}
 <x-layouts.app :title="__('This record changed')" narrow>
-    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css') }}"></x-slot:head>
+    <x-slot:head><link rel="stylesheet" href="{{ asset('css/cattle.css').'?v='.@filemtime(public_path('css/cattle.css')) }}"></x-slot:head>
     <x-ui.page-header :title="__('This record changed after you opened it')">
         <x-slot:breadcrumbs><a href="{{ route('cattle.index') }}">{{ __('My cattle') }}</a></x-slot:breadcrumbs>
     </x-ui.page-header>
