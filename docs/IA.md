@@ -224,9 +224,9 @@ File: `routes/modules/market-prices.php` · 11 routes
 
 | Method | URI | Route name | Feature | Access (when auth is built) |
 | --- | --- | --- | --- | --- |
-| `GET` | `/contributor/prices` | `contributor.prices.index` | F11 | Market price contributor |
-| `POST` | `/contributor/prices` | `contributor.prices.store` | F11 | Market price contributor |
-| `GET` | `/contributor/prices/create` | `contributor.prices.create` | F11 | Market price contributor |
+| `GET` | `/contributor/prices` | `contributor.prices.index` | F11 | Market price contributor (own entries only) |
+| `POST` | `/contributor/prices` | `contributor.prices.store` | F11 | Market price contributor (own entries only) |
+| `GET` | `/contributor/prices/create` | `contributor.prices.create` | F11 | Market price contributor (own entries only) |
 | `PUT|PATCH` | `/contributor/prices/{price}` | `contributor.prices.update` | F11 | Market price contributor |
 | `GET` | `/contributor/prices/{price}/edit` | `contributor.prices.edit` | F11 | Market price contributor |
 | `GET` | `/market-prices` | `market-prices.index` | F11 | Public |
