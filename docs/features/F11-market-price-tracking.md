@@ -19,8 +19,8 @@ so price history is never lost.
 | --- | --- | --- | --- |
 | 1 | Markets and price tables, recording and listing own prices | `contributor.prices.index/create/store` | Built |
 | 2 | Sessions of the day, tomorrow's estimate, all farm products with their units | same routes | Built |
-| 3 | Corrections with a revision log, 7-day window, stale-tab 409 | `contributor.prices.edit/update` | Planned |
-| 4 | Public page: today, yesterday and tomorrow's estimate, filters, recent entries | `market-prices.index` | Planned |
+| 3 | Public page: today, yesterday, change, tomorrow's estimate, last update, filters, recent entries | `market-prices.index` | Built |
+| 4 | Corrections with a revision log, 7-day window, stale-tab 409 | `contributor.prices.edit/update` | Planned |
 
 Not F11: comparison across markets (F13, `market-prices.compare`), trends and charts over a time period (F14,
 `market-prices.trends`), maps, coordinates and distance (F12, `markets.*`), and market administration
@@ -62,6 +62,23 @@ Not F11: comparison across markets (F13, `market-prices.compare`), trends and ch
   tomorrow, and tomorrow's actual prices are separate rows next to it.
 - **Rate limit:** 20 new prices per minute per account.
 
+## 3a. Public price page rules (slice 3)
+
+- Anyone can read `/market-prices`; contributors' names and phone numbers are never shown.
+- **One row per market + product + price type** that has at least one actual price. Retail and wholesale are separate.
+- **Latest price:** the latest `price_date`, then the latest session (evening, afternoon, morning), then the latest
+  entry (`id`). When two contributors report the same time, the most recent entry wins.
+- **Today** is the latest price only if it is dated today (Bangladesh calendar); otherwise "No price yet today", and
+  "Last updated" shows the older date, so an old price is never presented as today's.
+- **Yesterday** is yesterday's latest actual price. **Change** = today − yesterday, exact (brick/math), with the
+  percentage rounded half up to one decimal, a sign and an icon (never colour alone).
+- **Tomorrow (estimate)** is the latest estimate for tomorrow, labelled "Estimate, not a guarantee". Estimates never
+  count as today's or yesterday's price, and an estimate alone does not create a row.
+- Filters (GET, shareable): product group, product, market, retail or wholesale. Invalid values return to the page
+  with an error. Choosing a product and a market adds its **10 most recent entries** (both types and estimates), so the
+  kept history is visible. Charts and time periods are F14; comparing markets is F13.
+- Three database queries for the whole board (MySQL 8 `ROW_NUMBER()`), whatever the number of rows.
+
 ## 4. Database
 
 - `markets`: `name` (120), `name_bn` (120), `upazila` (80), `district` (60); unique (`name`, `district`).
@@ -79,10 +96,10 @@ Not F11: comparison across markets (F13, `market-prices.compare`), trends and ch
 | Migrations | `2026_11_14_400000_create_markets_table.php`, `2026_11_14_400001_create_market_prices_table.php`, `2026_11_14_400002_add_sessions_estimates_and_fish_to_market_prices.php`, `2026_11_14_400003_generalise_market_price_products_and_sessions.php` |
 | Models / factories | `Market`, `MarketPrice`; `MarketFactory`, `MarketPriceFactory` |
 | Policy | `MarketPricePolicy` (create; correction rules arrive in slice 2) |
-| Validation | `app/Http/Requests/MarketPrices/StoreMarketPriceRequest.php` |
-| Business rules | `app/Services/MarketPriceService.php` (one entry per day, resent forms) |
-| Controller | `app/Http/Controllers/Contributor/MarketPriceController.php` |
-| Views | `resources/views/contributor/prices/` (shared `.table` styles; no feature CSS needed) |
+| Validation | `app/Http/Requests/MarketPrices/` (`StoreMarketPriceRequest`, `SearchMarketPricesRequest`) |
+| Business rules | `app/Services/MarketPriceService.php` (one entry per session, resent forms, the public board, recent entries) |
+| Controllers | `Contributor\MarketPriceController` (workspace), `MarketPriceController` (public page) |
+| Views | `resources/views/contributor/prices/`, `resources/views/market-prices/` (shared `.table` styles; no feature CSS needed) |
 | Tests | `tests/Feature/MarketPrices/` |
 
 ## 6. For F12, F13 and F14
@@ -107,3 +124,5 @@ Not F11: comparison across markets (F13, `market-prices.compare`), trends and ch
   (its `down()` restores the crop-only list); MySQL refused the whole statement, so nothing changed, and the
   limitation is now written on both `down()` methods. A test also caught a real bug: the duplicate check ignored
   "estimate", so an actual whole-day price was refused because of the estimate for the same day. 48 F11 tests.
+- **Slice 3** (2026-11-14, same branch): the public price page, built before corrections at Jarif's request so prices
+  are visible. 15 more tests (63 F11 tests).
