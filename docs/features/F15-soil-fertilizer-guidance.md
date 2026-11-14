@@ -131,7 +131,8 @@ Every failure is saved as a short code in `error_code`; the farmer sees a simple
 | Code | When | Message idea |
 | --- | --- | --- |
 | `not_configured` | No key or model in `.env` | Service not set up correctly |
-| `invalid_credentials` | HTTP 401 / 403, or "API key not valid" | Service not set up correctly |
+| `invalid_credentials` | HTTP 401, or HTTP 400 "API key not valid" | Service not set up correctly |
+| `access_denied` | HTTP 403: the key is valid but the Google project may not use the API (no free tier, billing, region, verification) | Service not set up correctly |
 | `model_unavailable` | HTTP 404 | Service not set up correctly |
 | `rate_limited` | HTTP 429 | Service is busy, try in a few minutes |
 | `timeout`, `network`, `provider_error` | No answer in time, no connection, HTTP 400 / 5xx | Could not generate guidance right now |
@@ -191,7 +192,11 @@ invented measurements, false certainty and unclear wording. Checking some answer
 
 ## 11. Known limits
 
-- A real Gemini request must be verified with a real key before the demo (see the SRS row for the current status).
+- **Live check, 2026-11-14:** with Mehrab's key, the request reaches Gemini and the key is accepted, but Google answers
+  HTTP 403 "The Gemini API free tier is not available for this project … set up billing" for every model tried
+  (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-3.8-flash`). The app handles it correctly (`access_denied`,
+  simple message, request saved). No real guidance has been generated yet, so real answers have not been reviewed.
+  Next step: enable billing on the Google project, or use a key from a project with free-tier access.
 - Gemini must still be confirmed with the faculty (SRS §2.5c) and is recorded in [third-party.md](../third-party.md).
 - On Gemini's free tier, Google may use request content to improve its products. The form tells the farmer that the
   observations and photo are sent to an AI service; no account details are sent.
