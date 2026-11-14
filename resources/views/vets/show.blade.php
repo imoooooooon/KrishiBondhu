@@ -1,66 +1,114 @@
 <x-layouts.app :title="$vet->user->name">
-    <section class="kb-section">
-        <h1>{{ $vet->user->name }}</h1>
-        <p><strong>{{ __('Area') }}:</strong> {{ $vet->upazila }}, {{ $vet->district }}</p>
-        <p><strong>{{ __('Address') }}:</strong> {{ $vet->address }}</p>
-        @if($vet->experience_years !== null)
-            <p><strong>{{ __('Experience') }}:</strong> {{ $vet->experience_years }} {{ __('years') }}</p>
-        @endif
-        @if($vet->bio)
-            <p>{{ $vet->bio }}</p>
-        @endif
+    <div class="container">
+        <x-ui.page-header :title="$vet->user->name" :subtitle="$vet->upazila . ', ' . $vet->district">
+            <x-slot:breadcrumbs><a href="{{ route('vets.index') }}">{{ __('Veterinary Doctors') }}</a></x-slot:breadcrumbs>
+            <x-slot:actions>
+                <x-ui.button size="md" variant="secondary" icon="arrow-left" :href="route('vets.index')">{{ __('Back to Veterinarians') }}</x-ui.button>
+            </x-slot:actions>
+        </x-ui.page-header>
 
-        <hr>
-
-        @auth
-            @if(auth()->user()->hasRole(\App\Models\Role::FARMER))
-                <h2>{{ __('Request a Farm Visit') }}</h2>
-                @error('veterinarian_profile_id')
-                    <p class="kb-error">{{ $message }}</p>
-                @enderror
-
-                @if($vet->is_listed)
-                    <form method="POST" action="{{ route('vets.visit-requests.store', $vet) }}" class="kb-form">
-                        @csrf
-                        <div class="kb-field">
-                            <label for="animal_type">{{ __('Animal Type') }}</label>
-                            <select id="animal_type" name="animal_type" required>
-                                <option value="">{{ __('Select animal type') }}</option>
-                                @foreach(\App\Http\Controllers\VisitRequestController::ANIMAL_TYPES as $type)
-                                    <option value="{{ $type }}" @selected(old('animal_type') === $type)>{{ __(ucfirst($type)) }}</option>
-                                @endforeach
-                            </select>
-                            @error('animal_type') <p class="kb-error">{{ $message }}</p> @enderror
+        <div class="grid-2">
+            <x-ui.card>
+                <x-slot:title>{{ __('Doctor & Contact Details') }}</x-slot:title>
+                <dl class="stack stack-sm">
+                    <div class="cluster cluster--between">
+                        <dt class="t-muted">{{ __('Area') }}</dt>
+                        <dd>{{ $vet->upazila }}, {{ $vet->district }}</dd>
+                    </div>
+                    <div class="cluster cluster--between">
+                        <dt class="t-muted">{{ __('Address') }}</dt>
+                        <dd>{{ $vet->address }}</dd>
+                    </div>
+                    <div class="cluster cluster--between">
+                        <dt class="t-muted">{{ __('Mobile number') }}</dt>
+                        <dd class="t-num"><a href="tel:{{ $vet->user->phone }}">{{ $vet->user->phone }}</a></dd>
+                    </div>
+                    @if($vet->user->email)
+                        <div class="cluster cluster--between">
+                            <dt class="t-muted">{{ __('Email') }}</dt>
+                            <dd><a href="mailto:{{ $vet->user->email }}">{{ $vet->user->email }}</a></dd>
                         </div>
-
-                        <div class="kb-field">
-                            <label for="preferred_date">{{ __('Preferred Date') }}</label>
-                            <input id="preferred_date" type="date" name="preferred_date" value="{{ old('preferred_date') }}" min="{{ date('Y-m-d') }}" required>
-                            @error('preferred_date') <p class="kb-error">{{ $message }}</p> @enderror
+                    @endif
+                    @if($vet->experience_years !== null)
+                        <div class="cluster cluster--between">
+                            <dt class="t-muted">{{ __('Experience') }}</dt>
+                            <dd>{{ $vet->experience_years }} {{ __('years') }}</dd>
                         </div>
-
-                        <div class="kb-field">
-                            <label for="farm_address">{{ __('Farm Address') }}</label>
-                            <input id="farm_address" type="text" name="farm_address" value="{{ old('farm_address') }}" maxlength="255" required>
-                            @error('farm_address') <p class="kb-error">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="kb-field">
-                            <label for="problem">{{ __('Problem Description') }}</label>
-                            <textarea id="problem" name="problem" rows="3" required>{{ old('problem') }}</textarea>
-                            @error('problem') <p class="kb-error">{{ $message }}</p> @enderror
-                        </div>
-
-                        <button type="submit" class="kb-btn kb-btn-primary">{{ __('Send Request') }}</button>
-                    </form>
-                @else
-                    <p>{{ __('This veterinarian is not currently accepting visit requests.') }}</p>
+                    @endif
+                    <div class="cluster cluster--between">
+                        <dt class="t-muted">{{ __('Treats') }}</dt>
+                        <dd>
+                            {{ collect([
+                                $vet->treats_cattle ? __('Cattle') : null,
+                                $vet->treats_goats ? __('Goats') : null,
+                                $vet->treats_poultry ? __('Poultry') : null,
+                            ])->filter()->implode(', ') ?: __('General') }}
+                        </dd>
+                    </div>
+                </dl>
+                @if($vet->bio)
+                    <p class="t-callout mt-4">{{ $vet->bio }}</p>
                 @endif
-            @endif
-        @else
-            <p><a href="{{ route('login') }}">{{ __('Sign in') }}</a> {{ __('to request a farm visit.') }}</p>
-        @endauth
+            </x-ui.card>
 
-        <p><a href="{{ route('vets.index') }}">&larr; {{ __('Back to Veterinarians') }}</a></p>
-    </section>
+            <x-ui.card>
+                <x-slot:title>{{ __('Request a Farm Visit') }}</x-slot:title>
+
+                @auth
+                    @if(auth()->user()->hasRole(\App\Models\Role::FARMER))
+                        @error('veterinarian_profile_id')
+                            <x-ui.alert tone="danger" role="alert" class="mb-4">{{ $message }}</x-ui.alert>
+                        @enderror
+
+                        @if($vet->is_listed)
+                            @php
+                                $animalOptions = collect(\App\Http\Controllers\VisitRequestController::ANIMAL_TYPES)
+                                    ->mapWithKeys(fn ($type) => [$type => __(ucfirst($type))])
+                                    ->all();
+                            @endphp
+                            <form method="POST" action="{{ route('vets.visit-requests.store', $vet) }}" class="stack">
+                                @csrf
+                                <x-ui.select
+                                    name="animal_type"
+                                    :label="__('Animal Type')"
+                                    :options="$animalOptions"
+                                    :placeholder="__('Select animal type')"
+                                    required
+                                />
+                                <x-ui.field
+                                    name="preferred_date"
+                                    type="date"
+                                    :label="__('Preferred Date')"
+                                    :min="date('Y-m-d')"
+                                    required
+                                />
+                                <x-ui.field
+                                    name="farm_address"
+                                    :label="__('Farm Address')"
+                                    maxlength="255"
+                                    required
+                                />
+                                <x-ui.textarea
+                                    name="problem"
+                                    :label="__('Problem Description')"
+                                    rows="3"
+                                    required
+                                />
+                                <div>
+                                    <x-ui.button type="submit" icon="stethoscope">{{ __('Send Request') }}</x-ui.button>
+                                </div>
+                            </form>
+                        @else
+                            <x-ui.alert tone="warning">{{ __('This veterinarian is not currently accepting visit requests.') }}</x-ui.alert>
+                        @endif
+                    @else
+                        <x-ui.alert tone="info">{{ __('Only accounts with the Farmer role can send farm visit requests.') }}</x-ui.alert>
+                    @endif
+                @else
+                    <p class="t-callout t-muted mb-4">{{ __('Sign in with a Farmer account to request a farm visit.') }}</p>
+                    <x-ui.button size="md" icon="log-in" :href="route('login')">{{ __('Sign in') }}</x-ui.button>
+                @endauth
+            </x-ui.card>
+        </div>
+    </div>
 </x-layouts.app>

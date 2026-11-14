@@ -1,51 +1,69 @@
 @csrf
 
-<div class="kb-field">
-    <label for="category">{{ __('Category') }}</label>
-    <select id="category" name="category" required>
-        <option value="crop" @selected(old('category', $treatment->category) === 'crop')>{{ __('Crop') }}</option>
-        <option value="animal" @selected(old('category', $treatment->category) === 'animal')>{{ __('Animal') }}</option>
-    </select>
-    @error('category') <p class="kb-error">{{ $message }}</p> @enderror
+<x-ui.select
+    name="category"
+    :label="__('Category')"
+    :value="$treatment->category"
+    :options="[
+        'crop' => __('Crop'),
+        'animal' => __('Animal'),
+    ]"
+    required
+/>
+
+<x-ui.field
+    name="subject_name"
+    :label="__('Crop or Animal Name')"
+    :value="$treatment->subject_name"
+    maxlength="120"
+    required
+/>
+
+<x-ui.textarea
+    name="problem"
+    :label="__('Problem / Symptoms')"
+    :value="$treatment->problem"
+    rows="3"
+    required
+/>
+
+<x-ui.textarea
+    name="treatment_notes"
+    :label="__('Treatment & Medicine Notes')"
+    :value="$treatment->treatment_notes"
+    rows="3"
+    required
+/>
+
+<div class="grid-2">
+    <x-ui.field
+        name="treated_on"
+        type="date"
+        :label="__('Treatment Date')"
+        :value="$treatment->treated_on?->format('Y-m-d')"
+        required
+    />
+
+    <x-ui.field
+        name="follow_up_date"
+        type="date"
+        :label="__('Follow-up Date (Optional)')"
+        :value="$treatment->follow_up_date?->format('Y-m-d')"
+        optional
+    />
 </div>
 
-<div class="kb-field">
-    <label for="subject_name">{{ __('Crop or Animal Name') }}</label>
-    <input id="subject_name" type="text" name="subject_name" value="{{ old('subject_name', $treatment->subject_name) }}" maxlength="120" required>
-    @error('subject_name') <p class="kb-error">{{ $message }}</p> @enderror
-</div>
+<x-ui.select
+    name="status"
+    :label="__('Status')"
+    :value="$treatment->status ?? 'ongoing'"
+    :options="[
+        'ongoing' => __('Ongoing'),
+        'completed' => __('Completed'),
+    ]"
+    required
+/>
 
-<div class="kb-field">
-    <label for="problem">{{ __('Problem / Symptoms') }}</label>
-    <textarea id="problem" name="problem" rows="3" required>{{ old('problem', $treatment->problem) }}</textarea>
-    @error('problem') <p class="kb-error">{{ $message }}</p> @enderror
+<div>
+    <x-ui.button type="submit" icon="check">{{ $submitLabel }}</x-ui.button>
 </div>
-
-<div class="kb-field">
-    <label for="treatment_notes">{{ __('Treatment & Medicine Notes') }}</label>
-    <textarea id="treatment_notes" name="treatment_notes" rows="3" required>{{ old('treatment_notes', $treatment->treatment_notes) }}</textarea>
-    @error('treatment_notes') <p class="kb-error">{{ $message }}</p> @enderror
-</div>
-
-<div class="kb-field">
-    <label for="treated_on">{{ __('Treatment Date') }}</label>
-    <input id="treated_on" type="date" name="treated_on" value="{{ old('treated_on', $treatment->treated_on?->format('Y-m-d')) }}" required>
-    @error('treated_on') <p class="kb-error">{{ $message }}</p> @enderror
-</div>
-
-<div class="kb-field">
-    <label for="follow_up_date">{{ __('Follow-up Date (Optional)') }}</label>
-    <input id="follow_up_date" type="date" name="follow_up_date" value="{{ old('follow_up_date', $treatment->follow_up_date?->format('Y-m-d')) }}">
-    @error('follow_up_date') <p class="kb-error">{{ $message }}</p> @enderror
-</div>
-
-<div class="kb-field">
-    <label for="status">{{ __('Status') }}</label>
-    <select id="status" name="status" required>
-        <option value="ongoing" @selected(old('status', $treatment->status ?? 'ongoing') === 'ongoing')>{{ __('Ongoing') }}</option>
-        <option value="completed" @selected(old('status', $treatment->status) === 'completed')>{{ __('Completed') }}</option>
-    </select>
-    @error('status') <p class="kb-error">{{ $message }}</p> @enderror
-</div>
-
-<button type="submit" class="kb-btn kb-btn-primary">{{ $submitLabel }}</button>
