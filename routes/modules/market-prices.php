@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Contributor\MarketPriceController;
+use App\Http\Controllers\MarketPriceController as PublicMarketPriceController;
 use App\Http\Controllers\PlannedController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Price tracking, comparison and trends (public) — F11, F13, F14
-Route::get('/market-prices', PlannedController::class)->name('market-prices.index');
+Route::get('/market-prices', [PublicMarketPriceController::class, 'index'])->name('market-prices.index');
 Route::get('/market-prices/compare', PlannedController::class)->name('market-prices.compare');
 Route::get('/market-prices/trends', PlannedController::class)->name('market-prices.trends');
 
