@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PlannedController;
 use App\Http\Controllers\SoilGuidanceController;
+use App\Http\Controllers\TreatmentController;
 use App\Http\Controllers\VetDirectoryController;
 use App\Http\Controllers\VetProfileController;
 use App\Http\Controllers\VetVisitRequestController;
@@ -48,4 +49,6 @@ Route::middleware('auth')->group(function () {
 });
 
 // Treatment history and follow-ups — F19 (reminders: reminders.index in account.php)
-Route::resource('treatments', PlannedController::class);
+Route::middleware('auth')->group(function () {
+    Route::resource('treatments', TreatmentController::class);
+});
