@@ -76,6 +76,27 @@
                     </div>
                 </x-ui.card>
             @endif
+
+            @if ($user->hasRole(\App\Models\Role::PRICE_CONTRIBUTOR))
+                {{-- F11: market price contributor workspace, with the latest own entries --}}
+                <x-ui.card>
+                    <x-slot:title>{{ __('Market prices') }}</x-slot:title>
+                    <p class="t-callout t-muted mb-4">{{ __('Record today’s prices from your market. You can correct or withdraw your entries for 7 days.') }}</p>
+                    @if ($recentPrices->isNotEmpty())
+                        <div class="list-group mb-4">
+                            @foreach ($recentPrices as $price)
+                                <x-ui.list-row :title="$price->itemName().' · ৳ '.\App\Models\CropListing::localiseDigits((string) $price->unit_price).' / '.$price->unitLabel()"
+                                    :subtitle="$price->market->displayName().' · '.$price->priceDateForDisplay().' · '.($price->is_estimate ? __('Estimate') : $price->sessionLabel())"
+                                    :href="$price->canStillChange() ? route('contributor.prices.edit', $price) : null" />
+                            @endforeach
+                        </div>
+                    @endif
+                    <div class="cluster">
+                        <x-ui.button size="md" icon="plus" :href="route('contributor.prices.create')">{{ __('Record a price') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="list" :href="route('contributor.prices.index')">{{ __('My market prices') }}</x-ui.button>
+                    </div>
+                </x-ui.card>
+            @endif
         </div>
     </div>
 </x-layouts.app>
