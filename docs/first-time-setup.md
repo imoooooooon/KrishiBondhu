@@ -158,7 +158,7 @@ php artisan db:seed --class=MarketPriceDemoSeeder   # F11: a week of prices in 3
 php artisan db:seed --class=SoilGuidanceDemoSeeder  # F15: guidance history (hand-written examples, no Gemini call)
 php artisan db:seed --class=VeterinaryDemoSeeder    # F18: 3 demo vets and visit requests in every state
 php artisan db:seed --class=TreatmentDemoSeeder     # F19: treatment records and their reminders
-php artisan db:seed --class=AgriculturalProductDemoSeeder  # F25: 2 demo sellers and 10 products
+php artisan db:seed --class=AgriculturalProductDemoSeeder  # F25: 2 demo sellers and 10 products with photos
 php artisan kb:demo-cattle seed                      # F6: 12 demo cattle for the same demo farmers
 php artisan kb:demo-cattle credentials               # prints the demo logins and links
 php artisan kb:demo-cattle cleanup                   # dry run; add --apply to remove the demo cattle
