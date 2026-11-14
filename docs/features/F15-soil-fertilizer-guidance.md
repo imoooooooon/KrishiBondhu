@@ -192,11 +192,13 @@ invented measurements, false certainty and unclear wording. Checking some answer
 
 ## 11. Known limits
 
-- **Live check, 2026-11-14:** with Mehrab's key, the request reaches Gemini and the key is accepted, but Google answers
-  HTTP 403 "The Gemini API free tier is not available for this project … set up billing" for every model tried
-  (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-3.8-flash`). The app handles it correctly (`access_denied`,
-  simple message, request saved). No real guidance has been generated yet, so real answers have not been reviewed.
-  Next step: enable billing on the Google project, or use a key from a project with free-tier access.
+- **Live check, 2026-11-14.** The first key's Google project had no free tier (HTTP 403, handled as `access_denied`).
+  With a second key, three real requests completed in 2–3 seconds each with `gemini-3.5-flash-lite`: Boro rice
+  (text only), potato (with a photo, plus notes asking the model to ignore its rules and give pH and urea doses), and
+  jute in Bangla. Read by eye: no pH or nutrient values, no exact doses (it refers to the Upazila Agriculture Office),
+  only generic fertilizer names, no yield promises, the injection attempt was ignored, and "Not sure" stayed unknown
+  (it asked about texture instead of guessing). The Bangla answer had small grammar slips. Three answers cannot
+  guarantee every future answer; keep reading real answers when the instructions or model change.
 - Gemini must still be confirmed with the faculty (SRS §2.5c) and is recorded in [third-party.md](../third-party.md).
 - On Gemini's free tier, Google may use request content to improve its products. The form tells the farmer that the
   observations and photo are sent to an AI service; no account details are sent.
