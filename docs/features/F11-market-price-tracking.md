@@ -144,3 +144,5 @@ Not F11: comparison across markets (F13, `market-prices.compare`), trends and ch
 - **Slice 4** (2026-11-14, same branch): corrections with a revision log, withdraw instead of delete (D11, Jarif's
   choice), and the dashboard card (D12). A forward-only migration, rolled back and re-applied to test `down()`.
   11 more tests (74 F11 tests).
+- **Manual checks** (2026-11-14): Jarif checked the contributor pages, the dashboard card, corrections, withdrawals
+  and the public page in light and dark, English and Bangla, and at phone width: all working.
