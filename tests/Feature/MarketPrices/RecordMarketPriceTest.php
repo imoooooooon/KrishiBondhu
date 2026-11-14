@@ -35,11 +35,13 @@ class RecordMarketPriceTest extends TestCase
         $price = MarketPrice::sole();
         $this->assertSame($contributor->id, $price->contributor_id);
         $this->assertSame($this->kawranBazar()->id, $price->market_id);
-        $this->assertSame('potato', $price->crop_code);
+        $this->assertSame('potato', $price->item_code);
         $this->assertSame('retail', $price->price_type);
-        $this->assertSame('35.50', $price->price_per_kg);
+        $this->assertSame('35.50', $price->unit_price);
         $this->assertSame(MarketPrice::today(), $price->price_date->toDateString());
         $this->assertSame('Morning price, new harvest.', $price->note);
+        $this->assertSame('morning', $price->price_session);
+        $this->assertFalse($price->is_estimate);
         $this->assertSame(1, $price->version);
 
         $this->actingAs($contributor)->get(route('contributor.prices.index'))
@@ -53,6 +55,7 @@ class RecordMarketPriceTest extends TestCase
 
         $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm([
             'contributor_id' => $other->id,
+            'is_estimate' => '1',
             'version' => 99,
             'created_at' => '2001-01-01 00:00:00',
             'updated_at' => '2001-01-01 00:00:00',
@@ -62,6 +65,7 @@ class RecordMarketPriceTest extends TestCase
         $price = MarketPrice::sole();
         $this->assertSame($contributor->id, $price->contributor_id);
         $this->assertSame(1, $price->version);
+        $this->assertFalse($price->is_estimate, 'only entry_kind=estimate makes an estimate');
         $this->assertNotSame(999, $price->id);
         $this->assertTrue($price->created_at->isToday());
     }
@@ -72,12 +76,12 @@ class RecordMarketPriceTest extends TestCase
         $banglaDate = strtr($date, array_combine(str_split('0123456789'), ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯']));
 
         $this->actingAs($this->contributor())->post(route('contributor.prices.store'), $this->validForm([
-            'price_per_kg' => '৩৫.৭৫',
+            'unit_price' => '৩৫.৭৫',
             'price_date' => $banglaDate,
         ]))->assertSessionHasNoErrors();
 
         $price = MarketPrice::sole();
-        $this->assertSame('35.75', $price->price_per_kg);
+        $this->assertSame('35.75', $price->unit_price);
         $this->assertSame($date, $price->price_date->toDateString());
     }
 
@@ -103,8 +107,8 @@ class RecordMarketPriceTest extends TestCase
     public function test_invalid_prices_are_rejected_not_rounded(string $value): void
     {
         $this->actingAs($this->contributor())
-            ->post(route('contributor.prices.store'), $this->validForm(['price_per_kg' => $value]))
-            ->assertSessionHasErrors('price_per_kg');
+            ->post(route('contributor.prices.store'), $this->validForm(['unit_price' => $value]))
+            ->assertSessionHasErrors('unit_price');
 
         $this->assertSame(0, MarketPrice::count());
     }
@@ -113,10 +117,10 @@ class RecordMarketPriceTest extends TestCase
     {
         $contributor = $this->contributor();
 
-        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_per_kg' => '0.01']))->assertSessionHasNoErrors();
-        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_per_kg' => '100000', 'crop_code' => 'ginger']))->assertSessionHasNoErrors();
+        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['unit_price' => '0.01']))->assertSessionHasNoErrors();
+        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['unit_price' => '100000', 'item_code' => 'ginger']))->assertSessionHasNoErrors();
 
-        $this->assertSame(['0.01', '100000.00'], MarketPrice::orderBy('id')->pluck('price_per_kg')->all());
+        $this->assertSame(['0.01', '100000.00'], MarketPrice::orderBy('id')->pluck('unit_price')->all());
     }
 
     public function test_price_dates_follow_the_bangladesh_calendar_and_a_one_year_window(): void
@@ -133,22 +137,22 @@ class RecordMarketPriceTest extends TestCase
 
         $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_date' => $this->daysFromToday(-365)]))
             ->assertSessionHasNoErrors();
-        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_date' => MarketPrice::today(), 'crop_code' => 'onion']))
+        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_date' => MarketPrice::today(), 'item_code' => 'onion']))
             ->assertSessionHasNoErrors();
         $this->assertSame(2, MarketPrice::count());
     }
 
-    public function test_market_crop_and_type_must_come_from_their_lists(): void
+    public function test_market_product_and_type_must_come_from_their_lists(): void
     {
         $contributor = $this->contributor();
 
         $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['market_id' => 999999]))->assertSessionHasErrors('market_id');
         $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['market_id' => 'Kawran Bazar']))->assertSessionHasErrors('market_id');
-        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['crop_code' => 'gold']))->assertSessionHasErrors('crop_code');
+        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['item_code' => 'gold']))->assertSessionHasErrors('item_code');
         $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_type' => 'black_market']))->assertSessionHasErrors('price_type');
         $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['note' => str_repeat('n', 201)]))->assertSessionHasErrors('note');
         $this->actingAs($contributor)->post(route('contributor.prices.store'), [])
-            ->assertSessionHasErrors(['market_id', 'crop_code', 'price_type', 'price_per_kg', 'price_date']);
+            ->assertSessionHasErrors(['entry_kind', 'market_id', 'item_code', 'price_type', 'unit_price']);
 
         $this->assertSame(0, MarketPrice::count());
     }
@@ -166,28 +170,28 @@ class RecordMarketPriceTest extends TestCase
         $this->assertSame(1, MarketPrice::count());
     }
 
-    public function test_a_different_price_for_the_same_day_is_refused_and_history_is_unchanged(): void
+    public function test_a_different_price_for_the_same_session_is_refused_and_history_is_unchanged(): void
     {
         $contributor = $this->contributor();
-        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_per_kg' => '35.50']));
+        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['unit_price' => '35.50']));
 
-        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_per_kg' => '40']))
-            ->assertSessionHasErrors('price_date');
+        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['unit_price' => '40']))
+            ->assertSessionHasErrors('unit_price');
 
         $this->assertSame(1, MarketPrice::count());
-        $this->assertSame('35.50', MarketPrice::sole()->price_per_kg);
+        $this->assertSame('35.50', MarketPrice::sole()->unit_price);
     }
 
     public function test_new_days_types_and_other_contributors_add_new_history_rows(): void
     {
         $contributor = $this->contributor();
-        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_date' => $this->daysFromToday(-1), 'price_per_kg' => '34']));
-        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_per_kg' => '36']));
-        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_type' => 'wholesale', 'price_per_kg' => '30']));
-        $this->actingAs($this->contributor())->post(route('contributor.prices.store'), $this->validForm(['price_per_kg' => '37']));
+        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_date' => $this->daysFromToday(-1), 'unit_price' => '34']));
+        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['unit_price' => '36']));
+        $this->actingAs($contributor)->post(route('contributor.prices.store'), $this->validForm(['price_type' => 'wholesale', 'unit_price' => '30']));
+        $this->actingAs($this->contributor())->post(route('contributor.prices.store'), $this->validForm(['unit_price' => '37']));
 
         // Yesterday's price is still there after today's: nothing was replaced.
-        $this->assertSame(['34.00', '36.00', '30.00', '37.00'], MarketPrice::orderBy('id')->pluck('price_per_kg')->all());
+        $this->assertSame(['34.00', '36.00', '30.00', '37.00'], MarketPrice::orderBy('id')->pluck('unit_price')->all());
     }
 
     /** The CHECK constraints stop impossible rows even if a bug or a manual SQL edit skipped the Form Requests. */
@@ -196,10 +200,10 @@ class RecordMarketPriceTest extends TestCase
         $price = MarketPrice::factory()->create();
 
         foreach ([
-            ['price_per_kg' => '0'],
-            ['price_per_kg' => '-1'],
-            ['price_per_kg' => '100000.01'],
-            ['crop_code' => 'gold'],
+            ['unit_price' => '0'],
+            ['unit_price' => '-1'],
+            ['unit_price' => '100000.01'],
+            ['item_code' => 'gold'],
             ['price_type' => 'auction'],
             ['version' => 0],
         ] as $change) {
@@ -211,15 +215,15 @@ class RecordMarketPriceTest extends TestCase
             }
         }
 
-        $this->assertSame('35.00', $price->fresh()->price_per_kg);
+        $this->assertSame('35.00', $price->fresh()->unit_price);
     }
 
-    public function test_the_database_allows_one_entry_per_contributor_market_crop_type_and_day(): void
+    public function test_the_database_allows_one_entry_per_contributor_market_product_type_day_and_session(): void
     {
         $price = MarketPrice::factory()->create();
 
         $this->expectException(QueryException::class);
-        DB::table('market_prices')->insert($price->only(['market_id', 'contributor_id', 'crop_code', 'price_type', 'price_date']) + ['price_per_kg' => '40', 'version' => 1]);
+        DB::table('market_prices')->insert($price->only(['market_id', 'contributor_id', 'item_code', 'price_type', 'price_date']) + ['unit_price' => '40', 'version' => 1]);
     }
 
     public function test_markets_and_contributors_with_prices_cannot_be_deleted_by_accident(): void

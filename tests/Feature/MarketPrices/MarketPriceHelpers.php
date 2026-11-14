@@ -36,11 +36,13 @@ trait MarketPriceHelpers
     protected function validForm(array $overrides = []): array
     {
         return array_merge([
+            'entry_kind' => 'actual',
             'market_id' => $this->kawranBazar()->id,
-            'crop_code' => 'potato',
+            'item_code' => 'potato',
             'price_type' => 'retail',
-            'price_per_kg' => '35.50',
+            'unit_price' => '35.50',
             'price_date' => MarketPrice::today(),
+            'price_session' => 'morning',
             'note' => 'Morning price, new harvest.',
         ], $overrides);
     }
