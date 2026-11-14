@@ -270,4 +270,52 @@ class VeterinaryServiceTest extends TestCase
             ->patch(route('visit-requests.cancel', $requestRecord))
             ->assertForbidden();
     }
+
+    public function test_vet_directory_and_visit_request_pages_render_in_bangla(): void
+    {
+        $farmer = User::factory()->withRoles(Role::FARMER)->create(['locale' => 'bn']);
+        $vetUser = User::factory()->withRoles(Role::VETERINARIAN)->create(['locale' => 'bn']);
+
+        $profile = new VeterinarianProfile([
+            'district' => 'Rajshahi',
+            'upazila' => 'Paba',
+            'address' => 'Station Road',
+            'treats_goats' => true,
+            'is_listed' => true,
+        ]);
+        $profile->user_id = $vetUser->id;
+        $profile->save();
+
+        $requestRecord = new VisitRequest([
+            'animal_type' => 'goat',
+            'problem' => 'Not eating',
+            'preferred_date' => now()->addDay()->toDateString(),
+            'farm_address' => 'Paba Farm',
+        ]);
+        $requestRecord->farmer_id = $farmer->id;
+        $requestRecord->veterinarian_profile_id = $profile->id;
+        $requestRecord->save();
+
+        $this->actingAs($farmer)->get(route('vets.index'))
+            ->assertOk()
+            ->assertSee('পশু চিকিৎসক')
+            ->assertSee('নাম বা উপজেলা দিয়ে খুঁজুন')
+            ->assertDontSee('Veterinary Doctors');
+
+        $this->actingAs($farmer)->get(route('vets.show', $profile))
+            ->assertOk()
+            ->assertSee('খামারে ভিজিটের অনুরোধ করুন')
+            ->assertSee('ছাগল');
+
+        // The status badge is translated, not the raw database value.
+        $this->actingAs($farmer)->get(route('visit-requests.show', $requestRecord))
+            ->assertOk()
+            ->assertSee('অপেক্ষমাণ')
+            ->assertDontSee('PENDING');
+
+        $this->actingAs($vetUser)->get(route('vet.visit-requests.index'))
+            ->assertOk()
+            ->assertSee('আসা ভিজিটের অনুরোধ')
+            ->assertSee('গ্রহণ করুন');
+    }
 }

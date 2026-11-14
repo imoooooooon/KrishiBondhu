@@ -26,7 +26,7 @@
                     <x-ui.card>
                         <x-slot:title>{{ __('Farmer') }}: {{ $req->farmer->name }}</x-slot:title>
                         <x-slot:actions>
-                            <x-ui.badge :tone="$tone">{{ strtoupper($req->status) }}</x-ui.badge>
+                            <x-ui.badge :tone="$tone">{{ __(ucfirst($req->status)) }}</x-ui.badge>
                         </x-slot:actions>
 
                         <dl class="stack stack-sm mb-4">
