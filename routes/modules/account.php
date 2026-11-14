@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\PlannedController;
+use App\Http\Controllers\ReminderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,8 +50,10 @@ Route::post('/preferences/locale', LocaleController::class)->name('preferences.l
 Route::get('/notifications', PlannedController::class)->name('notifications.index');
 Route::patch('/notifications/{notification}/read', PlannedController::class)->name('notifications.read');
 Route::post('/notifications/read-all', PlannedController::class)->name('notifications.read-all');
-Route::get('/reminders', PlannedController::class)->name('reminders.index');                  // F10, F19
-Route::patch('/reminders/{reminder}/done', PlannedController::class)->name('reminders.complete'); // F10, F19
+Route::middleware('auth')->group(function () {
+    Route::get('/reminders', [ReminderController::class, 'index'])->name('reminders.index');                  // F10, F19
+    Route::patch('/reminders/{reminder}/done', [ReminderController::class, 'complete'])->name('reminders.complete'); // F10, F19
+});
 
 // Bangla voice (auth; JSON responses for the browser, not a separate API)
 Route::post('/voice/transcribe', PlannedController::class)->name('voice.transcribe');        // F23

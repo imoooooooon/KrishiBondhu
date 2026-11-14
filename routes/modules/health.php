@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PlannedController;
 use App\Http\Controllers\SoilGuidanceController;
+use App\Http\Controllers\TreatmentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,4 +41,6 @@ Route::get('/vet/visit-requests', PlannedController::class)->name('vet.visit-req
 Route::patch('/vet/visit-requests/{visitRequest}', PlannedController::class)->name('vet.visit-requests.update');
 
 // Treatment history and follow-ups — F19 (reminders: reminders.index in account.php)
-Route::resource('treatments', PlannedController::class);
+Route::middleware('auth')->group(function () {
+    Route::resource('treatments', TreatmentController::class);
+});
