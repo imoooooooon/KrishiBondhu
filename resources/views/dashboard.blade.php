@@ -53,6 +53,16 @@
                         <x-ui.button size="md" variant="secondary" icon="plus" :href="route('cattle.create')">{{ __('Register cattle') }}</x-ui.button>
                     </div>
                 </x-ui.card>
+
+                {{-- F15: soil-based fertilizer guidance (AI guidance from the farmer's own observations) --}}
+                <x-ui.card>
+                    <x-slot:title>{{ __('Soil and fertilizer guidance') }}</x-slot:title>
+                    <p class="t-callout t-muted mb-4">{{ __('Describe your crop and soil to get general soil-care and fertilizer guidance. A photo is optional.') }}</p>
+                    <div class="cluster">
+                        <x-ui.button size="md" icon="sprout" :href="route('guidance.soil.create')">{{ __('Get soil guidance') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="list" :href="route('guidance.soil.index')">{{ __('My soil guidance') }}</x-ui.button>
+                    </div>
+                </x-ui.card>
             @endif
 
             @if ($user->hasRole(\App\Models\Role::SELLER))

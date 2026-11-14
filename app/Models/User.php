@@ -52,6 +52,12 @@ class User extends Authenticatable
         return $this->hasMany(Cattle::class, 'farmer_id');
     }
 
+    /** Soil guidance requests this farmer made (F15), with the saved AI answers. */
+    public function soilGuidanceRecords(): HasMany
+    {
+        return $this->hasMany(SoilGuidanceRecord::class, 'farmer_id');
+    }
+
     /** Does this user hold the role? Pass a Role constant, e.g. Role::FARMER. */
     public function hasRole(string $slug): bool
     {
