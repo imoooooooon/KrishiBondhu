@@ -8,13 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('reminders', function (Blueprint $table) {$table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();$table->string('source_type', 60)->nullable();
-            $table->unsignedBigInteger('source_id')->nullable();$table->string('title', 160);
-            $table->text('notes')->nullable();$table->date('remind_on');
-            $table->timestamp('completed_at')->nullable();$table->timestamps();
+        Schema::create('reminders', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('source_type', 60)->nullable();
+            $table->unsignedBigInteger('source_id')->nullable();
+            $table->string('title', 160);
+            $table->text('notes')->nullable();
+            $table->date('remind_on');
+            $table->timestamp('completed_at')->nullable();
+            $table->timestamps();
 
-            $table->index(['user_id', 'completed_at', 'remind_on']);$table->index(['source_type', 'source_id']);
+            $table->index(['user_id', 'completed_at', 'remind_on']);
+            $table->index(['source_type', 'source_id']);
         });
     }
 
