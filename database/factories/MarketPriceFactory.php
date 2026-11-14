@@ -9,9 +9,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * Test price observations (F11). Default: today's retail potato price at a new test market, by a new contributor.
+ * Test price observations (F11). Default: today's retail morning potato price at a new test market, by a new contributor.
  *
- * Example: MarketPrice::factory()->for($contributor, 'contributor')->for($market)->create(['price_per_kg' => '42.50']);
+ * Example: MarketPrice::factory()->for($contributor, 'contributor')->for($market)->create(['unit_price' => '42.50']);
  *
  * @extends Factory<MarketPrice>
  */
@@ -22,12 +22,26 @@ class MarketPriceFactory extends Factory
         return [
             'market_id' => Market::factory(),
             'contributor_id' => User::factory()->withRoles(Role::PRICE_CONTRIBUTOR),
-            'crop_code' => 'potato',
+            'item_code' => 'potato',
             'price_type' => 'retail',
-            'price_per_kg' => '35.00',
+            'unit_price' => '35.00',
             'price_date' => MarketPrice::today(),
+            'price_session' => 'morning',
+            'is_estimate' => false,
             'note' => null,
             'version' => 1,
         ];
+    }
+
+    /** The contributor's estimate for tomorrow (session "all_day"). Keeps the factory's item (potato). */
+    public function estimate(): static
+    {
+        return $this->state(['price_date' => MarketPrice::tomorrow(), 'price_session' => MarketPrice::DAY_SESSION, 'is_estimate' => true]);
+    }
+
+    /** An actual price for a product with one price per day (e.g. rice), session "all_day". */
+    public function daily(string $itemCode = 'rice_coarse'): static
+    {
+        return $this->state(['item_code' => $itemCode, 'price_session' => MarketPrice::DAY_SESSION]);
     }
 }
