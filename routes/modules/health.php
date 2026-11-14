@@ -3,6 +3,10 @@
 use App\Http\Controllers\PlannedController;
 use App\Http\Controllers\SoilGuidanceController;
 use App\Http\Controllers\TreatmentController;
+use App\Http\Controllers\VetDirectoryController;
+use App\Http\Controllers\VetProfileController;
+use App\Http\Controllers\VetVisitRequestController;
+use App\Http\Controllers\VisitRequestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,17 +32,21 @@ Route::resource('guidance/crop-health', PlannedController::class)->only(['index'
 Route::resource('guidance/animal-health', PlannedController::class)->only(['index', 'create', 'store', 'show'])->names('guidance.animal-health')->parameters(['animal-health' => 'record']);
 
 // Veterinary search and visit requests — F18
-Route::get('/vets', PlannedController::class)->name('vets.index');
-Route::get('/vets/{vet}', PlannedController::class)->name('vets.show');
-Route::post('/vets/{vet}/visit-requests', PlannedController::class)->name('vets.visit-requests.store');
-Route::get('/visit-requests', PlannedController::class)->name('visit-requests.index');
-Route::get('/visit-requests/{visitRequest}', PlannedController::class)->name('visit-requests.show');
+Route::get('/vets', [VetDirectoryController::class, 'index'])->name('vets.index');
+Route::get('/vets/{vet}', [VetDirectoryController::class, 'show'])->name('vets.show');
 
-// Veterinarian workspace — F18
-Route::get('/vet/profile', PlannedController::class)->name('vet.profile.edit');
-Route::patch('/vet/profile', PlannedController::class)->name('vet.profile.update');
-Route::get('/vet/visit-requests', PlannedController::class)->name('vet.visit-requests.index');
-Route::patch('/vet/visit-requests/{visitRequest}', PlannedController::class)->name('vet.visit-requests.update');
+Route::middleware('auth')->group(function () {
+    Route::post('/vets/{vet}/visit-requests', [VisitRequestController::class, 'store'])->name('vets.visit-requests.store');
+    Route::get('/visit-requests', [VisitRequestController::class, 'index'])->name('visit-requests.index');
+    Route::get('/visit-requests/{visitRequest}', [VisitRequestController::class, 'show'])->name('visit-requests.show');
+    Route::patch('/visit-requests/{visitRequest}/cancel', [VisitRequestController::class, 'cancel'])->name('visit-requests.cancel');
+
+    // Veterinarian workspace — F18
+    Route::get('/vet/profile', [VetProfileController::class, 'edit'])->name('vet.profile.edit');
+    Route::patch('/vet/profile', [VetProfileController::class, 'update'])->name('vet.profile.update');
+    Route::get('/vet/visit-requests', [VetVisitRequestController::class, 'index'])->name('vet.visit-requests.index');
+    Route::patch('/vet/visit-requests/{visitRequest}', [VetVisitRequestController::class, 'update'])->name('vet.visit-requests.update');
+});
 
 // Treatment history and follow-ups — F19 (reminders: reminders.index in account.php)
 Route::middleware('auth')->group(function () {
