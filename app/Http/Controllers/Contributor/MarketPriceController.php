@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Contributor;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MarketPrices\StoreMarketPriceRequest;
+use App\Http\Requests\MarketPrices\UpdateMarketPriceRequest;
+use App\Http\Requests\MarketPrices\WithdrawMarketPriceRequest;
 use App\Models\Market;
 use App\Models\MarketPrice;
 use App\Services\MarketPriceService;
@@ -17,7 +19,7 @@ use Illuminate\View\View;
  * names contributor.prices.*. Spec: docs/features/F11-market-price-tracking.md.
  *
  * This controller only coordinates. Who may act -> MarketPricePolicy (via Gate and the Form Requests),
- * valid input -> Form Requests, saving rows (duplicates, history) -> MarketPriceService.
+ * valid input -> Form Requests, saving rows (duplicates, corrections, withdrawals, history) -> MarketPriceService.
  */
 class MarketPriceController extends Controller
 {
@@ -54,5 +56,44 @@ class MarketPriceController extends Controller
         return redirect()->route('contributor.prices.index')->with('status', $created
             ? __('Price recorded. Thank you: buyers and farmers can now see it.')
             : __('This price was already recorded from your earlier submission. Nothing was added twice.'));
+    }
+
+    /**
+     * The correction page for one own entry (contributor.prices.edit): correct the price or note, or withdraw it.
+     * Another contributor's entry is 404; an entry older than the correction window is 403 with the reason.
+     */
+    public function edit(Request $request, MarketPrice $price): View
+    {
+        Gate::authorize('update', $price);
+
+        return view('contributor.prices.edit', [
+            'price' => $price->load(['market', 'revisions']),
+            'confirmWithdraw' => $request->query('confirm') === 'withdraw',
+        ]);
+    }
+
+    /** Correct the price and/or note (contributor.prices.update). The old values are logged with the reason. */
+    public function update(UpdateMarketPriceRequest $request, MarketPrice $price): RedirectResponse
+    {
+        $this->prices->correct(
+            $price,
+            $request->version(),
+            $request->correction(),
+            $request->validated('reason'),
+            $request->user(),
+            $request->only(['unit_price', 'note', 'reason']),
+        );
+
+        return redirect()->route('contributor.prices.index')
+            ->with('status', __('Price corrected. The old value is kept in the price history.'));
+    }
+
+    /** Withdraw (contributor.prices.destroy): hidden everywhere, kept in the database with the reason. */
+    public function destroy(WithdrawMarketPriceRequest $request, MarketPrice $price): RedirectResponse
+    {
+        $this->prices->withdraw($price, $request->version(), $request->reason());
+
+        return redirect()->route('contributor.prices.index')
+            ->with('status', __('Price withdrawn. It no longer appears anywhere, and you can record the right price now.'));
     }
 }

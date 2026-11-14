@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Exceptions\MarketPriceConflictException;
 use App\Models\MarketPrice;
+use App\Models\MarketPriceRevision;
 use App\Models\User;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -206,6 +209,69 @@ class MarketPriceService
         }
 
         return [$price, true];
+    }
+
+    /**
+     * Correct the price and/or note of an entry. The values being replaced are stored in market_price_revisions with
+     * the reason, in the same transaction, so every value that was ever public stays on record.
+     * The row is locked and its version compared: a correction from an old tab is refused (409), never applied.
+     *
+     * @param  array{unit_price: string, note: ?string}  $correction
+     */
+    public function correct(MarketPrice $price, int $version, array $correction, string $reason, User $contributor, array $submitted = []): MarketPrice
+    {
+        return DB::transaction(function () use ($price, $version, $correction, $reason, $contributor, $submitted) {
+            $locked = $this->lockCurrent($price, $version, $submitted);
+
+            $samePrice = BigDecimal::of((string) $locked->unit_price)->isEqualTo($correction['unit_price']);
+            if ($samePrice && $locked->note === $correction['note']) {
+                throw ValidationException::withMessages(['unit_price' => __('Nothing changed. Change the price or the note, or cancel.')]);
+            }
+
+            $revision = new MarketPriceRevision([
+                'old_unit_price' => $locked->unit_price,
+                'old_note' => $locked->note,
+                'reason' => $reason,
+            ]);
+            $revision->revised_by = $contributor->id; // set by the server, never by the form
+            $locked->revisions()->save($revision);
+
+            $locked->fill($correction);
+            $locked->version = $locked->version + 1;
+            $locked->save();
+
+            return $locked;
+        });
+    }
+
+    /**
+     * Withdraw an entry: it disappears from the public page and the contributor's list, but the row stays in the
+     * database (soft delete) with the reason. Its slot is freed, so the right price can be recorded again.
+     */
+    public function withdraw(MarketPrice $price, int $version, string $reason): void
+    {
+        DB::transaction(function () use ($price, $version, $reason) {
+            $locked = $this->lockCurrent($price, $version);
+            $locked->withdrawal_reason = $reason;
+            $locked->version = $locked->version + 1;
+            $locked->deleted_at = $locked->freshTimestamp();
+            $locked->save();
+        });
+    }
+
+    /**
+     * Lock the entry until the transaction ends, and make sure the contributor's page is not out of date.
+     * An entry withdrawn meanwhile is "not found" (404); a changed one is a conflict (409).
+     */
+    private function lockCurrent(MarketPrice $price, int $version, array $submitted = []): MarketPrice
+    {
+        $locked = MarketPrice::query()->whereKey($price->getKey())->lockForUpdate()->firstOrFail();
+
+        if ($locked->version !== $version) {
+            throw new MarketPriceConflictException($locked, $submitted);
+        }
+
+        return $locked;
     }
 
     private function findSameSession(User $contributor, array $fields): ?MarketPrice

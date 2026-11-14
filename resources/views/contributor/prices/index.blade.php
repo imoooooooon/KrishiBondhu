@@ -2,6 +2,8 @@
     "My market prices" (route contributor.prices.index, market price contributor role). F11.
     Controller: Contributor\MarketPriceController@index. Only this contributor's own entries, latest change first.
     Estimates for tomorrow carry a badge, so they are never mistaken for a price that was seen.
+    Entries can be corrected or withdrawn for MarketPrice::CORRECTION_DAYS days; after that they are locked history.
+    Withdrawn entries are hidden here (soft delete) but stay in the database.
     The table scrolls sideways on narrow phones (.table-wrap) instead of widening the page.
 --}}
 <x-layouts.app :title="__('My market prices')">
@@ -30,6 +32,7 @@
                             <th scope="col">{{ __('Price type') }}</th>
                             <th scope="col" class="num">{{ __('Price') }}</th>
                             <th scope="col">{{ __('Note') }}</th>
+                            <th scope="col"><span class="visually-hidden">{{ __('Actions') }}</span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,8 +49,18 @@
                                 <td>{{ $price->itemName() }}</td>
                                 <td>{{ $price->market->label() }}</td>
                                 <td>{{ $price->typeLabel() }}</td>
-                                <td class="num"><x-ui.price :amount="$price->unit_price" :decimals="2" :unit="$price->unitLabel()" /></td>
+                                <td class="num">
+                                    <x-ui.price :amount="$price->unit_price" :decimals="2" :unit="$price->unitLabel()" />
+                                    @if ($price->isCorrected())<span class="t-caption t-muted"><br>{{ __('Corrected') }}</span>@endif
+                                </td>
                                 <td>{{ $price->note }}</td>
+                                <td>
+                                    @if ($price->canStillChange())
+                                        <x-ui.button size="sm" variant="tertiary" icon="pencil" :href="route('contributor.prices.edit', $price)">{{ __('Edit') }}<span class="visually-hidden"> {{ $price->itemName() }}, {{ $price->priceDateForDisplay() }}</span></x-ui.button>
+                                    @else
+                                        <span class="t-caption t-muted">{{ __('Locked (history)') }}</span>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -21,14 +21,16 @@ Route::get('/markets', PlannedController::class)->name('markets.index');
 Route::get('/markets/map', PlannedController::class)->name('markets.map');
 Route::get('/markets/{market}', PlannedController::class)->name('markets.show');
 
-// Contributor price entry (history kept; no delete) — F11. Signed in here; the contributor role (and, for corrections,
-// ownership) is checked by MarketPricePolicy. Per account: 20 new prices per minute.
+// Contributor price entry — F11. Signed in here; the contributor role, ownership and the 7-day correction window are
+// checked by MarketPricePolicy. History is kept: "destroy" withdraws an entry (soft delete with a reason), it never
+// erases it. Per account: 20 new prices and 30 corrections or withdrawals per minute.
 Route::middleware('auth')->group(function () {
     Route::resource('contributor/prices', MarketPriceController::class)->names('contributor.prices')
-        ->parameters(['prices' => 'price'])->only(['index', 'create']);
+        ->parameters(['prices' => 'price'])->only(['index', 'create', 'edit']);
     Route::post('/contributor/prices', [MarketPriceController::class, 'store'])
         ->middleware('throttle:20,1,market-price-create')->name('contributor.prices.store');
+    Route::match(['put', 'patch'], '/contributor/prices/{price}', [MarketPriceController::class, 'update'])
+        ->middleware('throttle:30,1,market-price-change')->name('contributor.prices.update');
+    Route::delete('/contributor/prices/{price}', [MarketPriceController::class, 'destroy'])
+        ->middleware('throttle:30,1,market-price-change')->name('contributor.prices.destroy');
 });
-// Corrections (slice 2) — F11
-Route::get('/contributor/prices/{price}/edit', PlannedController::class)->name('contributor.prices.edit');
-Route::match(['put', 'patch'], '/contributor/prices/{price}', PlannedController::class)->name('contributor.prices.update');

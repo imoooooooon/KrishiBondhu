@@ -76,7 +76,7 @@ class StoreMarketPriceRequest extends FormRequest
     }
 
     /** Exact decimal comparison (brick/math, shipped with Laravel): never converts money to a float. */
-    private function positiveAtMost(string $max): Closure
+    protected function positiveAtMost(string $max): Closure
     {
         return function (string $attribute, mixed $value, Closure $fail) use ($max) {
             $number = BigDecimal::of($value);
