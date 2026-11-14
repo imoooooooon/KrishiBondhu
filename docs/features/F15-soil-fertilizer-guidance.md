@@ -49,7 +49,7 @@ Farmers reach it from the **Soil and fertilizer guidance** card on the dashboard
 | Service | `app/Services/GeminiClient.php` | The only code that knows Gemini's URL, headers and JSON shapes |
 | Exception | `app/Exceptions/AiGuidanceException.php` | The list of safe error codes |
 | Config | `config/services.php` (`gemini`), `config/soil_guidance.php` | Key, model, time limit; attempt and retry limits |
-| Tests | `tests/Feature/SoilGuidance/` | 89 tests; the AI service is always faked |
+| Tests | `tests/Feature/SoilGuidance/` | 90 tests; the AI service is always faked |
 
 One sentence for the viva: **the view shows, the controller coordinates, the Form Request checks input, the policy
 checks who, the model holds the data and its rules, and the services do the work with the AI provider.**
@@ -178,7 +178,7 @@ No queue worker, no new Composer package, no `storage:link` (the photo is privat
 
 ## 10. Tests
 
-`php artisan test tests/Feature/SoilGuidance` (89 tests). Every test fakes the AI service with `Http::fake()`, and
+`php artisan test tests/Feature/SoilGuidance` (90 tests). Every test fakes the AI service with `Http::fake()`, and
 `Http::preventStrayRequests()` makes a forgotten fake fail, so tests never need a key or use quota.
 
 They cover: submitting with and without a photo; guests and non-farmers; required fields and allowed values;
