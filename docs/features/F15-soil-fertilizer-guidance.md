@@ -1,6 +1,6 @@
 # F15 — Soil-Based Fertilizer Guidance
 
-Owner: Mehrab Hossain Nizami (`mugdhoo44`) · Issue: [#22](https://github.com/imoooooooon/KrishiBondhu/issues/22) · Sprint 2 ·
+Owner: Mehrab Hossain Nizami (`mugdhoo44`) · Issue: [#22](https://github.com/imoooooooon/KrishiBondhu/issues/22) · Sprint 1 ·
 SRS row: R15 / F15 in [srs.md](../srs.md).
 
 > **Living document.** Records what F15 does, the decisions behind it, and how to set it up and demonstrate it.
