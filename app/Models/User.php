@@ -6,6 +6,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -62,5 +63,17 @@ class User extends Authenticatable
     public function hasRole(string $slug): bool
     {
         return $this->roles->contains('slug', $slug);
+    }
+
+    /** Veterinarian profile owned by this user (F18). */
+    public function veterinarianProfile(): HasOne
+    {
+        return $this->hasOne(VeterinarianProfile::class);
+    }
+
+    /** Farm-visit requests sent by this farmer (F18). */
+    public function visitRequests(): HasMany
+    {
+        return $this->hasMany(VisitRequest::class, 'farmer_id');
     }
 }
