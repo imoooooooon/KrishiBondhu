@@ -1,6 +1,6 @@
 # Demo assets and credits
 
-Photos used **only by the local demo data** (`php artisan db:seed --class=CropListingDemoSeeder`, `php artisan kb:demo-cattle seed`).
+Photos used **only by the local demo data** (`php artisan db:seed --class=CropListingDemoSeeder`, `php artisan db:seed --class=AgriculturalProductDemoSeeder`, `php artisan kb:demo-cattle seed`).
 They are free photos from [Unsplash](https://unsplash.com), used under the [Unsplash License](https://unsplash.com/license)
 (free use, attribution appreciated but not required). They are downloaded from Unsplash's image CDN when the demo runs,
 cached privately on your computer (`storage/app/private/demo/`), and never committed to Git.
@@ -31,7 +31,7 @@ All demo accounts use the password `password`. `php artisan db:seed --class=Demo
 
 The F11 prices, F15 guidance texts, F18 requests and F19 treatment notes are fictional examples, not real market data
 or veterinary or agronomic advice. The F15 answers were written by hand and are saved with `ai_model` `demo-seeder`,
-so they are never presented as real Gemini output. F25 demo products have no photos.
+so they are never presented as real Gemini output.
 
 ## F6 demo cattle (accessed 13 November 2026)
 
@@ -56,3 +56,9 @@ Each photo was checked by hand: it shows cattle, has no people, and is a free ph
 
 The 17 crop photos are listed with their Unsplash page ids in `database/seeders/CropListingDemoSeeder.php`
 (photo pages: `https://unsplash.com/photos/{id}`).
+
+## F25 demo products (accessed 15 November 2026)
+
+The 10 product photos are listed with their Unsplash page ids in `database/seeders/AgriculturalProductDemoSeeder.php`
+(photo pages: `https://unsplash.com/photos/{id}`). Each was checked by eye: it shows the product or something close to
+it (for example a generic sprayer or oil bottle, not the exact product), has no faces, and is a free photo (not Unsplash+).
