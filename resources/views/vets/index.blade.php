@@ -1,47 +1,81 @@
 <x-layouts.app :title="__('Veterinary Doctors')">
-    <section class="kb-section">
-        <h1>{{ __('Veterinary Doctors') }}</h1>
+    <div class="container">
+        <x-ui.page-header :title="__('Veterinary Doctors')" :subtitle="__('Find listed veterinarians by name, district, or the animals they treat.')">
+            <x-slot:breadcrumbs><a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a></x-slot:breadcrumbs>
+            @auth
+                @if(auth()->user()->hasRole(\App\Models\Role::FARMER))
+                    <x-slot:actions>
+                        <x-ui.button size="md" variant="secondary" icon="list" :href="route('visit-requests.index')">{{ __('My Visit Requests') }}</x-ui.button>
+                    </x-slot:actions>
+                @endif
+            @endauth
+        </x-ui.page-header>
 
-        <form method="GET" action="{{ route('vets.index') }}" class="kb-filter-bar">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('Search by name or upazila') }}">
-            <input type="text" name="district" value="{{ request('district') }}" placeholder="{{ __('District') }}">
-            <select name="animal">
-                <option value="">{{ __('All Animals') }}</option>
-                <option value="cattle" @selected(request('animal') === 'cattle')>{{ __('Cattle') }}</option>
-                <option value="goats" @selected(request('animal') === 'goats')>{{ __('Goats') }}</option>
-                <option value="poultry" @selected(request('animal') === 'poultry')>{{ __('Poultry') }}</option>
-            </select>
-            <button type="submit" class="kb-btn kb-btn-primary">{{ __('Search') }}</button>
-            @if(request()->hasAny(['search', 'district', 'animal']))
-                <a href="{{ route('vets.index') }}" class="kb-btn">{{ __('Reset') }}</a>
-            @endif
-        </form>
+        <x-ui.card class="mb-4">
+            <form method="GET" action="{{ route('vets.index') }}" class="stack">
+                <div class="grid-2">
+                    <x-ui.field name="search" :label="__('Search')" :value="request('search')" :placeholder="__('Search by name or upazila')" />
+                    <x-ui.field name="district" :label="__('District')" :value="request('district')" :placeholder="__('District')" />
+                </div>
+                <x-ui.select
+                    name="animal"
+                    :label="__('Animal Type')"
+                    :value="request('animal')"
+                    :options="[
+                        '' => __('All Animals'),
+                        'cattle' => __('Cattle'),
+                        'goats' => __('Goats'),
+                        'poultry' => __('Poultry'),
+                    ]"
+                />
+                <div class="cluster">
+                    <x-ui.button type="submit" size="md" icon="search">{{ __('Search') }}</x-ui.button>
+                    @if(request()->hasAny(['search', 'district', 'animal']))
+                        <x-ui.button size="md" variant="secondary" :href="route('vets.index')">{{ __('Reset') }}</x-ui.button>
+                    @endif
+                </div>
+            </form>
+        </x-ui.card>
 
         @if($vets->isEmpty())
-            <p>{{ __('No veterinarians found.') }}</p>
+            <x-ui.empty-state icon="stethoscope" :title="__('No veterinarians found.')" :description="__('Try clearing your filters or check back later as more doctors list their profiles.')" />
         @else
-            <div class="kb-grid">
+            <div class="grid-2">
                 @foreach($vets as $vet)
-                    <article class="kb-card">
-                        <h2>{{ $vet->user->name }}</h2>
-                        <p><strong>{{ __('Area') }}:</strong> {{ $vet->upazila }}, {{ $vet->district }}</p>
-                        <p><strong>{{ __('Address') }}:</strong> {{ $vet->address }}</p>
+                    <x-ui.card>
+                        <x-slot:title>{{ $vet->user->name }}</x-slot:title>
                         @if($vet->experience_years !== null)
-                            <p><strong>{{ __('Experience') }}:</strong> {{ $vet->experience_years }} {{ __('years') }}</p>
+                            <x-slot:actions>
+                                <x-ui.badge tone="info">{{ $vet->experience_years }} {{ __('years') }}</x-ui.badge>
+                            </x-slot:actions>
                         @endif
-                        <p>
-                            <strong>{{ __('Treats') }}:</strong>
-                            {{ collect([
-                                $vet->treats_cattle ? __('Cattle') : null,
-                                $vet->treats_goats ? __('Goats') : null,
-                                $vet->treats_poultry ? __('Poultry') : null,
-                            ])->filter()->implode(', ') ?: __('General') }}
-                        </p>
-                        <a href="{{ route('vets.show', $vet) }}">{{ __('View Profile & Request Visit') }}</a>
-                    </article>
+
+                        <dl class="stack stack-sm mb-4">
+                            <div class="cluster cluster--between">
+                                <dt class="t-muted">{{ __('Area') }}</dt>
+                                <dd>{{ $vet->upazila }}, {{ $vet->district }}</dd>
+                            </div>
+                            <div class="cluster cluster--between">
+                                <dt class="t-muted">{{ __('Address') }}</dt>
+                                <dd>{{ $vet->address }}</dd>
+                            </div>
+                            <div class="cluster cluster--between">
+                                <dt class="t-muted">{{ __('Treats') }}</dt>
+                                <dd>
+                                    {{ collect([
+                                        $vet->treats_cattle ? __('Cattle') : null,
+                                        $vet->treats_goats ? __('Goats') : null,
+                                        $vet->treats_poultry ? __('Poultry') : null,
+                                    ])->filter()->implode(', ') ?: __('General') }}
+                                </dd>
+                            </div>
+                        </dl>
+
+                        <x-ui.button size="md" icon="arrow-right" :href="route('vets.show', $vet)">{{ __('View Profile & Request Visit') }}</x-ui.button>
+                    </x-ui.card>
                 @endforeach
             </div>
-            {{ $vets->links() }}
+            <div class="mt-4">{{ $vets->links() }}</div>
         @endif
-    </section>
+    </div>
 </x-layouts.app>

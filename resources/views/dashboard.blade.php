@@ -54,6 +54,18 @@
                     </div>
                 </x-ui.card>
 
+                {{-- F18 & F19: veterinary visit requests, treatment history and reminders --}}
+                <x-ui.card>
+                    <x-slot:title>{{ __('Veterinary care & treatments') }}</x-slot:title>
+                    <p class="t-callout t-muted mb-4">{{ __('Find veterinarians for farm visits, keep treatment notes, and check follow-up reminders.') }}</p>
+                    <div class="cluster">
+                        <x-ui.button size="md" icon="stethoscope" :href="route('vets.index')">{{ __('Find a veterinarian') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="list" :href="route('visit-requests.index')">{{ __('My Visit Requests') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="heart-pulse" :href="route('treatments.index')">{{ __('Treatment History') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="bell" :href="route('reminders.index')">{{ __('Follow-up Reminders') }}</x-ui.button>
+                    </div>
+                </x-ui.card>
+
                 {{-- F15: soil-based fertilizer guidance (AI guidance from the farmer's own observations) --}}
                 <x-ui.card>
                     <x-slot:title>{{ __('Soil and fertilizer guidance') }}</x-slot:title>
@@ -61,6 +73,18 @@
                     <div class="cluster">
                         <x-ui.button size="md" icon="sprout" :href="route('guidance.soil.create')">{{ __('Get soil guidance') }}</x-ui.button>
                         <x-ui.button size="md" variant="secondary" icon="list" :href="route('guidance.soil.index')">{{ __('My soil guidance') }}</x-ui.button>
+                    </div>
+                </x-ui.card>
+            @endif
+
+            @if ($user->hasRole(\App\Models\Role::VETERINARIAN))
+                {{-- F18: veterinarian profile and incoming farm visit requests --}}
+                <x-ui.card>
+                    <x-slot:title>{{ __('Veterinary practice') }}</x-slot:title>
+                    <p class="t-callout t-muted mb-4">{{ __('Manage your public doctor profile and respond to farm visit requests from farmers.') }}</p>
+                    <div class="cluster">
+                        <x-ui.button size="md" icon="stethoscope" :href="route('vet.visit-requests.index')">{{ __('Incoming Visit Requests') }}</x-ui.button>
+                        <x-ui.button size="md" variant="secondary" icon="user" :href="route('vet.profile.edit')">{{ __('Veterinarian Profile') }}</x-ui.button>
                     </div>
                 </x-ui.card>
             @endif
