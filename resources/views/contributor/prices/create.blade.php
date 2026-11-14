@@ -3,7 +3,7 @@
     Controller: Contributor\MarketPriceController@create. Sending the same form twice records one price.
 --}}
 <x-layouts.app :title="__('Record a market price')" narrow>
-    <x-ui.page-header :title="__('Record a market price')" :subtitle="__('Enter one crop price you saw today or recently. Every entry is kept as price history.')">
+    <x-ui.page-header :title="__('Record a market price')" :subtitle="__('Enter a price you saw for a farm product, or your estimate for tomorrow. Every entry is kept as price history.')">
         <x-slot:breadcrumbs>
             <a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
             <x-ui.icon name="chevron-right" size="14" />
