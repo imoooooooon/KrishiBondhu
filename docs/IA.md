@@ -68,6 +68,7 @@ flowchart LR
 | Farmer records breeding | `cattle.show` → `breeding-check.create` → `cattle.inseminations.create` → `cattle.pregnancies.create` → `pregnancies.calving` |
 | Farmer gets soil guidance | `guidance.soil.create` → `guidance.soil.store` (asks the AI service) → `guidance.soil.show` (result, or failure with `guidance.soil.retry`) → `guidance.soil.index` (history) |
 | Farmer gets help for a sick cow | `guidance.animal-health.create` → result → `vets.index` → `vets.visit-requests.store` → `visit-requests.show` |
+| `PATCH /visit-requests/{visitRequest}/cancel` | `visit-requests.cancel` | Farmer (request owner, pending only) | Cancel a pending farm-visit request (F18) |
 | Farmer hires workers | `farmer.jobs.create` → workers `jobs.applications.store` → `farmer.jobs.applications.update` → `farmer.jobs.bookings.store` → `bookings.show` |
 
 ## 4. Conventions
@@ -274,6 +275,7 @@ File: `routes/modules/health.php` · 31 routes
 | `POST` | `/vets/{vet}/visit-requests` | `vets.visit-requests.store` | F18 | Farmer |
 | `GET` | `/visit-requests` | `visit-requests.index` | F18 | Farmer |
 | `GET` | `/visit-requests/{visitRequest}` | `visit-requests.show` | F18 | Farmer |
+| `PATCH /visit-requests/{visitRequest}/cancel` | `visit-requests.cancel` | Farmer (request owner, pending only) | Cancel a pending farm-visit request (F18) |
 
 ### 5.7 Jobs
 
