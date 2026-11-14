@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 | Access: hub and vet directory are public; guidance and treatments need auth; /vet/* needs the veterinarian role.
 */
 
-// Health hub (public): entry point to F15–F19
-Route::get('/health', PlannedController::class)->name('health.index');
+// Health hub (public): entry point to F15–F19. A plain page of links, so a view route is enough.
+Route::view('/health', 'health.index')->name('health.index');
 
 // Soil-based fertilizer guidance — F15. Signed in here; the Farmer role and ownership are checked by SoilGuidanceRecordPolicy.
 // Each new request and each retry calls the AI service, so both are rate limited per account (5 and 6 per minute).
