@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -16,7 +18,9 @@ use Illuminate\Support\Carbon;
  * Items cover everything farmers sell: grains, vegetables, fish, meat, poultry, eggs, milk and oil. Each item has a
  * fixed unit (kg, litre or dozen), so unit_price is "taka per kg", "per litre" or "per dozen" depending on the item.
  *
- * History is kept: a new price is a new row, rows are never deleted, and corrections are logged.
+ * History is kept: a new price is a new row and rows are never erased. A contributor may correct (price and note) or
+ * withdraw their own entry within CORRECTION_DAYS: corrections are logged in market_price_revisions, and a withdrawn
+ * entry is soft-deleted (deleted_at + withdrawal_reason), so it disappears from every page but stays in the database.
  * Only vegetables and fish change during the day, so only their actual prices belong to a session (morning, afternoon,
  * evening). Every other product has one price per day (session "all_day"). An estimate is the contributor's guess for
  * tomorrow (session "all_day", is_estimate = true) and is never shown as an actual price.
@@ -25,7 +29,7 @@ use Illuminate\Support\Carbon;
 class MarketPrice extends Model
 {
     /** @use HasFactory<MarketPriceFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * Every item whose price is tracked: code => [group, unit]. Order = the order in the item list.
@@ -72,6 +76,9 @@ class MarketPrice extends Model
 
     public const PER_PAGE = 15;
 
+    /** A contributor may correct or withdraw their own entry for this many days after recording it. */
+    public const CORRECTION_DAYS = 7;
+
     /** "Today" for the price date is the Bangladesh calendar date. Timestamps stay in UTC. */
     public const TIMEZONE = 'Asia/Dhaka';
 
@@ -99,6 +106,24 @@ class MarketPrice extends Model
     public function contributor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'contributor_id');
+    }
+
+    /** Every correction of this entry, newest first. */
+    public function revisions(): HasMany
+    {
+        return $this->hasMany(MarketPriceRevision::class)->orderByDesc('id');
+    }
+
+    /** Is this entry still within the correction window (CORRECTION_DAYS after it was recorded)? */
+    public function canStillChange(): bool
+    {
+        return $this->created_at !== null && $this->created_at->greaterThanOrEqualTo(now()->subDays(self::CORRECTION_DAYS));
+    }
+
+    /** Has the price or note been corrected at least once? (Every change raises the version.) */
+    public function isCorrected(): bool
+    {
+        return $this->version > 1;
     }
 
     /** The entries one contributor recorded, for "My prices". */
