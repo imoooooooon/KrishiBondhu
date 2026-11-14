@@ -20,7 +20,7 @@ so price history is never lost.
 | 1 | Markets and price tables, recording and listing own prices | `contributor.prices.index/create/store` | Built |
 | 2 | Sessions of the day, tomorrow's estimate, all farm products with their units | same routes | Built |
 | 3 | Public page: today, yesterday, change, tomorrow's estimate, last update, filters, recent entries | `market-prices.index` | Built |
-| 4 | Corrections with a revision log, 7-day window, stale-tab 409 | `contributor.prices.edit/update` | Planned |
+| 4 | Correct (logged) or withdraw (kept, hidden) own entries within 7 days; dashboard card | `contributor.prices.edit/update/destroy` (destroy is new) | Built |
 
 Not F11: comparison across markets (F13, `market-prices.compare`), trends and charts over a time period (F14,
 `market-prices.trends`), maps, coordinates and distance (F12, `markets.*`), and market administration
@@ -33,7 +33,9 @@ Not F11: comparison across markets (F13, `market-prices.compare`), trends and ch
 | --- | --- | --- |
 | D1 | A minimal shared `markets` table (name, Bangla name, upazila, district). The initial 8 markets are inserted by the migration, like the roles. | No admin account can exist yet, so `/admin/markets` cannot create markets. F12 adds coordinates in its own migration; admins manage markets later. |
 | D2 | Products are a fixed list on `MarketPrice::ITEMS` (code → group and unit) with English and Bangla names. | Free text would split one product into many ("Potato", "potato", "আলু"), breaking the latest price and F13/F14. Adding a product is a code change plus a migration for the CHECK; a test checks the two lists match. |
-| D3 | A correction is allowed on your own entry within 7 days, needs a reason, and logs the old values (slice 2). | The SRS keeps previous entries: no value that was ever public disappears. |
+| D3 | A correction is allowed on your own entry within 7 days, changes only the price and the note, needs a reason, and logs the old values. | The SRS keeps previous entries: no value that was ever public disappears. |
+| D11 | **"Delete" = withdraw** (chosen by Jarif): the entry disappears from every page but stays in the database (soft delete) with a required reason; own entries within 7 days only. Withdrawing frees the slot so the right price can be recorded. New route `contributor.prices.destroy`. | Contributors must be able to remove a wrong entry, but the SRS keeps price history, so nothing is erased. |
+| D12 | Contributors see their 5 latest entries on the dashboard, with links to correct them (shared `dashboard.blade.php` and `DashboardController`, lines added only, approved by Jarif). | Contributors asked to see and manage their contributions from the dashboard. |
 | D4 | Every price is either retail or wholesale. | Mixing them would make the latest price and comparisons misleading. |
 | D5 | The public page shows the recent entries for one crop at one market (slice 4). | Makes the kept history visible; charts and time periods stay F14's. |
 | D6 | Prices that change during the day have a session: morning, afternoon or evening. | Vegetable and fish prices change during the day, sometimes several times. |
@@ -61,6 +63,19 @@ Not F11: comparison across markets (F13, `market-prices.compare`), trends and ch
   instead". Another contributor may record the same item at the same market and time. One estimate per item for
   tomorrow, and tomorrow's actual prices are separate rows next to it.
 - **Rate limit:** 20 new prices per minute per account.
+
+## 3b. Corrections and withdrawals (slice 4)
+
+- Only the entry's own contributor, and only within **7 days** of recording it (`MarketPrice::CORRECTION_DAYS`).
+  Another contributor gets 404; non-contributors 403; after 7 days 403 with "part of the price history, record a new
+  price instead"; "My market prices" then shows "Locked (history)".
+- **Correct:** price and/or note only, with a required reason (5–200 characters). The values being replaced go into
+  `market_price_revisions` (old price, old note, reason, who, when) in the same transaction. A correction that changes
+  nothing is refused. Corrected prices are labelled "Corrected", and the correction page lists the earlier values.
+- **Withdraw:** explicit confirmation and a reason. Sets `deleted_at` and `withdrawal_reason` (a CHECK keeps them
+  together); the row is never erased, and a corrected price cannot be hard-deleted (restrict FK from revisions).
+  A stored generated column `active_key` (1 or NULL) in the unique key frees the slot after a withdrawal.
+- Both send the page's `version`; a stale tab gets a 409 page, and nothing changes. 30 per minute per account.
 
 ## 3a. Public price page rules (slice 3)
 
@@ -93,12 +108,12 @@ Not F11: comparison across markets (F13, `market-prices.compare`), trends and ch
 
 | Layer | Files |
 | --- | --- |
-| Migrations | `2026_11_14_400000_create_markets_table.php`, `2026_11_14_400001_create_market_prices_table.php`, `2026_11_14_400002_add_sessions_estimates_and_fish_to_market_prices.php`, `2026_11_14_400003_generalise_market_price_products_and_sessions.php` |
-| Models / factories | `Market`, `MarketPrice`; `MarketFactory`, `MarketPriceFactory` |
-| Policy | `MarketPricePolicy` (create; correction rules arrive in slice 2) |
-| Validation | `app/Http/Requests/MarketPrices/` (`StoreMarketPriceRequest`, `SearchMarketPricesRequest`) |
+| Migrations | `2026_11_14_400000_create_markets_table.php`, `2026_11_14_400001_create_market_prices_table.php`, `2026_11_14_400002_add_sessions_estimates_and_fish_to_market_prices.php`, `2026_11_14_400003_generalise_market_price_products_and_sessions.php`, `2026_11_14_400004_add_corrections_and_withdrawal_to_market_prices.php` |
+| Models / factories | `Market`, `MarketPrice`, `MarketPriceRevision`; `MarketFactory`, `MarketPriceFactory` |
+| Policy | `MarketPricePolicy` (create; update and delete for own entries within 7 days) |
+| Validation | `app/Http/Requests/MarketPrices/` (`Store…`, `Update…`, `Withdraw…`, `SearchMarketPricesRequest`) |
 | Business rules | `app/Services/MarketPriceService.php` (one entry per session, resent forms, the public board, recent entries) |
-| Controllers | `Contributor\MarketPriceController` (workspace), `MarketPriceController` (public page) |
+| Controllers | `Contributor\MarketPriceController` (workspace), `MarketPriceController` (public page); `MarketPriceConflictException` (409); dashboard card via `DashboardController` |
 | Views | `resources/views/contributor/prices/`, `resources/views/market-prices/` (shared `.table` styles; no feature CSS needed) |
 | Tests | `tests/Feature/MarketPrices/` |
 
@@ -126,3 +141,6 @@ Not F11: comparison across markets (F13, `market-prices.compare`), trends and ch
   "estimate", so an actual whole-day price was refused because of the estimate for the same day. 48 F11 tests.
 - **Slice 3** (2026-11-14, same branch): the public price page, built before corrections at Jarif's request so prices
   are visible. 15 more tests (63 F11 tests).
+- **Slice 4** (2026-11-14, same branch): corrections with a revision log, withdraw instead of delete (D11, Jarif's
+  choice), and the dashboard card (D12). A forward-only migration, rolled back and re-applied to test `down()`.
+  11 more tests (74 F11 tests).

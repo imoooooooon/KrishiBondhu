@@ -71,15 +71,17 @@ class ContributorPriceAccessTest extends TestCase
             ->assertOk()->assertSee('You have not recorded any prices');
     }
 
-    public function test_price_history_has_no_delete_route(): void
+    public function test_deleting_only_withdraws_and_never_erases_the_row(): void
     {
         $contributor = $this->contributor();
         $price = MarketPrice::factory()->for($contributor, 'contributor')->create();
 
-        $this->actingAs($contributor)->delete('/contributor/prices/'.$price->id)->assertStatus(405);
+        $this->actingAs($contributor)->delete(route('contributor.prices.destroy', $price), [
+            'confirm_withdraw' => '1', 'version' => 1, 'withdrawal_reason' => 'Recorded at the wrong market.',
+        ])->assertRedirect(route('contributor.prices.index'));
 
-        $this->assertFalse(app('router')->has('contributor.prices.destroy'));
-        $this->assertNotNull($price->fresh());
+        $this->assertNull(MarketPrice::find($price->id), 'hidden from normal queries');
+        $this->assertNotNull(MarketPrice::withTrashed()->find($price->id), 'but the row is still in the database');
     }
 
     public function test_forged_writes_are_rejected_when_csrf_protection_is_active(): void
@@ -146,9 +148,10 @@ class ContributorPriceAccessTest extends TestCase
         }
         $this->get(route('markets.show', 1))->assertOk()->assertSee('markets.show');
 
-        // Corrections arrive in slice 2; until then they answer "not built yet".
-        $this->get(route('contributor.prices.edit', 1))->assertOk()->assertSee('contributor.prices.edit');
-        $this->patch(route('contributor.prices.update', 1))->assertStatus(501);
+        // The contributor workspace routes are all built and need a signed-in user.
+        foreach (['index', 'create'] as $action) {
+            $this->get(route('contributor.prices.'.$action))->assertRedirect(route('login'));
+        }
     }
 
     private function countQueries(callable $request): int
