@@ -15,7 +15,9 @@ class AiGuidanceException extends RuntimeException
 {
     public const NOT_CONFIGURED = 'not_configured';           // no API key or model in .env
 
-    public const INVALID_CREDENTIALS = 'invalid_credentials'; // the key was refused (HTTP 401 / 403)
+    public const INVALID_CREDENTIALS = 'invalid_credentials'; // the key itself is wrong or expired (HTTP 401)
+
+    public const ACCESS_DENIED = 'access_denied';             // valid key, but the project may not use it (HTTP 403: billing, free tier, region)
 
     public const MODEL_UNAVAILABLE = 'model_unavailable';     // the configured model does not exist (HTTP 404)
 

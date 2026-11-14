@@ -98,7 +98,8 @@ class GeminiClient
         $status = $response->status();
 
         $code = match (true) {
-            in_array($status, [401, 403], true) => AiGuidanceException::INVALID_CREDENTIALS,
+            $status === 401 => AiGuidanceException::INVALID_CREDENTIALS,
+            $status === 403 => AiGuidanceException::ACCESS_DENIED, // e.g. "free tier is not available for this project"
             $status === 400 && Str::contains($message, 'API key', ignoreCase: true) => AiGuidanceException::INVALID_CREDENTIALS,
             $status === 404 => AiGuidanceException::MODEL_UNAVAILABLE,
             $status === 429 => AiGuidanceException::RATE_LIMITED,

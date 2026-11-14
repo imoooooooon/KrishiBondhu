@@ -228,6 +228,7 @@ class SoilGuidanceRecord extends Model
         return match ($this->error_code) {
             AiGuidanceException::NOT_CONFIGURED,
             AiGuidanceException::INVALID_CREDENTIALS,
+            AiGuidanceException::ACCESS_DENIED,
             AiGuidanceException::MODEL_UNAVAILABLE => __('The AI guidance service is not set up correctly on this website yet. Your observations have been saved. Please try again later.'),
             AiGuidanceException::RATE_LIMITED => __('The AI service is very busy right now. Your observations have been saved. Please try again in a few minutes.'),
             AiGuidanceException::PROVIDER_REJECTED => __('The AI service could not give guidance for this request. Your observations have been saved. You can try again, or make a new request with a clearer description.'),

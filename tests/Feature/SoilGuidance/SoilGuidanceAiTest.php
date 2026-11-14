@@ -129,7 +129,8 @@ class SoilGuidanceAiTest extends TestCase
 
         return [
             'invalid key (401)' => [401, $error('UNAUTHENTICATED', 'API key expired.'), AiGuidanceException::INVALID_CREDENTIALS],
-            'key not allowed (403)' => [403, $error('PERMISSION_DENIED', 'Your project has been denied access.'), AiGuidanceException::INVALID_CREDENTIALS],
+            'key not allowed (403)' => [403, $error('PERMISSION_DENIED', 'Your project has been denied access.'), AiGuidanceException::ACCESS_DENIED],
+            'no free tier for the project (403)' => [403, ['error' => ['code' => 'permission_denied', 'message' => 'The Gemini API free tier is not available for this project. SECRET-PROVIDER-DETAIL']], AiGuidanceException::ACCESS_DENIED],
             'invalid key reported as 400' => [400, $error('INVALID_ARGUMENT', 'API key not valid. Please pass a valid API key.'), AiGuidanceException::INVALID_CREDENTIALS],
             'unknown model (404)' => [404, $error('NOT_FOUND', 'Model gemini-test-model was not found.'), AiGuidanceException::MODEL_UNAVAILABLE],
             'rate limit (429)' => [429, $error('RESOURCE_EXHAUSTED', 'Quota exceeded.'), AiGuidanceException::RATE_LIMITED],
@@ -158,7 +159,7 @@ class SoilGuidanceAiTest extends TestCase
             ->assertSee('Your observations have been saved.')
             ->assertSee('Try again')
             ->assertDontSee('SECRET-PROVIDER-DETAIL')
-            ->assertDontSee($body['error']['status']);
+            ->assertDontSee($body['error']['status'] ?? $body['error']['code']);
     }
 
     public function test_a_timeout_becomes_a_failed_request(): void
