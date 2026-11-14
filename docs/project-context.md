@@ -35,12 +35,18 @@ Repository: <https://github.com/imoooooooon/KrishiBondhu>
   The original PDFs stay in each member's local, git-ignored `course-docs/` folder (never committed). Student IDs
   and the faculty email are intentionally kept out of the public Markdown copies.
 - All documentation is living: update it in the same PR whenever the workflow or scope changes.
-- **Information architecture (2026-11-12):** [docs/IA.md](IA.md). 199 named routes for F1–F26 (193 planned + the F1 photo route + 5 F6 routes), one route file per
+- **Information architecture (2026-11-12):** [docs/IA.md](IA.md). 202 named routes for F1–F26 as of 2026-11-14 (146 of them still planned; the original 193 plus the photo, health-history, close and retry routes added by F1, F6, F20, F25 and F15), one route file per
   area in `routes/modules/`, unbuilt routes served by `PlannedController`.
 - **Design system (2026-11-12):** [docs/design-system.md](design-system.md), adapted from the Al Wasil system for
   agriculture. **No UI framework** (replaces Bootstrap from the SRS draft) and **no npm/Vite pipeline**: plain CSS
   tokens and Blade components, self-hosted Inter Tight (OFL); Bangla in Li Ador Noirrit (committed, used with permission from Lipighor) with Noto Sans Bengali (OFL) fallback; Lucide icons (ISC). A basic landing page is at `/`.
 - **Structure:** Laravel's MVC folders are the frontend/backend/database separation ([docs/architecture.md](architecture.md)).
+
+- **AI guidance (2026-11-14, F15, issue #22):** the Gemini API is called from the server with Laravel's HTTP client
+  (no SDK package). All provider code is in `App\Services\GeminiClient`; key and model come from `.env`
+  (`GEMINI_API_KEY`, `GEMINI_MODEL`) through `config/services.php`. Because queues run synchronously, guidance is
+  generated inside the farmer's request with a 20-second limit, and failures are saved and can be retried.
+  Tests always fake the AI service. Faculty confirmation of Gemini (SRS §2.5c) is still pending.
 
 ## Sprint deadlines (Asia/Dhaka)
 

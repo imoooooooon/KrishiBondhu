@@ -20,9 +20,10 @@ Add a row in the same PR that introduces the dependency.
 | brick/math | installed with laravel/framework (see composer.lock) | Composer (runtime, already a Laravel dependency) | Exact decimal comparison of crop quantities and prices in F1 validation (no float rounding) | Emon (F1) | No (general maths library, not an assessed feature) |
 | PHP GD extension | bundled with PHP 8.4 | PHP extension (`extension=gd`; added to CI) | Decode, resize and re-encode crop listing photos, which strips metadata (F1) | Emon (F1) | No (part of PHP) |
 | Unsplash photos (17 crop photos in `CropListingDemoSeeder`; 12 cattle photos in `database/seeders/data/cattle-demo-fixtures.php`, credits in [demo-assets.md](demo-assets.md)) | downloaded from images.unsplash.com when the demo runs; cached privately, not committed | Demo images (development only) | Example photos for the F1 demo listings and F6 demo cattle | Emon (F1, F6) | No ([Unsplash License](https://unsplash.com/license): free use, no attribution required). **Delete the demo data before release.** |
+| Gemini API (Google), Interactions API, model `gemini-3.5-flash-lite` by default (`GEMINI_MODEL`) | REST over HTTPS with Laravel's built-in HTTP client; no SDK or Composer package | External AI service (key in each member's own `.env` as `GEMINI_API_KEY`, never committed) | Writes the general soil-care and fertilizer guidance for F15 from the farmer's observations and optional photo. Only `App\Services\GeminiClient` calls it. Requests are sent with `store: false`. On the free tier Google may use the content to improve its products, so no name, phone number or account detail is sent. | Mehrab (F15) | **Yes, pending.** It is the AI service planned in SRS §2.5(c), which says the team will confirm the approach with the faculty. Confirm before the F15 demo. |
 
 No CSS/JS framework is used (Bootstrap from the SRS draft was replaced by the design system).
 
 Planned in the SRS but **not added yet** (each needs a team decision; confirm with faculty where the SRS says so):
-Gemini API (AI guidance), Leaflet + OpenStreetMap (maps), Azure AI Speech (Bangla voice),
+Leaflet + OpenStreetMap (maps), Azure AI Speech (Bangla voice),
 SSLCommerz sandbox (test payments), alwaysdata (hosting).
