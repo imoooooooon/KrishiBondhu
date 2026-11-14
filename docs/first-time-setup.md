@@ -89,6 +89,9 @@ GRANT ALL PRIVILEGES ON krishibondhu_test.* TO 'krishibondhu'@'localhost';
 
 - `krishibondhu` = your development database. `krishibondhu_test` = disposable, used only by tests.
 - Never commit `.env`. Never share your `.env` or passwords in the group chat.
+- Optional, only to try AI guidance (F15) with real answers: create your own key in Google AI Studio and put it in
+  your `.env` as `GEMINI_API_KEY=...`. Without a key everything else works; guidance requests are saved and shown
+  as failed ("not set up"). Tests never need a key.
 
 ---
 

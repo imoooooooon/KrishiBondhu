@@ -66,6 +66,7 @@ flowchart LR
 | Buyer buys a small amount | `marketplace.index` → `marketplace.show` → `cart.items.store` → `cart.show` → `checkout.show` → `checkout.store` → `payments.store` → `orders.show` |
 | Buyer buys in bulk | `bulk-requests.create` → farmers `bulk-requests.bids.store` → `bulk-requests.bids.accept`, or `marketplace.offers.store` → `negotiations.show` (counter/accept) → order |
 | Farmer records breeding | `cattle.show` → `breeding-check.create` → `cattle.inseminations.create` → `cattle.pregnancies.create` → `pregnancies.calving` |
+| Farmer gets soil guidance | `guidance.soil.create` → `guidance.soil.store` (asks the AI service) → `guidance.soil.show` (result, or failure with `guidance.soil.retry`) → `guidance.soil.index` (history) |
 | Farmer gets help for a sick cow | `guidance.animal-health.create` → result → `vets.index` → `vets.visit-requests.store` → `visit-requests.show` |
 | Farmer hires workers | `farmer.jobs.create` → workers `jobs.applications.store` → `farmer.jobs.applications.update` → `farmer.jobs.bookings.store` → `bookings.show` |
 
@@ -237,7 +238,7 @@ File: `routes/modules/market-prices.php` · 11 routes
 
 ### 5.6 Health
 
-File: `routes/modules/health.php` · 29 routes
+File: `routes/modules/health.php` · 31 routes
 
 | Method | URI | Route name | Feature | Access (when auth is built) |
 | --- | --- | --- | --- | --- |
@@ -252,7 +253,9 @@ File: `routes/modules/health.php` · 29 routes
 | `GET` | `/guidance/soil` | `guidance.soil.index` | F15 | Farmer |
 | `POST` | `/guidance/soil` | `guidance.soil.store` | F15 | Farmer |
 | `GET` | `/guidance/soil/create` | `guidance.soil.create` | F15 | Farmer |
-| `GET` | `/guidance/soil/{record}` | `guidance.soil.show` | F15 | Farmer |
+| `GET` | `/guidance/soil/{record}` | `guidance.soil.show` | F15 | Farmer (owner) |
+| `GET` | `/guidance/soil/{record}/photo` | `guidance.soil.photo` | F15 | Farmer (owner) |
+| `POST` | `/guidance/soil/{record}/retry` | `guidance.soil.retry` | F15 | Farmer (owner) |
 | `GET` | `/health` | `health.index` | F15–F19 hub | Public |
 | `GET` | `/treatments` | `treatments.index` | F19 | Farmer |
 | `POST` | `/treatments` | `treatments.store` | F19 | Farmer |
@@ -392,3 +395,4 @@ File: `routes/modules/admin.php` · 16 routes
 | 2026-11-13 | Built the F1 routes (`farmer.listings.*`, `marketplace.index`, `marketplace.show`) with `Farmer\CropListingController` and `MarketplaceController`; URIs and names unchanged. **Added `crop-listing-photos.show`** (`GET /crop-listing-photos/{photo}/{variant}`): listing photos are private files and this route checks the listing's visibility on every request. `/farmer/listings/*` is behind `auth`; the Farmer role and ownership are checked by `CropListingPolicy`; per account, 10 new listings and 30 changes per minute. After publishing, the farmer lands on `farmer.listings.show`, which links to the public page. Cart and offer buttons on `marketplace.show` post to the still-planned `cart.items.store` and `marketplace.offers.store`. | Emon (with Claude Code) |
 | 2026-11-13 | Built the F6 routes (`cattle.index/create/store/show/edit/update/destroy`) with `CattleController`; URIs and names unchanged. `cattle.destroy` **archives** (sets `archived_at`) and `cattle.update` with `operation=restore` brings it back; nothing is deleted. **Added** `cattle.photo` (private photos, owner only) and `cattle.health-history.create/store/edit/update` (`CattleHealthEntryController`). All behind `auth`; the Farmer role and ownership are checked by `CattlePolicy`. Per account, 10 registrations and 30 other changes per minute. The F7–F10 and F18 routes are unchanged and still planned; the cattle profile links to them with a "Planned" label. | Emon (with Claude Code) |
 | 2026-11-14 | Built the F25 routes `seller.products.*` (`Seller\AgriculturalProductController`), `shop.index` and `shop.show` (`ShopController`); URIs and names unchanged. **Added `shop.photo`** (`GET /shop/products/{product}/photo/{variant}`): product photos are private files and this route checks the product's visibility on every request. `/seller/products/*` is behind `auth`; the seller role and ownership are checked by `AgriculturalProductPolicy`; per account, 10 new products and 30 changes per minute. `shop.offers.store` (F3) and `seller.orders.*` (needs F5's Order model) are unchanged and still planned; the product page shows disabled cart and offer buttons with an explanation. | Jarif (with Claude Code) |
+| 2026-11-14 | Built the F15 routes (`guidance.soil.index/create/store/show`) with `SoilGuidanceController`; URIs and names unchanged. **Added `guidance.soil.retry`** (`POST /guidance/soil/{record}/retry`: try a failed request again with the same saved observations) and **`guidance.soil.photo`** (`GET /guidance/soil/{record}/photo`: the soil photo is a private file, owner only). All behind `auth`; the Farmer role and ownership are checked by `SoilGuidanceRecordPolicy` (another farmer gets 404). Each new request and each retry calls the Gemini API, so they are limited per account to 5 new requests and 6 retries per minute. The F16 and F17 guidance routes and the `health.index` hub are unchanged and still planned; farmers reach F15 from a dashboard card. | Mehrab (with Claude Code) |
